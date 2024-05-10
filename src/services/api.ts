@@ -2781,13 +2781,19 @@ const liquidations = [
 ];
 export async function getLiquidations(): Promise<ILiquidation[]> {
   const liquidations = await fetch(
-    "https://api.liquidation.burrow.finance/liquidatable-list"
+    "https://api.liquidation.burrow.finance/liquidation/liquidatable-list-quick"
   )
     .then((res) => res.json())
     .catch(() => {
       return [];
     });
-  return liquidations;
+  try {
+    const data = liquidations.data;
+    return JSON.parse(data).data;
+  } catch (error) {
+    return [];
+  }
+ 
 }
 export async function getDemoLiquidations() {
   return liquidations;
