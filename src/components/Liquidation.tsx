@@ -4,9 +4,9 @@ import { getLiquidations, getDemoLiquidations } from "../services/api";
 import {
   ILiquidation,
   IAsset,
-  IAssetType,
   TokenMetadata,
   ISortkey,
+  IAssetsByType,
 } from "../interface/common";
 import { ftGetTokenMetadata } from "../services/near";
 import { format_usd } from "../utils/number";
@@ -38,8 +38,7 @@ Modal.defaultStyles = {
 };
 export default function Home(props: any) {
   const [liquidations, setLiquidations] = useState<ILiquidation[]>([]);
-  const [assetsDetail, setAssetsDetail] = useState<IAsset[]>([]);
-  const [assetType, setAssetType] = useState<IAssetType>();
+  const [assetsDetail, setAssetsDetail] = useState<IAssetsByType | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [sortKey, setSortKey] = useState<ISortkey>("");
   const [sortDirection, setSortDirection] = useState("");
@@ -98,15 +97,31 @@ export default function Home(props: any) {
     setLiquidations(liquidations);
     setLoading(false);
   }
-  function showAssetsModal(assets: IAsset[], assetType: IAssetType) {
+  function showAssetsModal(
+    accountId: string,
+    position: string,
+    collateralAssets: IAsset[],
+    borrowedAssets: IAsset[]
+  ) {
+    const assetsByType: IAssetsByType = {
+      Collateral: {
+        type: "Collateral",
+        assets: collateralAssets,
+      },
+      Borrowed: {
+        type: "Borrowed",
+        assets: borrowedAssets,
+      },
+      accountId,
+      position,
+    };
     setIsOpen(true);
-    setAssetsDetail(assets);
-    setAssetType(assetType);
+    setAssetsDetail(assetsByType);
   }
+
   function closeAssetsModal() {
     setIsOpen(false);
-    setAssetsDetail([]);
-    setAssetType("");
+    setAssetsDetail(null);
   }
   function sortClick(key: ISortkey) {
     setSortKey(key);
@@ -121,7 +136,7 @@ export default function Home(props: any) {
   return (
     <div
       className="text-white bg-dark-200 rounded-lg"
-      style={{ maxWidth: "1220px", margin: "30px auto 50px auto" }}
+      style={{ maxWidth: "82vw", margin: "30px auto 50px auto" }}
     >
       <div
         className="flex items-center border-b border-dark-100 px-6 text-purple-50 text-lg font-bold"
@@ -129,7 +144,7 @@ export default function Home(props: any) {
       >
         Pending Liquidation (Total: {liquidations.length})
       </div>
-      <div className="overflow-auto w-full" style={{ maxHeight: "70vh" }}>
+      <div className="overflow-auto w-full" style={{ maxHeight: "84vh" }}>
         <table className="commonTable">
           <thead>
             <tr>
@@ -265,18 +280,15 @@ export default function Home(props: any) {
                       <div
                         className="flex items-center justify-center border border-purple-50 border-opacity-50 px-3 h-8 rounded text-sm text-purple-50 cursor-pointer whitespace-nowrap"
                         onClick={() => {
-                          showAssetsModal(l.collateralAssets, "Collateral");
+                          showAssetsModal(
+                            l.position,
+                            l.accountId,
+                            l.collateralAssets,
+                            l.borrowedAssets
+                          );
                         }}
                       >
-                        c Details
-                      </div>
-                      <div
-                        className="flex items-center justify-center bg-dark-300 px-3 h-8 rounded text-sm text-white cursor-pointer whitespace-nowrap"
-                        onClick={() => {
-                          showAssetsModal(l.borrowedAssets, "Borrowed");
-                        }}
-                      >
-                        b Details
+                        Details
                       </div>
                     </div>
                   </td>
@@ -292,13 +304,16 @@ export default function Home(props: any) {
           </div>
         ) : null}
       </div>
-      <AssetModal
-        isOpen={isOpen}
-        onRequestClose={closeAssetsModal}
-        assetType={assetType}
-        assets={assetsDetail}
-        allTokenMetadatas={allTokenMetadatas}
-      />
+      {assetsDetail && (
+        <AssetModal
+          isOpen={isOpen}
+          onRequestClose={closeAssetsModal}
+          assets={assetsDetail}
+          allTokenMetadatas={allTokenMetadatas}
+          accountId={assetsDetail.accountId}
+          position={assetsDetail.position}
+        />
+      )}
     </div>
   );
 }

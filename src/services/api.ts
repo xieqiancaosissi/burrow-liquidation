@@ -2793,8 +2793,43 @@ export async function getLiquidations(): Promise<ILiquidation[]> {
   } catch (error) {
     return [];
   }
- 
 }
+export async function calcByRepayRatio(
+  accountId: string,
+  position: string,
+  selectedCollateralTokenId: string,
+  selectedBorrowedTokenId: string,
+  repayRatio: number
+): Promise<any> {
+  const requestData = {
+    accountId: accountId,
+    position: position,
+    collateralToken: selectedCollateralTokenId,
+    borrowedToken: selectedBorrowedTokenId,
+    repayRatio: repayRatio,
+  };
+
+  try {
+    const response = await fetch(
+      "https://api.liquidation.burrow.finance/liquidation/calc-by-repay-ratio",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestData),
+      }
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    }
+  } catch (error) {
+    return { error };
+  }
+}
+
 export async function getDemoLiquidations() {
   return liquidations;
 }

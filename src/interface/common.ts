@@ -19,6 +19,18 @@ export interface IAsset {
   value: string;
   adjustedValue: string;
 }
+export interface IAssetsByType {
+  Collateral: {
+    type: string;
+    assets: IAsset[];
+  };
+  Borrowed: {
+    type: string;
+    assets: IAsset[];
+  };
+  accountId: string;
+  position: string;
+}
 export type IAssetType = "Collateral" | "Borrowed" | "";
 
 export interface TokenMetadata {
