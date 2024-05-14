@@ -15,6 +15,7 @@ import Modal from "react-modal";
 import AssetModal from "../components/AssetModal";
 import { SortIcon } from "../components/Icons";
 import { BeatLoading } from "../components/Loading";
+import { formatTimestamp } from "@/utils/time";
 Modal.defaultStyles = {
   overlay: {
     position: "fixed",
@@ -48,6 +49,7 @@ export default function Home(props: any) {
     Record<string, TokenMetadata>
   >({});
   const [loading, setLoading] = useState<boolean>(true);
+  const [timestamp, setTimestamp] = useState<number | null>(null);
   useEffect(() => {
     get_liquidations();
   }, []);
@@ -71,9 +73,11 @@ export default function Home(props: any) {
     if (props.isDemo) {
       liquidations = await getDemoLiquidations();
     } else {
-      liquidations = await getLiquidations();
+      const res = await getLiquidations()
+      liquidations = res.data;
+      setTimestamp(res.timestamp); 
     }
-    const tokenIdList = liquidations.reduce((acc, cur) => {
+    const tokenIdList = liquidations.reduce((acc:any, cur:any) => {
       cur.collateralAssets.forEach((asset: IAsset) => {
         acc.add(asset.tokenId);
       });
@@ -152,6 +156,7 @@ export default function Home(props: any) {
         style={{ height: "60px" }}
       >
         Pending Liquidation (Total: {liquidations.length})
+        <p className="ml-2">{timestamp !== null ? formatTimestamp(timestamp) : ''}</p>
       </div>
       <div className="overflow-auto w-full" style={{ maxHeight: "84vh" }}>
         <table className="commonTable">

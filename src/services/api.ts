@@ -1,4 +1,4 @@
-import { ILiquidation } from "../interface/common";
+import { ILiquidation, ILiquidationResponse } from "../interface/common";
 const liquidations = [
   {
     accountId: "davidnvg1511.near",
@@ -2779,19 +2779,25 @@ const liquidations = [
     adjustedGapSum: "-0.010540468569178927795",
   },
 ];
-export async function getLiquidations(): Promise<ILiquidation[]> {
-  const liquidations = await fetch(
-    "https://api.liquidation.burrow.finance/liquidation/liquidatable-list-quick"
-  )
-    .then((res) => res.json())
-    .catch(() => {
-      return [];
-    });
+export async function getLiquidations(): Promise<ILiquidationResponse> {
+  const defaultResponse: ILiquidationResponse = {
+    timestamp:0,
+    data: [],
+  };
   try {
-    const data = liquidations.data;
-    return JSON.parse(data).data;
+    const liquidationsResponse = await fetch(
+      "https://api.liquidation.burrow.finance/liquidation/liquidatable-list-quick"
+    );
+    const liquidationsData = await liquidationsResponse.json();
+
+    const parsedData = JSON.parse(liquidationsData.data);
+    return {
+      timestamp:parsedData.timestamp,
+      data: parsedData.data,
+    };
   } catch (error) {
-    return [];
+    console.error("Error fetching liquidations:", error);
+    return defaultResponse;
   }
 }
 export async function getLiquidationDetail(

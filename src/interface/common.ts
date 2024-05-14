@@ -1,3 +1,7 @@
+export interface ILiquidationResponse {
+  timestamp:number;
+  data: ILiquidation[];
+}
 export interface ILiquidation {
   accountId: string;
   position: string;
@@ -40,7 +44,6 @@ export interface TokenMetadata {
   decimals: number;
   icon: string;
 }
-
 export type ISortkey =
   | "collateralSum"
   | "borrowedSum"
