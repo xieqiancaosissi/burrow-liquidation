@@ -25,8 +25,6 @@ export default function AssetModal({
   accountId,
   position,
 }: AssetModalProps) {
-  // console.log(accountId);
-  // console.log(position);
   const [selectedCollateralTokenId, setSelectedCollateralTokenId] =
     useState<string>("");
   const [selectedBorrowedTokenId, setSelectedBorrowedTokenId] =
@@ -51,7 +49,7 @@ export default function AssetModal({
       setRepayRatio("");
     }
   };
-  
+
   const renderTable = (
     assetsType: keyof typeof assets,
     handleTokenSelection: (tokenId: string) => void,
@@ -101,7 +99,7 @@ export default function AssetModal({
                     </div>
                   </td>
                   <td>
-                    {toReadableNumber(meta?.decimals || 0, asset.tokenBalance)}
+                    {/* {toReadableNumber(meta?.decimals || 0, asset.tokenBalance)} */}
                   </td>
                   <td>${asset.value}</td>
                   <td>${asset.adjustedValue}</td>
@@ -115,21 +113,21 @@ export default function AssetModal({
       </div>
     );
   };
-  const handleConfirmSelection = async () => {
-    const numericRepayRatio = parseFloat(repayRatio);
-    const result = await calcByRepayRatio(
-      accountId,
-      position,
-      selectedCollateralTokenId,
-      selectedBorrowedTokenId,
-      numericRepayRatio
-    );
-    if (result.error) {
-      console.error("发生错误：", result.error);
-    } else {
-      console.log("接口返回的数据：", result);
-    }
-  };
+  // const handleConfirmSelection = async () => {
+  //   const numericRepayRatio = parseFloat(repayRatio);
+  //   const result = await calcByRepayRatio(
+  //     position,
+  //     accountId,
+  //     selectedCollateralTokenId,
+  //     selectedBorrowedTokenId,
+  //     numericRepayRatio
+  //   );
+  //   if (result.error) {
+  //     console.error("发生错误：", result.error);
+  //   } else {
+  //     console.log("接口返回的数据：", result);
+  //   }
+  // };
   return (
     <div>
       <Modal
@@ -147,7 +145,7 @@ export default function AssetModal({
       >
         <div
           style={{ maxWidth: "80vw", maxHeight: "80vh" }}
-          className="border border-dark-350 border-opacity-20 bg-dark-200 rounded-2xl px-5 py-4"
+          className="border border-dark-350 border-opacity-20 bg-dark-200 rounded-2xl px-5 py-4 overflow-auto"
         >
           <div className="flex items-center justify-between mb-6">
             <span className="text-white font-bold text-lg">view details</span>
@@ -175,9 +173,9 @@ export default function AssetModal({
                 className="input-style"
               />
             </div>
-            <button className="calc-btn" onClick={handleConfirmSelection}>
+            {/* <button className="calc-btn" onClick={handleConfirmSelection}>
               Calc By Repay Ratio
-            </button>
+            </button> */}
           </div>
         </div>
       </Modal>

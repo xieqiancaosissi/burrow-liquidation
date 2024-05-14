@@ -28,6 +28,9 @@ body {
 .commonTable tr td:first-of-type {
   padding-left: 26px;
 }
+.modalTable {
+  width: 100%;
+}
 .modalTable tr th {
   height: 42px;
   font-size: 14px;

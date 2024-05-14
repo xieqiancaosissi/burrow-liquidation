@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import Big from "big.js";
 import { getLiquidations, getDemoLiquidations } from "../services/api";
 import {
@@ -37,6 +38,7 @@ Modal.defaultStyles = {
   },
 };
 export default function Home(props: any) {
+  const router = useRouter();
   const [liquidations, setLiquidations] = useState<ILiquidation[]>([]);
   const [assetsDetail, setAssetsDetail] = useState<IAssetsByType | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -132,6 +134,13 @@ export default function Home(props: any) {
     } else {
       setSortDirection("down");
     }
+  }
+  function handleDetailsClick(accountId: string, position: string) {
+    router.push(`/details?accountId=${accountId}&position=${position}`);
+    localStorage.setItem(
+      "allTokenMetadatas",
+      JSON.stringify(allTokenMetadatas)
+    );
   }
   return (
     <div
@@ -280,12 +289,7 @@ export default function Home(props: any) {
                       <div
                         className="flex items-center justify-center border border-purple-50 border-opacity-50 px-3 h-8 rounded text-sm text-purple-50 cursor-pointer whitespace-nowrap"
                         onClick={() => {
-                          showAssetsModal(
-                            l.position,
-                            l.accountId,
-                            l.collateralAssets,
-                            l.borrowedAssets
-                          );
+                          handleDetailsClick(l.accountId, l.position);
                         }}
                       >
                         Details
@@ -304,7 +308,7 @@ export default function Home(props: any) {
           </div>
         ) : null}
       </div>
-      {assetsDetail && (
+      {/* {assetsDetail && (
         <AssetModal
           isOpen={isOpen}
           onRequestClose={closeAssetsModal}
@@ -313,7 +317,7 @@ export default function Home(props: any) {
           accountId={assetsDetail.accountId}
           position={assetsDetail.position}
         />
-      )}
+      )} */}
     </div>
   );
 }

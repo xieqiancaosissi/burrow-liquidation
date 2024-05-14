@@ -2794,6 +2794,24 @@ export async function getLiquidations(): Promise<ILiquidation[]> {
     return [];
   }
 }
+export async function getLiquidationDetail(
+  accountId: string,
+  position: string
+): Promise<ILiquidation[]> {
+  const liquidationDetail = await fetch(
+    `https://api.liquidation.burrow.finance/liquidation/account/${accountId}/${position}`
+  )
+    .then((res) => res.json())
+    .catch(() => {
+      return {};
+    });
+  try {
+    return liquidationDetail.data;
+  } catch (error) {
+    return [];
+  }
+}
+
 export async function calcByRepayRatio(
   accountId: string,
   position: string,
@@ -2812,6 +2830,44 @@ export async function calcByRepayRatio(
   try {
     const response = await fetch(
       "https://api.liquidation.burrow.finance/liquidation/calc-by-repay-ratio",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestData),
+      }
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    }
+  } catch (error) {
+    return { error };
+  }
+}
+
+export async function calcByHealthFactor(
+  accountId: string,
+  position: string,
+  selectedCollateralTokenId: string,
+  selectedBorrowedTokenId: string,
+  repayValue: number,
+  targetHealthFactor: number
+): Promise<any> {
+  const requestData = {
+    accountId: accountId,
+    position: position,
+    collateralToken: selectedCollateralTokenId,
+    borrowedToken: selectedBorrowedTokenId,
+    repayValue: repayValue,
+    targetHealthFactor: targetHealthFactor,
+  };
+
+  try {
+    const response = await fetch(
+      "https://api.liquidation.burrow.finance/liquidation/calc-by-health-factor",
       {
         method: "POST",
         headers: {
