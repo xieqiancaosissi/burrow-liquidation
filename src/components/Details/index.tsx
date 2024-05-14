@@ -6,6 +6,7 @@ import {
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { NEAR_META_DATA } from "../Icons";
+import { toReadableNumber } from "@/utils/number";
 
 export default function DetailPage() {
   const [liquidationDetail, setLiquidationDetail] = useState<any>({});
@@ -306,9 +307,7 @@ const AssetTable: React.FC<AssetTableProps> = ({
                   </div>
                 </td>
                 <td>
-                  1:{meta?.decimals}
-                  2:{asset.tokenBalance}
-                  {/* {toReadableNumber(meta?.decimals || 0, asset.tokenBalance)} */}
+                  {toReadableNumber(meta?.decimals || 0, asset.tokenBalance)}
                 </td>
                 <td>${asset.value}</td>
                 <td>${asset.adjustedValue}</td>
