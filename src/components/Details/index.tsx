@@ -47,7 +47,7 @@ export default function DetailPage() {
   ) => {
     setRepayValue(event.target.value);
   };
-  
+
   const handleTargetHealthFactorChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -179,30 +179,32 @@ export default function DetailPage() {
             </tbody>
           </table>
           <div className="flex items-center justify-between">
-            <div className="flex items-center p-4">
-              <p className="text-white text-base mr-2">repayValue:</p>
-              <input
-                type="number"
-                value={repayValue}
-                onChange={handleRrepayValueChange}
-                className="input-style"
-              />
-            </div>
-            <div className="flex items-center p-4">
-              <p className="text-white text-base mr-2">targetHealthFactor:</p>
-              <input
-                type="number"
-                value={targetHealthFactor}
-                onChange={handleTargetHealthFactorChange}
-                className="input-style"
-              />
+            <div className="flex items-center">
+              <div className="flex items-center p-4">
+                <p className="text-white text-base mr-2">repayValue:</p>
+                <input
+                  type="number"
+                  value={repayValue}
+                  onChange={handleRrepayValueChange}
+                  className="input-style"
+                />
+              </div>
+              <div className="flex items-center p-4">
+                <p className="text-white text-base mr-2">targetHealthFactor:</p>
+                <input
+                  type="number"
+                  value={targetHealthFactor}
+                  onChange={handleTargetHealthFactorChange}
+                  className="input-style"
+                />
+              </div>
             </div>
             <button
               className={`calc-btn ${isButtonFactorLoading ? "disabled" : ""}`}
               onClick={handleByHealthFactor}
               disabled={isButtonFactorLoading}
             >
-              {isButtonFactorLoading ? "..." : "Calc By Health Factor"}
+              {isButtonFactorLoading ? "..." : "Generate Liquidation Command"}
             </button>
           </div>
         </div>
@@ -210,7 +212,7 @@ export default function DetailPage() {
       {repayHealthFactor && Object.keys(repayHealthFactor).length > 0 && (
         <div className="mb-4 my-4 modalBox overflow-auto w-full p-4 bg-dark-250 rounded-2xl">
           <div className="text-white font-bold text-base mb-4">
-            Health Factor
+            Liquidation Command
           </div>
           <div>
             {Object.keys(repayHealthFactor)
