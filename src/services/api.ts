@@ -2781,7 +2781,7 @@ const liquidations = [
 ];
 export async function getLiquidations(): Promise<ILiquidationResponse> {
   const defaultResponse: ILiquidationResponse = {
-    timestamp:0,
+    timestamp: 0,
     data: [],
   };
   try {
@@ -2792,7 +2792,7 @@ export async function getLiquidations(): Promise<ILiquidationResponse> {
 
     const parsedData = JSON.parse(liquidationsData.data);
     return {
-      timestamp:parsedData.timestamp,
+      timestamp: parsedData.timestamp,
       data: parsedData.data,
     };
   } catch (error) {

@@ -73,11 +73,11 @@ export default function Home(props: any) {
     if (props.isDemo) {
       liquidations = await getDemoLiquidations();
     } else {
-      const res = await getLiquidations()
+      const res = await getLiquidations();
       liquidations = res.data;
-      setTimestamp(res.timestamp); 
+      setTimestamp(res.timestamp);
     }
-    const tokenIdList = liquidations.reduce((acc:any, cur:any) => {
+    const tokenIdList = liquidations.reduce((acc: any, cur: any) => {
       cur.collateralAssets.forEach((asset: IAsset) => {
         acc.add(asset.tokenId);
       });
@@ -156,7 +156,9 @@ export default function Home(props: any) {
         style={{ height: "60px" }}
       >
         Pending Liquidation (Total: {liquidations.length})
-        <p className="ml-2">{timestamp !== null ? formatTimestamp(timestamp) : ''}</p>
+        <p className="ml-2">
+          {timestamp !== null ? formatTimestamp(timestamp) : ""}
+        </p>
       </div>
       <div className="overflow-auto w-full" style={{ maxHeight: "84vh" }}>
         <table className="commonTable">
@@ -292,7 +294,7 @@ export default function Home(props: any) {
                   <td>
                     <div className="flex items-center gap-2">
                       <div
-                        className="flex items-center justify-center border border-purple-50 border-opacity-50 px-3 h-8 rounded text-sm text-purple-50 cursor-pointer whitespace-nowrap"
+                        className="flex items-center justify-center px-3 h-8 cursor-pointer whitespace-nowrap underline"
                         onClick={() => {
                           handleDetailsClick(l.accountId, l.position);
                         }}

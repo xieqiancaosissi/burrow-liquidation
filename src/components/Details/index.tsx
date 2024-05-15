@@ -229,15 +229,33 @@ export default function DetailPage() {
             Health Factor
           </div>
           <div>
-            {Object.keys(repayHealthFactor).map((key) => {
-              const asset = repayHealthFactor[key];
-              return (
-                <div key={key} className="mb-2 flex">
-                  <p>{key}:</p>
-                  <pre>{asset}</pre>
-                </div>
-              );
-            })}
+            {Object.keys(repayHealthFactor)
+              .slice(0, 2)
+              .map((key, index) => {
+                const asset = repayHealthFactor[key];
+                return (
+                  <div key={key} className="mb-2">
+                    <p className="mb-2">{key}:</p>
+                    <pre
+                      className="text-white p-4 rounded overflow-x-auto text-sm whitespace-pre-wrap word-break"
+                      style={{ background: "#0b1a1a" }}
+                    >
+                      <code>{asset}</code>
+                    </pre>
+                  </div>
+                );
+              })}
+            {Object.keys(repayHealthFactor)
+              .slice(2)
+              .map((key, index) => {
+                const asset = repayHealthFactor[key];
+                return (
+                  <div key={key} className="mb-2 flex">
+                    <p className="mr-2">{key}:</p>
+                    <p>{asset}</p>
+                  </div>
+                );
+              })}
           </div>
         </div>
       )}

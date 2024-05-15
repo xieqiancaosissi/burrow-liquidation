@@ -1,5 +1,5 @@
 export interface ILiquidationResponse {
-  timestamp:number;
+  timestamp: number;
   data: ILiquidation[];
 }
 export interface ILiquidation {
