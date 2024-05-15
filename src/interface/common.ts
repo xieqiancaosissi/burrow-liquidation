@@ -45,6 +45,7 @@ export interface TokenMetadata {
   icon: string;
 }
 export type ISortkey =
+  | "healthFactor"
   | "collateralSum"
   | "borrowedSum"
   | "gapSum"

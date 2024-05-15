@@ -1,14 +1,15 @@
 import Big from "big.js";
 export function format_usd(n: string | number) {
-  if (Big(n).lt(0)) {
-    return (
-      "-$" +
-      Big(n || "0")
-        .abs()
-        .toFixed(8)
-    );
+  const number = Big(n || "0");
+  if (number.abs().lt(0.0001)) {
+    return number.lt(0) ? "<-$0.0001" : "<$0.0001";
   }
-  return "$" + Big(n || "0").toFixed(8);
+
+  if (number.lt(0)) {
+    return "-$" + number.abs().toFixed(4);
+  }
+
+  return "$" + number.toFixed(4);
 }
 
 export const toReadableNumber = (

@@ -9,6 +9,7 @@ import { NEAR_META_DATA } from "../Icons";
 import { toReadableNumber } from "@/utils/number";
 
 export default function DetailPage() {
+  const [accountId, setAccountId] = useState<string>("");
   const [liquidationDetail, setLiquidationDetail] = useState<any>({});
   const [allTokenMetadatas, setAllTokenMetadatas] = useState<any>({});
   const [repayRatioData, setRepayRatioData] = useState<any>([]);
@@ -31,6 +32,7 @@ export default function DetailPage() {
       JSON.parse(localStorage.getItem("allTokenMetadatas")!)
     );
     if (accountId) {
+      setAccountId(accountId);
       getLiquidationDetail(accountId, position).then((data) => {
         setLiquidationDetail(data);
       });
@@ -108,12 +110,16 @@ export default function DetailPage() {
   return (
     <div
       className="text-white bg-dark-200 rounded-lg p-4"
-      style={{ maxWidth: "80vw", margin: "30px auto 50px auto" }}
+      style={{ maxWidth: "76vw", margin: "30px auto 50px auto" }}
     >
       <Link href="/" className="flex items-center text-base mb-4">
         <span className="mr-2">&#8592;</span>
         <p>Home</p>
       </Link>
+      <div className="ml-2 flex items-center">
+        <p>accountId:</p>
+        <p className="ml-2 text-lg">{accountId}</p>
+      </div>
       <AssetTable
         title="Collateral Assets"
         assets={liquidationDetail.collateralAssets || []}

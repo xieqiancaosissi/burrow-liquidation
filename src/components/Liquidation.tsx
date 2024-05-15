@@ -149,7 +149,7 @@ export default function Home(props: any) {
   return (
     <div
       className="text-white bg-dark-200 rounded-lg"
-      style={{ maxWidth: "82vw", margin: "30px auto 50px auto" }}
+      style={{ maxWidth: "76vw", margin: "30px auto 50px auto" }}
     >
       <div
         className="flex items-center border-b border-dark-100 px-6 text-purple-50 text-lg font-bold"
@@ -167,7 +167,21 @@ export default function Home(props: any) {
               <th>serial</th>
               <th>accountId</th>
               <th>position</th>
-              <th>healthFactor</th>
+              <th>
+                <div
+                  className="flex items-center gap-1.5 cursor-pointer"
+                  onClick={() => {
+                    sortClick("healthFactor");
+                  }}
+                >
+                  healthFactor
+                  <SortComponent
+                    keyName="healthFactor"
+                    sortKey={sortKey}
+                    sortDirection={sortDirection}
+                  />
+                </div>
+              </th>
               <th>
                 <div
                   className="flex items-center gap-1.5 cursor-pointer"
