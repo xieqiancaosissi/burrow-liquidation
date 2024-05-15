@@ -40,34 +40,18 @@ export default function DetailPage() {
   const handleRepayRatioChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const ratio = parseFloat(event.target.value);
-    if (!isNaN(ratio)) {
-      setRepayRatio(ratio.toString());
-    } else {
-      setRepayRatio("");
-    }
+    setRepayRatio(event.target.value);
   };
-
   const handleRrepayValueChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const ratio = parseFloat(event.target.value);
-    if (!isNaN(ratio)) {
-      setRepayValue(ratio.toString());
-    } else {
-      setRepayValue("");
-    }
+    setRepayValue(event.target.value);
   };
-
+  
   const handleTargetHealthFactorChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const ratio = parseFloat(event.target.value);
-    if (!isNaN(ratio)) {
-      setTargetHealthFactor(ratio.toString());
-    } else {
-      setTargetHealthFactor("");
-    }
+    setTargetHealthFactor(event.target.value);
   };
   const handleConfirmSelection = async () => {
     setIsButtonLoading(true);

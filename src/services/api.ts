@@ -2873,7 +2873,7 @@ export async function calcByHealthFactor(
 
   try {
     const response = await fetch(
-      "https://api.liquidation.burrow.finance/liquidation/calc-by-health-factor",
+      "https://api.liquidation.burrow.finance/liquidation/generate-liquidation-command",
       {
         method: "POST",
         headers: {
