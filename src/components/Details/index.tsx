@@ -42,18 +42,28 @@ export default function DetailPage() {
   const handleRepayRatioChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setRepayRatio(event.target.value);
+    const value = event.target.value;
+    if (value === "" || /^\d*\.?\d*$/.test(value)) {
+      setRepayRatio(value);
+    }
   };
+  
   const handleRrepayValueChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setRepayValue(event.target.value);
+    const value = event.target.value;
+    if (value === "" || /^\d*\.?\d*$/.test(value)) {
+      setRepayValue(event.target.value);
+    }
   };
 
   const handleTargetHealthFactorChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setTargetHealthFactor(event.target.value);
+    const value = event.target.value;
+    if (value === "" || /^\d*\.?\d*$/.test(value)) {
+      setTargetHealthFactor(event.target.value);
+    }
   };
   const handleConfirmSelection = async () => {
     setIsButtonLoading(true);
@@ -73,6 +83,7 @@ export default function DetailPage() {
         console.error(result.error);
       } else {
         setRepayRatioData(result.data);
+        setRepayValue(result.data[0].repay.toString());
       }
     } catch (error) {
       console.error(error);
@@ -138,10 +149,11 @@ export default function DetailPage() {
         <div className="flex items-center p-4">
           <p className="text-white text-base mr-2">repayRatio:</p>
           <input
-            type="number"
+            type="text"
             value={repayRatio}
             onChange={handleRepayRatioChange}
             className="input-style"
+            pattern="\d*\.?\d*"
           />
         </div>
         <button
@@ -189,19 +201,21 @@ export default function DetailPage() {
               <div className="flex items-center p-4">
                 <p className="text-white text-base mr-2">repayValue:</p>
                 <input
-                  type="number"
+                  type="text"
                   value={repayValue}
                   onChange={handleRrepayValueChange}
                   className="input-style"
+                  pattern="\d*\.?\d*"
                 />
               </div>
               <div className="flex items-center p-4">
                 <p className="text-white text-base mr-2">targetHealthFactor:</p>
                 <input
-                  type="number"
+                  type="text"
                   value={targetHealthFactor}
                   onChange={handleTargetHealthFactorChange}
                   className="input-style"
+                  pattern="\d*\.?\d*"
                 />
               </div>
             </div>
