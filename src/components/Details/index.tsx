@@ -47,7 +47,7 @@ export default function DetailPage() {
       setRepayRatio(value);
     }
   };
-  
+
   const handleRrepayValueChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {

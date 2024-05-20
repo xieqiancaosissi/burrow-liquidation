@@ -43,8 +43,8 @@ export default function Home(props: any) {
   const [liquidations, setLiquidations] = useState<ILiquidation[]>([]);
   const [assetsDetail, setAssetsDetail] = useState<IAssetsByType | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [sortKey, setSortKey] = useState<ISortkey>("");
-  const [sortDirection, setSortDirection] = useState("");
+  const [sortKey, setSortKey] = useState<ISortkey>("healthFactor");
+  const [sortDirection, setSortDirection] = useState("up");
   const [allTokenMetadatas, setAllTokenMetadatas] = useState<
     Record<string, TokenMetadata>
   >({});
@@ -53,21 +53,6 @@ export default function Home(props: any) {
   useEffect(() => {
     get_liquidations();
   }, []);
-  useEffect(() => {
-    if (sortKey && sortDirection) {
-      const copyLiquidations: ILiquidation[] = JSON.parse(
-        JSON.stringify(liquidations)
-      );
-      copyLiquidations.sort((a, b) => {
-        if (sortDirection == "down") {
-          return Big(b[sortKey]).minus(a[sortKey]).toNumber();
-        } else {
-          return Big(a[sortKey]).minus(b[sortKey]).toNumber();
-        }
-      });
-      setLiquidations(copyLiquidations);
-    }
-  }, [sortKey, sortDirection]);
   async function get_liquidations() {
     let liquidations;
     if (props.isDemo) {
@@ -101,7 +86,14 @@ export default function Home(props: any) {
     }, {});
     setAllTokenMetadatas(map);
     setLiquidations(liquidations);
+    sortInitialLiquidations(liquidations);
     setLoading(false);
+  }
+  function sortInitialLiquidations(liquidations: ILiquidation[]) {
+    const sortedLiquidations = [...liquidations].sort((a, b) => {
+      return Big(a.healthFactor).cmp(b.healthFactor);
+    });
+    setLiquidations(sortedLiquidations);
   }
   function showAssetsModal(
     accountId: string,
@@ -130,14 +122,21 @@ export default function Home(props: any) {
     setAssetsDetail(null);
   }
   function sortClick(key: ISortkey) {
+    const isCurrentlyAscending = sortKey === key && sortDirection === "up";
+    const newSortDirection = isCurrentlyAscending ? "down" : "up";
+
     setSortKey(key);
-    if (!sortDirection) {
-      setSortDirection("down");
-    } else if (sortDirection == "down") {
-      setSortDirection("up");
-    } else {
-      setSortDirection("down");
-    }
+    setSortDirection(newSortDirection);
+
+    const sortedLiquidations = [...liquidations].sort((a, b) => {
+      const valueA = Big(a[key]);
+      const valueB = Big(b[key]);
+      return newSortDirection === "up"
+        ? valueA.sub(valueB).toNumber()
+        : valueB.sub(valueA).toNumber();
+    });
+
+    setLiquidations(sortedLiquidations);
   }
   function handleDetailsClick(accountId: string, position: string) {
     router.push(`/details?accountId=${accountId}&position=${position}`);
@@ -347,7 +346,7 @@ function SortComponent(props: any) {
   const { sortKey, sortDirection, keyName } = props;
   if (keyName !== sortKey) {
     return <SortIcon className="text-white text-opacity-30" />;
-  } else if (sortDirection == "down") {
+  } else if (sortDirection === "up") {
     return <SortIcon className="text-white transform rotate-180" />;
   } else {
     return <SortIcon className="text-white" />;

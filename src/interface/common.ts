@@ -51,5 +51,4 @@ export type ISortkey =
   | "gapSum"
   | "adjustedCollateralSum"
   | "adjustedBorrowedSum"
-  | "adjustedGapSum"
-  | "";
+  | "adjustedGapSum";
