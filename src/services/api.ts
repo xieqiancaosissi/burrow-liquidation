@@ -1,4 +1,7 @@
 import { ILiquidation, ILiquidationResponse } from "../interface/common";
+import getConfig from "./config";
+const config = getConfig();
+const { LIQUIDATION_API_URL } = config;
 const liquidations = [
   {
     accountId: "davidnvg1511.near",
@@ -2786,7 +2789,7 @@ export async function getLiquidations(): Promise<ILiquidationResponse> {
   };
   try {
     const liquidationsResponse = await fetch(
-      "https://api.liquidation.burrow.finance/liquidation/liquidatable-list-quick"
+      `${LIQUIDATION_API_URL}/liquidation/liquidatable-list-quick`
     );
     const liquidationsData = await liquidationsResponse.json();
 
@@ -2805,7 +2808,7 @@ export async function getLiquidationDetail(
   position: string
 ): Promise<ILiquidation[]> {
   const liquidationDetail = await fetch(
-    `https://api.liquidation.burrow.finance/liquidation/account/${accountId}/${position}`
+    `${LIQUIDATION_API_URL}/liquidation/account/${accountId}/${position}`
   )
     .then((res) => res.json())
     .catch(() => {
@@ -2835,7 +2838,7 @@ export async function calcByRepayRatio(
 
   try {
     const response = await fetch(
-      "https://api.liquidation.burrow.finance/liquidation/calc-by-repay-ratio",
+      `${LIQUIDATION_API_URL}/liquidation/calc-by-repay-ratio`,
       {
         method: "POST",
         headers: {
@@ -2873,7 +2876,7 @@ export async function calcByHealthFactor(
 
   try {
     const response = await fetch(
-      "https://api.liquidation.burrow.finance/liquidation/generate-liquidation-command",
+      `${LIQUIDATION_API_URL}/liquidation/generate-liquidation-command`,
       {
         method: "POST",
         headers: {
