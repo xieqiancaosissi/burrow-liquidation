@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Big from "big.js";
-import { getLiquidations, getDemoLiquidations } from "../services/api";
+import { getLiquidations } from "../services/api";
 import {
   ILiquidation,
   IAsset,
@@ -12,10 +12,10 @@ import {
 import { ftGetTokenMetadata } from "../services/near";
 import { format_usd } from "../utils/number";
 import Modal from "react-modal";
-import AssetModal from "../components/AssetModal";
 import { SortIcon } from "../components/Icons";
 import { BeatLoading } from "../components/Loading";
 import { formatTimestamp } from "@/utils/time";
+import { LP_ASSET_MARK } from "../services/config";
 Modal.defaultStyles = {
   overlay: {
     position: "fixed",
@@ -55,16 +55,14 @@ export default function Home(props: any) {
   }, []);
   async function get_liquidations() {
     let liquidations;
-    if (props.isDemo) {
-      liquidations = await getDemoLiquidations();
-    } else {
-      const res = await getLiquidations();
+    const res = await getLiquidations();
       liquidations = res.data;
       setTimestamp(res.timestamp);
-    }
     const tokenIdList = liquidations.reduce((acc: any, cur: any) => {
       cur.collateralAssets.forEach((asset: IAsset) => {
-        acc.add(asset.tokenId);
+        if (!asset.tokenId.includes(LP_ASSET_MARK)) {
+          acc.add(asset.tokenId);
+        }
       });
       cur.borrowedAssets.forEach((asset: IAsset) => {
         acc.add(asset.tokenId);

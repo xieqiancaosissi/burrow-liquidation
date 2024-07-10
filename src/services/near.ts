@@ -1,15 +1,17 @@
 import { keyStores, connect, Contract } from "near-api-js";
 import { TokenMetadata } from "../interface/common";
+import getConfig from "../services/config";
+const { NODE_URL, walletUrl,  myNearWalletUrl, helperUrl, explorerUrl} = getConfig();
 async function connectToNear() {
   const myKeyStore = new keyStores.BrowserLocalStorageKeyStore();
   const connectionConfig = {
     networkId: "mainnet",
     keyStore: myKeyStore,
-    nodeUrl: "https://rpc.mainnet.near.org",
-    walletUrl: "https://wallet.near.org",
-    myNearWalletUrl: "https://app.mynearwallet.com/",
-    helperUrl: "https://api.kitwallet.app",
-    explorerUrl: "https://nearblocks.io",
+    nodeUrl: `${NODE_URL}`,
+    walletUrl: `${walletUrl}`,
+    myNearWalletUrl: `${myNearWalletUrl}`,
+    helperUrl: `${helperUrl}`,
+    explorerUrl: `${explorerUrl}`,
   };
   const nearConnection = await connect(connectionConfig);
   return nearConnection;
