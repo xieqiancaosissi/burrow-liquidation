@@ -313,7 +313,7 @@ const AssetTable: React.FC<AssetTableProps> = ({
         <tbody>
           {assets.map((asset: any) => {
             let metas: TokenMetadata[] = [];
-            let meta = {};
+            let meta: any = {};
             let isLpAsset: boolean = false;
             if (asset.tokenId.includes(LP_ASSET_MARK)) {
               const tokenIds = lpAssets![asset.tokenId];
