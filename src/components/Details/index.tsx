@@ -7,6 +7,8 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { NEAR_META_DATA } from "../Icons";
 import { toReadableNumber } from "@/utils/number";
+import { LP_ASSET_MARK } from "@/services/config";
+import { TokenMetadata } from "@/interface/common";
 
 export default function DetailPage() {
   const [accountId, setAccountId] = useState<string>("");
@@ -23,6 +25,7 @@ export default function DetailPage() {
   const [targetHealthFactor, setTargetHealthFactor] = useState<string>("");
   const [isButtonLoading, setIsButtonLoading] = useState(false);
   const [isButtonFactorLoading, setIsButtonFactorLoading] = useState(false);
+  const [lpAssets, setLpAssets] = useState<Record<string, any>>({});
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -31,6 +34,7 @@ export default function DetailPage() {
     setAllTokenMetadatas(
       JSON.parse(localStorage.getItem("allTokenMetadatas")!)
     );
+    setLpAssets(JSON.parse(localStorage.getItem("lpAssets")!));
     if (accountId) {
       setAccountId(accountId);
       getLiquidationDetail(accountId, position).then((data) => {
@@ -137,6 +141,7 @@ export default function DetailPage() {
         allTokenMetadatas={allTokenMetadatas}
         selectedTokenId={selectedCollateralTokenId}
         onTokenSelect={setSelectedCollateralTokenId}
+        lpAssets={lpAssets}
       />
       <AssetTable
         title="Borrowed Assets"
@@ -272,9 +277,10 @@ export default function DetailPage() {
 interface AssetTableProps {
   title: string;
   assets: any[];
-  allTokenMetadatas: any;
+  allTokenMetadatas: Record<string, TokenMetadata>;
   selectedTokenId: string;
   onTokenSelect: (tokenId: string) => void;
+  lpAssets?: Record<string, string[]>;
 }
 
 const AssetTable: React.FC<AssetTableProps> = ({
@@ -283,6 +289,7 @@ const AssetTable: React.FC<AssetTableProps> = ({
   allTokenMetadatas,
   selectedTokenId,
   onTokenSelect,
+  lpAssets,
 }) => {
   useEffect(() => {
     if (assets.length > 0 && !selectedTokenId) {
@@ -305,9 +312,31 @@ const AssetTable: React.FC<AssetTableProps> = ({
         </thead>
         <tbody>
           {assets.map((asset: any) => {
-            let meta = allTokenMetadatas?.[asset.tokenId] || {};
-            if (asset.tokenId === "wrap.near") {
-              meta = NEAR_META_DATA;
+            let metas: TokenMetadata[] = [];
+            let meta = {};
+            let isLpAsset: boolean = false;
+            if (asset.tokenId.includes(LP_ASSET_MARK)) {
+              const tokenIds = lpAssets![asset.tokenId];
+              isLpAsset = true;
+              metas = tokenIds.reduce((acc, cur: string) => {
+                let meta = allTokenMetadatas?.[cur] as TokenMetadata;
+                if (
+                  asset.tokenId === "wrap.near" ||
+                  asset.tokenId === "wrap.testnet"
+                ) {
+                  meta = NEAR_META_DATA;
+                }
+                acc.push(meta);
+                return acc;
+              }, [] as TokenMetadata[]);
+            } else {
+              meta = allTokenMetadatas?.[asset.tokenId] || {};
+              if (
+                asset.tokenId === "wrap.near" ||
+                asset.tokenId === "wrap.testnet"
+              ) {
+                meta = NEAR_META_DATA;
+              }
             }
             return (
               <tr key={asset.tokenId}>
@@ -323,11 +352,38 @@ const AssetTable: React.FC<AssetTableProps> = ({
                         onChange={() => onTokenSelect(asset.tokenId)}
                       />
                     </div>
-                    <img
-                      className="flex-shrink-0 w-5 h-5 rounded-full"
-                      src={meta?.icon}
-                    />
-                    <span>{meta?.symbol}</span>
+                    {isLpAsset ? (
+                      <div className="flex items-center gap-2 pr-4">
+                        <div className="flex items-center flex-shrink-0">
+                          {metas.map((meta: TokenMetadata, index) => {
+                            return <img
+                              key={meta?.id + index}
+                              src={meta?.icon}
+                              className={`flex-shrink-0 w-5 h-5 rounded-full ${
+                                index !== 0 ? "-ml-1.5" : ""
+                              }`}
+                            />;
+                          })}
+                        </div>
+                        <div className="flex items-center">
+                        {metas.map((meta: TokenMetadata, index) => {
+                            return <span
+                              className="whitespace-nowrap"
+                              key={meta?.symbol + index}>
+                                {meta?.symbol}{index == metas.length - 1 ? '': '-'}
+                              </span>
+                          })}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <img
+                          className="flex-shrink-0 w-5 h-5 rounded-full"
+                          src={meta?.icon}
+                        />
+                        <span>{meta?.symbol}</span>
+                      </div>
+                    )}
                   </div>
                 </td>
                 <td>

@@ -8,8 +8,9 @@ import {
   TokenMetadata,
   ISortkey,
   IAssetsByType,
+  IPool,
 } from "../interface/common";
-import { ftGetTokenMetadata } from "../services/near";
+import { ftGetTokenMetadata, get_pool } from "../services/near";
 import { format_usd } from "../utils/number";
 import Modal from "react-modal";
 import { SortIcon } from "../components/Icons";
@@ -50,17 +51,21 @@ export default function Home(props: any) {
   >({});
   const [loading, setLoading] = useState<boolean>(true);
   const [timestamp, setTimestamp] = useState<number | null>(null);
+  const [lpAssets, setLpAssets] = useState<Record<string, any>>({});
   useEffect(() => {
     get_liquidations();
   }, []);
   async function get_liquidations() {
     let liquidations;
     const res = await getLiquidations();
-      liquidations = res.data;
-      setTimestamp(res.timestamp);
+    liquidations = res.data;
+    setTimestamp(res.timestamp);
+    const lpAssetIds: any = new Set([]);
     const tokenIdList = liquidations.reduce((acc: any, cur: any) => {
       cur.collateralAssets.forEach((asset: IAsset) => {
-        if (!asset.tokenId.includes(LP_ASSET_MARK)) {
+        if (asset.tokenId.includes(LP_ASSET_MARK)) {
+          lpAssetIds.add(asset.tokenId);
+        } else {
           acc.add(asset.tokenId);
         }
       });
@@ -69,22 +74,50 @@ export default function Home(props: any) {
       });
       return acc;
     }, new Set());
-    const requests = Array.from(tokenIdList).map(async (tokenId) => {
+    const lpAssetIdsArray: string[] = Array.from(lpAssetIds);
+    const pool_ids: string[] = [];
+    const poolRequests = lpAssetIdsArray.map(async (lpAssetId: string) => {
+      const pool_id = lpAssetId.split("-")[1];
+      pool_ids.push(pool_id);
+      return get_pool(pool_id);
+    });
+    const pools = await Promise.all(poolRequests);
+    const lpAssetsMap = pools.reduce((acc, cur, index) => {
+      const pool_id = pool_ids[index];
+      return {
+        ...acc,
+        [LP_ASSET_MARK + "-" + pool_id]: cur.token_account_ids,
+      };
+    }, {});
+    const temp: string[] = [];
+    pools.forEach((pool: IPool) => {
+      temp.push(...pool.token_account_ids);
+    });
+    const allTokenIds = Array.from(
+      new Set(temp.concat(Array.from(tokenIdList)))
+    )
+    const requests = allTokenIds.map(async (tokenId) => {
       return ftGetTokenMetadata(tokenId as string);
     });
     const metadatas = await Promise.all(requests);
     const map = metadatas.reduce((acc, metadata, index) => {
       return {
         ...acc,
-        [Array.from(tokenIdList)[index] as string]: {
+        [Array.from(allTokenIds)[index] as string]: {
           ...metadata,
-          id: Array.from(tokenIdList)[index] as string,
+          id: Array.from(allTokenIds)[index] as string,
         },
       };
     }, {});
+    localStorage.setItem(
+      "allTokenMetadatas",
+      JSON.stringify(map)
+    );
+    localStorage.setItem("lpAssets", JSON.stringify(lpAssetsMap));
     setAllTokenMetadatas(map);
     setLiquidations(liquidations);
     sortInitialLiquidations(liquidations);
+    setLpAssets(lpAssetsMap);
     setLoading(false);
   }
   function sortInitialLiquidations(liquidations: ILiquidation[]) {
@@ -138,10 +171,6 @@ export default function Home(props: any) {
   }
   function handleDetailsClick(accountId: string, position: string) {
     router.push(`/details?accountId=${accountId}&position=${position}`);
-    localStorage.setItem(
-      "allTokenMetadatas",
-      JSON.stringify(allTokenMetadatas)
-    );
   }
   return (
     <div

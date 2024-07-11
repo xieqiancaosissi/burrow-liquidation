@@ -44,6 +44,15 @@ export interface TokenMetadata {
   decimals: number;
   icon: string;
 }
+export interface IPool {
+  pool_id?: string;
+  pool_kind: string;
+  token_account_ids: string[];
+  amounts: string[];
+  total_fee: number;
+  shares_total_supply: string;
+  amp: number;
+}
 export type ISortkey =
   | "healthFactor"
   | "collateralSum"
