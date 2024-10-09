@@ -11,6 +11,7 @@ export default function getConfig(
         helperUrl: "https://api.kitwallet.app",
         explorerUrl: "https://nearblocks.io",
         REF_FI_CONTRACT_ID: "ref-finance-101.testnet",
+        HISTORY_API_URL: "https://dev.data-service.ref-finance.com",
       };
     case "testnet":
       return {
@@ -21,6 +22,7 @@ export default function getConfig(
         helperUrl: "https://testnet-api.kitwallet.app",
         explorerUrl: "https://testnet.nearblocks.io",
         REF_FI_CONTRACT_ID: "exchange.ref-dev.testnet",
+        HISTORY_API_URL: "https://dev.data-service.ref-finance.com",
       };
     default:
       return {
@@ -31,6 +33,7 @@ export default function getConfig(
         helperUrl: "https://testnet-api.kitwallet.app",
         explorerUrl: "https://testnet.nearblocks.io",
         REF_FI_CONTRACT_ID: "v2.ref-finance.near",
+        HISTORY_API_URL: "https://dev.data-service.ref-finance.com",
       };
   }
 }

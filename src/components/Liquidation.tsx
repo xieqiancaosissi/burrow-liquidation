@@ -95,7 +95,7 @@ export default function Home(props: any) {
     });
     const allTokenIds = Array.from(
       new Set(temp.concat(Array.from(tokenIdList)))
-    )
+    );
     const requests = allTokenIds.map(async (tokenId) => {
       return ftGetTokenMetadata(tokenId as string);
     });
@@ -109,10 +109,7 @@ export default function Home(props: any) {
         },
       };
     }, {});
-    localStorage.setItem(
-      "allTokenMetadatas",
-      JSON.stringify(map)
-    );
+    localStorage.setItem("allTokenMetadatas", JSON.stringify(map));
     localStorage.setItem("lpAssets", JSON.stringify(lpAssetsMap));
     setAllTokenMetadatas(map);
     setLiquidations(liquidations);

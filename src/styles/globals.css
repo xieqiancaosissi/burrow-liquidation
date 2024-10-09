@@ -185,3 +185,40 @@ input[type="number"]::-webkit-outer-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  /* margin-top: 24px; */
+  padding: 32px 0;
+}
+
+.pagination-container ul {
+  list-style-type: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+.pagination-container li {
+  margin: 0 5px;
+}
+
+.pagination-container li a {
+  color: #c0c4e9;
+  text-decoration: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.pagination-container .active-page a {
+  color: #fff;
+}
+
+.pagination-container .disabled a {
+  color: #c0c4e9;
+  border-color: #c0c4e9;
+  cursor: not-allowed;
+}

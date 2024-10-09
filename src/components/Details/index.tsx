@@ -356,22 +356,28 @@ const AssetTable: React.FC<AssetTableProps> = ({
                       <div className="flex items-center gap-2 pr-4">
                         <div className="flex items-center flex-shrink-0">
                           {metas.map((meta: TokenMetadata, index) => {
-                            return <img
-                              key={meta?.id + index}
-                              src={meta?.icon}
-                              className={`flex-shrink-0 w-5 h-5 rounded-full ${
-                                index !== 0 ? "-ml-1.5" : ""
-                              }`}
-                            />;
+                            return (
+                              <img
+                                key={meta?.id + index}
+                                src={meta?.icon}
+                                className={`flex-shrink-0 w-5 h-5 rounded-full ${
+                                  index !== 0 ? "-ml-1.5" : ""
+                                }`}
+                              />
+                            );
                           })}
                         </div>
                         <div className="flex items-center">
-                        {metas.map((meta: TokenMetadata, index) => {
-                            return <span
-                              className="whitespace-nowrap"
-                              key={meta?.symbol + index}>
-                                {meta?.symbol}{index == metas.length - 1 ? '': '-'}
+                          {metas.map((meta: TokenMetadata, index) => {
+                            return (
+                              <span
+                                className="whitespace-nowrap"
+                                key={meta?.symbol + index}
+                              >
+                                {meta?.symbol}
+                                {index == metas.length - 1 ? "" : "-"}
                               </span>
+                            );
                           })}
                         </div>
                       </div>

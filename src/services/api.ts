@@ -1,7 +1,7 @@
 import { ILiquidation, ILiquidationResponse } from "../interface/common";
 import getConfig from "./config";
 const config = getConfig();
-const { LIQUIDATION_API_URL } = config;
+const { LIQUIDATION_API_URL, HISTORY_API_URL } = config;
 const liquidations = [
   {
     accountId: "davidnvg1511.near",
@@ -2897,4 +2897,22 @@ export async function calcByHealthFactor(
 
 export async function getDemoLiquidations() {
   return liquidations;
+}
+
+export async function getHistoryData(page_number = 1, page_size = 10) {
+  const defaultResponse = {
+    data: [],
+  };
+  try {
+    const liquidationsResponse = await fetch(
+      `${HISTORY_API_URL}/burrow/get_burrow_liquidate_record_page?page_number=${page_number}&page_size=${page_size}`
+    );
+    const liquidationsData = await liquidationsResponse.json();
+    return {
+      data: liquidationsData,
+    };
+  } catch (error) {
+    console.error("Error fetching liquidations:", error);
+    return defaultResponse;
+  }
 }
