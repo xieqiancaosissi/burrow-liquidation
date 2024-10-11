@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { getHistoryData } from "@/services/api";
+import { getHistoryData, getLiquidations } from "@/services/api";
 import ReactPaginate from "react-paginate";
 import { BeatLoading } from "./Loading";
 import { formatTimestamp } from "@/utils/time";
 import { CopyIcon, NEAR_META_DATA } from "./Icons";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import { LP_ASSET_MARK } from "@/services/config";
+import { IAsset, IPool } from "@/interface/common";
+import { ftGetTokenMetadata, get_pool } from "@/services/near";
 
 export default function History() {
   const [historyData, setHistoryData] = useState<any[]>([]);
@@ -15,15 +18,61 @@ export default function History() {
   const [allTokenMetadatas, setAllTokenMetadatas] = useState<any>({});
   const [showCopyTooltip, setShowCopyTooltip] = useState<
     Record<string, boolean>
-  >({});
+  >({}); 
   useEffect(() => {
-    setAllTokenMetadatas(
-      JSON.parse(localStorage.getItem("allTokenMetadatas")!)
-    );
+    get_liquidations();
   }, []);
   useEffect(() => {
     get_history_data(currentPage + 1);
   }, [currentPage]);
+  async function get_liquidations() {
+    let liquidations;
+    const res = await getLiquidations();
+    liquidations = res.data;
+    const lpAssetIds: any = new Set([]);
+    const tokenIdList = liquidations.reduce((acc: any, cur: any) => {
+      cur.collateralAssets.forEach((asset: IAsset) => {
+        if (asset.tokenId.includes(LP_ASSET_MARK)) {
+          lpAssetIds.add(asset.tokenId);
+        } else {
+          acc.add(asset.tokenId);
+        }
+      });
+      cur.borrowedAssets.forEach((asset: IAsset) => {
+        acc.add(asset.tokenId);
+      });
+      return acc;
+    }, new Set());
+    const lpAssetIdsArray: string[] = Array.from(lpAssetIds);
+    const pool_ids: string[] = [];
+    const poolRequests = lpAssetIdsArray.map(async (lpAssetId: string) => {
+      const pool_id = lpAssetId.split("-")[1];
+      pool_ids.push(pool_id);
+      return get_pool(pool_id);
+    });
+    const pools = await Promise.all(poolRequests);
+    const temp: string[] = [];
+    pools.forEach((pool: IPool) => {
+      temp.push(...pool.token_account_ids);
+    });
+    const allTokenIds = Array.from(
+      new Set(temp.concat(Array.from(tokenIdList)))
+    );
+    const requests = allTokenIds.map(async (tokenId) => {
+      return ftGetTokenMetadata(tokenId as string);
+    });
+    const metadatas = await Promise.all(requests);
+    const map = metadatas.reduce((acc, metadata, index) => {
+      return {
+        ...acc,
+        [Array.from(allTokenIds)[index] as string]: {
+          ...metadata,
+          id: Array.from(allTokenIds)[index] as string,
+        },
+      };
+    }, {});
+    setAllTokenMetadatas(map);
+  }
   async function get_history_data(page: number | undefined) {
     setLoading(true);
     const res = await getHistoryData(page);
