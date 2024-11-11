@@ -3,11 +3,12 @@ import { getHistoryData, getLiquidations } from "@/services/api";
 import ReactPaginate from "react-paginate";
 import { BeatLoading } from "./Loading";
 import { formatTimestamp } from "@/utils/time";
-import { CopyIcon, NEAR_META_DATA } from "./Icons";
+import { CopyIcon, NEAR_META_DATA, SortIcon } from "./Icons";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { LP_ASSET_MARK } from "@/services/config";
 import { IAsset, IPool } from "@/interface/common";
 import { ftGetTokenMetadata, get_pool } from "@/services/near";
+import { toReadableDecimalsNumber, toReadableNumber } from "@/utils/number";
 
 export default function History() {
   const [historyData, setHistoryData] = useState<any[]>([]);
@@ -18,13 +19,17 @@ export default function History() {
   const [allTokenMetadatas, setAllTokenMetadatas] = useState<any>({});
   const [showCopyTooltip, setShowCopyTooltip] = useState<
     Record<string, boolean>
-  >({}); 
+  >({});
+  const [sortField, setSortField] = useState("timestamp");
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [selectedLiquidationType, setSelectedLiquidationType] = useState("all");
+  const [isModalOpen, setIsModalOpen] = useState(false);
   useEffect(() => {
     get_liquidations();
   }, []);
   useEffect(() => {
     get_history_data(currentPage + 1);
-  }, [currentPage]);
+  }, [currentPage, sortField, sortOrder, selectedLiquidationType]);
   async function get_liquidations() {
     let liquidations;
     const res = await getLiquidations();
@@ -73,11 +78,19 @@ export default function History() {
     }, {});
     setAllTokenMetadatas(map);
   }
-  async function get_history_data(page: number | undefined) {
+  async function get_history_data(page: number) {
     setLoading(true);
-    const res = await getHistoryData(page);
+    const res = await getHistoryData(page, 10, sortField, sortOrder);
     if (res && res.data) {
-      setHistoryData(res.data.record_list);
+      let filteredData = res.data.record_list;
+      if (selectedLiquidationType !== "all") {
+        filteredData = filteredData.filter(
+          (item: { liquidation_type: string }) =>
+            item.liquidation_type === selectedLiquidationType
+        );
+      }
+      console.log(filteredData);
+      setHistoryData(filteredData);
       setPageCount(res.data.total_page);
       setSizeCount(res.data.total_size);
       setLoading(false);
@@ -88,6 +101,16 @@ export default function History() {
   }) => {
     setCurrentPage(data.selected);
   };
+  const handleSort = (field: React.SetStateAction<string>) => {
+    setSortField(field);
+    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+  };
+
+  const handleSelectChange = (value: React.SetStateAction<string>) => {
+    setSelectedLiquidationType(value);
+    setIsModalOpen(false);
+  };
+
   function formatTimestamp(timestamp: number) {
     const date = new Date(timestamp * 1000);
     const year = date.getFullYear();
@@ -111,7 +134,7 @@ export default function History() {
   return (
     <div
       className="text-white bg-dark-200 rounded-lg"
-      style={{ maxWidth: "90vw", margin: "30px auto 50px auto" }}
+      style={{ maxWidth: "72vw", margin: "30px auto 50px auto" }}
     >
       <div
         className="flex items-center border-b border-dark-100 px-6 text-purple-50 text-lg font-bold"
@@ -119,107 +142,188 @@ export default function History() {
       >
         Record List(Total: {sizeCount})
       </div>
-      {loading ? <BeatLoading /> : <div className="overflow-auto w-full text-xs">
-        <table className="commonTable">
-          <thead>
-            <tr>
-              <th>accountId</th>
-              <th>receiptId</th>
-              {/* <th>healthFactorAfter</th> */}
-              <th>isRead</th>
-              <th>isDeleted</th>
-              <th>position</th>
-              <th>liquidationType</th>
-              {/* <th>healthFactorBefore</th> */}
-              <th>RepaidAssets</th>
-              <th>LiquidatedAssets</th>
-              <th>createdAt</th>
-              <th>updatedAt</th>
-            </tr>
-          </thead>
-          <tbody>
-            {historyData.map((l, index) => {
-              // console.log(l.isRead);
-              return (
-                <tr
-                  key={index}
-                  className="hover:bg-dark-250 border-b border-dark-100"
-                >
-                  <td
-                    title={l.account_id}
-                    className="flex items-center justify-center relative cursor-pointer"
+      {loading ? (
+        <BeatLoading />
+      ) : (
+        <div className="overflow-auto w-full text-xs">
+          <table className="commonTable">
+            <thead>
+              <tr>
+                <th>
+                  <div
+                    className="flex items-center gap-1.5 cursor-pointer w-24"
+                    onClick={() => handleSort("account_id")}
                   >
-                    <div className="justify-self-start overflow-hidden w-48 whitespace-nowrap text-ellipsis">
-                      <span>{l.account_id}</span>
-                    </div>
-                    <CopyToClipboard
-                      text={l.account_id}
-                      onCopy={() => handleCopy(index + "account_id")}
-                    >
-                      <CopyIcon />
-                    </CopyToClipboard>
-                    {showCopyTooltip[index + "account_id"] && (
-                      <span className="absolute -top-2 bg-black text-white text-xs py-1 px-2 rounded">
-                        Copied!
-                      </span>
+                    accountId
+                    <SortComponent
+                      keyName="account_id"
+                      sortKey={sortField}
+                      sortDirection={sortOrder}
+                    />
+                  </div>
+                </th>
+                <th>
+                  <div
+                    className="flex items-center gap-1.5 cursor-pointer w-42"
+                    onClick={() => handleSort("liquidation_account_id")}
+                  >
+                    liquidationAccountId
+                    <SortComponent
+                      keyName="liquidation_account_id"
+                      sortKey={sortField}
+                      sortDirection={sortOrder}
+                    />
+                  </div>
+                </th>
+                <th>
+                  <div
+                    className="flex items-center gap-1.5 cursor-pointer  w-64"
+                    onClick={() => handleSort("receipt_id")}
+                  >
+                    receiptId
+                    <SortComponent
+                      keyName="receipt_id"
+                      sortKey={sortField}
+                      sortDirection={sortOrder}
+                    />
+                  </div>
+                </th>
+                <th>
+                  <div
+                    className="flex items-center gap-1.5 cursor-pointer  w-24"
+                    onClick={() => handleSort("position")}
+                  >
+                    Position
+                    <SortComponent
+                      keyName="position"
+                      sortKey={sortField}
+                      sortDirection={sortOrder}
+                    />
+                  </div>
+                </th>
+                <th onClick={() => handleSort("RepaidAssets")}>
+                  Repaid Assets
+                </th>
+                <th onClick={() => handleSort("LiquidatedAssets")}>
+                  Liquidated Assets
+                </th>
+                <th>
+                  <div
+                    className="flex items-center gap-1.5 cursor-pointer"
+                    onClick={() => handleSort("timestamp")}
+                  >
+                    Created At
+                    <SortComponent
+                      keyName="timestamp"
+                      sortKey={sortField}
+                      sortDirection={sortOrder}
+                    />
+                  </div>
+                </th>
+                <th>
+                  <div className="flex items-center gap-1.5 cursor-pointer">
+                    <span>liquidationType:</span>
+                    <button onClick={() => setIsModalOpen(true)} className="">
+                      {selectedLiquidationType}
+                    </button>
+                    {isModalOpen && (
+                      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                        <div className="bg-dark-200 rounded-lg shadow-lg p-5 w-64">
+                          <h3 className="text-lg font-semibold mb-4">
+                            Select Type
+                          </h3>
+                          <select
+                            value={selectedLiquidationType}
+                            onChange={(e) => handleSelectChange(e.target.value)}
+                            className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none 
+              focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700"
+                          >
+                            <option value="all">All</option>
+                            <option value="liquidate">Liquidation</option>
+                            <option value="both">Both</option>
+                          </select>
+                          <button
+                            onClick={() => setIsModalOpen(false)}
+                            className="mt-4 w-full text-black px-3 py-2 rounded-md focus:outline-none"
+                            style={{ background: "rgb(210, 255, 58)" }}
+                          >
+                            Close
+                          </button>
+                        </div>
+                      </div>
                     )}
-                  </td>
-                  <td title={l.receipt_id}>
-                    <div className="flex items-center relative cursor-pointer">
-                      <div className="justify-self-start overflow-hidden w-32 whitespace-nowrap text-ellipsis">
-                        <span>{l.receipt_id}</span>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {historyData.map((l, index) => {
+                // console.log(l.isRead);
+                return (
+                  <tr
+                    key={index}
+                    className="hover:bg-dark-250 border-b border-dark-100"
+                  >
+                    <td
+                      title={l.account_id}
+                      className="flex items-center justify-center relative cursor-pointer"
+                    >
+                      <div className="justify-self-start overflow-hidden w-24 whitespace-nowrap text-ellipsis">
+                        <span>{l.account_id}</span>
                       </div>
                       <CopyToClipboard
-                        text={l.receipt_id}
-                        onCopy={() => handleCopy(index + "receipt_id")}
+                        text={l.account_id}
+                        onCopy={() => handleCopy(index + "account_id")}
                       >
                         <CopyIcon />
                       </CopyToClipboard>
-                      {showCopyTooltip[index + "receipt_id"] && (
-                        <span className="absolute -top-8 bg-black text-white text-xs py-1 px-2 rounded">
+                      {showCopyTooltip[index + "account_id"] && (
+                        <span className="absolute -top-2 bg-black text-white text-xs py-1 px-2 rounded">
                           Copied!
                         </span>
                       )}
-                    </div>
-                  </td>
-
-                  {/* <td>{l.healthFactor_after}</td> */}
-
-                  <td>{l.isRead ? "true" : "false"}</td>
-                  <td>{l.isDeleted ? "true" : "false"}</td>
-                  <td>{l.position}</td>
-                  <td>{l.liquidation_type}</td>
-                  <td>
-                    {l.RepaidAssets.map((asset: any, assetIndex: number) => {
-                      const tokenMetadata =
-                        asset.token_id === "wrap.near"
-                          ? NEAR_META_DATA
-                          : allTokenMetadatas[asset.token_id] || {};
-                      return (
-                        <div
-                          key={assetIndex}
-                          className="flex items-center space-x-2"
-                        >
-                          {tokenMetadata.icon && (
-                            <img
-                              src={tokenMetadata.icon}
-                              alt={tokenMetadata.symbol}
-                              className="flex-shrink-0 w-5 h-5 rounded-full"
-                            />
-                          )}
-                          <span>
-                            {tokenMetadata.symbol}
-                            <br />
-                            {asset.amount}
-                          </span>
+                    </td>
+                    <td title={l.liquidation_account_id}>
+                      <div className="flex items-center relative cursor-pointer">
+                        <div className="justify-self-start overflow-hidden w-32 whitespace-nowrap text-ellipsis">
+                          <span>{l.liquidation_account_id}</span>
                         </div>
-                      );
-                    })}
-                  </td>
-                  <td>
-                    {" "}
-                    {l.LiquidatedAssets.map(
-                      (asset: any, assetIndex: number) => {
+                        <CopyToClipboard
+                          text={l.liquidation_account_id}
+                          onCopy={() =>
+                            handleCopy(index + "liquidation_account_id")
+                          }
+                        >
+                          <CopyIcon />
+                        </CopyToClipboard>
+                        {showCopyTooltip[index + "liquidation_account_id"] && (
+                          <span className="absolute -top-8 bg-black text-white text-xs py-1 px-2 rounded">
+                            Copied!
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td title={l.receipt_id}>
+                      <div className="flex items-center relative cursor-pointer">
+                        <div className="justify-self-start overflow-hidden w-64 whitespace-nowrap text-ellipsis">
+                          <span>{l.receipt_id}</span>
+                        </div>
+                        <CopyToClipboard
+                          text={l.receipt_id}
+                          onCopy={() => handleCopy(index + "receipt_id")}
+                        >
+                          <CopyIcon />
+                        </CopyToClipboard>
+                        {showCopyTooltip[index + "receipt_id"] && (
+                          <span className="absolute -top-8 bg-black text-white text-xs py-1 px-2 rounded">
+                            Copied!
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td>{l.position}</td>
+                    <td>
+                      {l.RepaidAssets.map((asset: any, assetIndex: number) => {
                         const tokenMetadata =
                           asset.token_id === "wrap.near"
                             ? NEAR_META_DATA
@@ -227,43 +331,80 @@ export default function History() {
                         return (
                           <div
                             key={assetIndex}
-                            className="flex items-center space-x-2"
+                            className="flex items-center space-x-2 overflow-hidden whitespace-nowrap text-ellipsis mb-1"
                           >
-                            {tokenMetadata.icon && (
+                            {/* {tokenMetadata.icon && (
+                            <img
+                              src={tokenMetadata.icon}
+                              alt={tokenMetadata.symbol}
+                              className="flex-shrink-0 w-5 h-5 rounded-full"
+                            />
+                          )} */}
+                            <span>
+                              {tokenMetadata.symbol}：
+                              {parseFloat(
+                                toReadableDecimalsNumber(
+                                  tokenMetadata?.decimals || 0,
+                                  asset.amount
+                                )
+                              ).toFixed(4)}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </td>
+                    <td>
+                      {" "}
+                      {l.LiquidatedAssets.map(
+                        (asset: any, assetIndex: number) => {
+                          console.log(asset, "asset");
+                          const tokenMetadata =
+                            asset.token_id === "wrap.near"
+                              ? NEAR_META_DATA
+                              : allTokenMetadatas[asset.token_id] || {};
+                          return (
+                            <div
+                              key={assetIndex}
+                              className="flex items-center space-x-2 overflow-hidden whitespace-nowrap text-ellipsis mb-1"
+                            >
+                              {/* {tokenMetadata.icon && (
                               <img
                                 src={tokenMetadata.icon}
                                 alt={tokenMetadata.symbol}
                                 className="flex-shrink-0 w-5 h-5 rounded-full"
                               />
-                            )}
-                            <span>
-                              {tokenMetadata.symbol}
-                              <br />
-                              {asset.amount}
-                            </span>
-                          </div>
-                        );
-                      }
-                    )}
-                  </td>
-                  <td className="whitespace-nowrap">
-                    {formatTimestamp(l.createdAt)}
-                  </td>
-                  <td className="whitespace-nowrap">
-                    {formatTimestamp(l.updatedAt)}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>}
-        {!loading && !historyData.length ? (
-          <div className="flex items-center justify-center text-base text-dark-300 my-20">
-            fetch data error...
-          </div>
-        ) : null}
-      
+                            )} */}
+                              <span>
+                                {tokenMetadata.symbol}：
+                                {parseFloat(
+                                  toReadableDecimalsNumber(
+                                    tokenMetadata?.decimals || 0,
+                                    asset.amount
+                                  )
+                                ).toFixed(4)}
+                              </span>
+                            </div>
+                          );
+                        }
+                      )}
+                    </td>
+                    <td className="whitespace-nowrap">
+                      {formatTimestamp(l.createdAt)}
+                    </td>
+                    <td>{l.liquidation_type}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {!loading && historyData.length === 0 && (
+        <div className="flex items-center justify-center text-base text-dark-300 my-20">
+          No data
+        </div>
+      )}
+
       <ReactPaginate
         previousLabel={"previous"}
         nextLabel={"next"}
@@ -275,4 +416,15 @@ export default function History() {
       />
     </div>
   );
+}
+
+function SortComponent(props: any) {
+  const { sortKey, sortDirection, keyName } = props;
+  if (keyName !== sortKey) {
+    return <SortIcon className="text-white text-opacity-30" />;
+  } else if (sortDirection === "asc") {
+    return <SortIcon className="text-white transform rotate-180" />;
+  } else {
+    return <SortIcon className="text-white" />;
+  }
 }

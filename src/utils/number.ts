@@ -38,3 +38,21 @@ export const toNonDivisibleNumber = (
     .replace(/^0+/, "")
     .padStart(1, "0");
 };
+
+export const toReadableDecimalsNumber = (
+  decimals: number,
+  number: string = "0"
+): string => {
+  const effectiveDecimals = decimals < 18 ? 18 : decimals;
+
+  if (!effectiveDecimals) return number;
+
+  const wholeStr =
+    number.substring(0, number.length - effectiveDecimals) || "0";
+  const fractionStr = number
+    .substring(number.length - effectiveDecimals)
+    .padStart(effectiveDecimals, "0")
+    .substring(0, effectiveDecimals);
+
+  return `${wholeStr}.${fractionStr}`.replace(/\.?0+$/, "");
+};

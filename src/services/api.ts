@@ -2899,13 +2899,18 @@ export async function getDemoLiquidations() {
   return liquidations;
 }
 
-export async function getHistoryData(page_number = 1, page_size = 10) {
+export async function getHistoryData(
+  page_number = 1,
+  page_size = 10,
+  sort = "timestamp",
+  order = "desc"
+) {
   const defaultResponse = {
     data: [],
   };
   try {
     const liquidationsResponse = await fetch(
-      `${HISTORY_API_URL}/burrow/get_burrow_liquidate_record_page?page_number=${page_number}&page_size=${page_size}`
+      `${HISTORY_API_URL}/burrow/get_burrow_liquidate_record_page?page_number=${page_number}&page_size=${page_size}&sort=${sort}&order=${order}`
     );
     const liquidationsData = await liquidationsResponse.json();
     return {
