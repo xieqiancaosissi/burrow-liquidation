@@ -2921,3 +2921,25 @@ export async function getHistoryData(
     return defaultResponse;
   }
 }
+
+export const getTxId = async (receipt_id: string) => {
+  return await fetch(`https://api3.nearblocks.io/v1/search/?keyword=${receipt_id}`)
+    .then(async (res) => {
+      const data = await res.json();
+      return data;
+    })
+    .catch(() => {
+      return [];
+    });
+};
+
+export const getPerice = async () => {
+  return await fetch(`https://api.ref.finance/list-token-price`)
+    .then(async (res) => {
+      const data = await res.json();
+      return data;
+    })
+    .catch(() => {
+      return [];
+    });
+};

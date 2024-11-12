@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getHistoryData, getLiquidations } from "@/services/api";
+import { getHistoryData, getLiquidations, getPerice, getTxId } from "@/services/api";
 import ReactPaginate from "react-paginate";
 import { BeatLoading } from "./Loading";
 import { formatTimestamp } from "@/utils/time";
@@ -21,11 +21,12 @@ export default function History() {
     Record<string, boolean>
   >({});
   const [sortField, setSortField] = useState("timestamp");
-  const [sortOrder, setSortOrder] = useState("asc");
+  const [sortOrder, setSortOrder] = useState("desc");
   const [selectedLiquidationType, setSelectedLiquidationType] = useState("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
   useEffect(() => {
     get_liquidations();
+    get_allPerice_data();
   }, []);
   useEffect(() => {
     get_history_data(currentPage + 1);
@@ -131,10 +132,28 @@ export default function History() {
       }));
     }, 500);
   };
+  async function handleTxClick(receipt_id: string, url: string) {
+    try {
+      const data = await getTxId(receipt_id);
+      if (data && data.receipts && data.receipts.length > 0) {
+        const txHash = data.receipts[0].originated_from_transaction_hash;
+        window.open(`${url}/${txHash}`, "_blank", "noopener,noreferrer");
+      }
+    } catch (error) {
+      console.error(
+        "An error occurred while fetching transaction data:",
+        error
+      );
+    }
+  }
+  async function get_allPerice_data() {
+    const res = await getPerice();
+    // console.log(res,'getPerice')
+  }
   return (
     <div
       className="text-white bg-dark-200 rounded-lg"
-      style={{ maxWidth: "72vw", margin: "30px auto 50px auto" }}
+      style={{ maxWidth: "58vw", margin: "30px auto 50px auto" }}
     >
       <div
         className="flex items-center border-b border-dark-100 px-6 text-purple-50 text-lg font-bold"
@@ -175,7 +194,7 @@ export default function History() {
                     />
                   </div>
                 </th>
-                <th>
+                {/* <th>
                   <div
                     className="flex items-center gap-1.5 cursor-pointer  w-64"
                     onClick={() => handleSort("receipt_id")}
@@ -187,7 +206,7 @@ export default function History() {
                       sortDirection={sortOrder}
                     />
                   </div>
-                </th>
+                </th> */}
                 <th>
                   <div
                     className="flex items-center gap-1.5 cursor-pointer  w-24"
@@ -258,7 +277,6 @@ export default function History() {
             </thead>
             <tbody>
               {historyData.map((l, index) => {
-                // console.log(l.isRead);
                 return (
                   <tr
                     key={index}
@@ -303,7 +321,7 @@ export default function History() {
                         )}
                       </div>
                     </td>
-                    <td title={l.receipt_id}>
+                    {/* <td title={l.receipt_id}>
                       <div className="flex items-center relative cursor-pointer">
                         <div className="justify-self-start overflow-hidden w-64 whitespace-nowrap text-ellipsis">
                           <span>{l.receipt_id}</span>
@@ -320,7 +338,7 @@ export default function History() {
                           </span>
                         )}
                       </div>
-                    </td>
+                    </td> */}
                     <td>{l.position}</td>
                     <td>
                       {l.RepaidAssets.map((asset: any, assetIndex: number) => {
@@ -357,7 +375,6 @@ export default function History() {
                       {" "}
                       {l.LiquidatedAssets.map(
                         (asset: any, assetIndex: number) => {
-                          console.log(asset, "asset");
                           const tokenMetadata =
                             asset.token_id === "wrap.near"
                               ? NEAR_META_DATA
@@ -389,7 +406,13 @@ export default function History() {
                       )}
                     </td>
                     <td className="whitespace-nowrap">
-                      {formatTimestamp(l.createdAt)}
+                      <div className="underline cursor-pointer"  onClick={() =>
+                              handleTxClick(
+                                l.receipt_id,
+                                `https://nearblocks.io/txns`
+                              )
+                            }>{formatTimestamp(l.createdAt)}</div>
+                      
                     </td>
                     <td>{l.liquidation_type}</td>
                   </tr>
