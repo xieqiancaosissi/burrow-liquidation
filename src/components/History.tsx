@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { getHistoryData, getLiquidations, getPerice, getTxId } from "@/services/api";
+import {
+  getHistoryData,
+  getLiquidations,
+  getPerice,
+  getTxId,
+} from "@/services/api";
 import ReactPaginate from "react-paginate";
 import { BeatLoading } from "./Loading";
 import { formatTimestamp } from "@/utils/time";
@@ -24,6 +29,7 @@ export default function History() {
   const [sortOrder, setSortOrder] = useState("desc");
   const [selectedLiquidationType, setSelectedLiquidationType] = useState("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [allTokenPrices, setAllTokenPrices] = useState<any>({});
   useEffect(() => {
     get_liquidations();
     get_allPerice_data();
@@ -148,7 +154,7 @@ export default function History() {
   }
   async function get_allPerice_data() {
     const res = await getPerice();
-    // console.log(res,'getPerice')
+    setAllTokenPrices(res);
   }
   return (
     <div
@@ -286,7 +292,7 @@ export default function History() {
                       title={l.account_id}
                       className="flex items-center justify-center relative cursor-pointer"
                     >
-                      <div className="justify-self-start overflow-hidden w-24 whitespace-nowrap text-ellipsis">
+                      <div className="justify-self-start overflow-hidden w-24 whitespace-nowrap text-ellipsis text-base">
                         <span>{l.account_id}</span>
                       </div>
                       <CopyToClipboard
@@ -302,7 +308,7 @@ export default function History() {
                       )}
                     </td>
                     <td title={l.liquidation_account_id}>
-                      <div className="flex items-center relative cursor-pointer">
+                      <div className="flex items-center relative cursor-pointer text-base">
                         <div className="justify-self-start overflow-hidden w-32 whitespace-nowrap text-ellipsis">
                           <span>{l.liquidation_account_id}</span>
                         </div>
@@ -339,82 +345,152 @@ export default function History() {
                         )}
                       </div>
                     </td> */}
-                    <td>{l.position}</td>
                     <td>
-                      {l.RepaidAssets.map((asset: any, assetIndex: number) => {
-                        const tokenMetadata =
-                          asset.token_id === "wrap.near"
-                            ? NEAR_META_DATA
-                            : allTokenMetadatas[asset.token_id] || {};
-                        return (
-                          <div
-                            key={assetIndex}
-                            className="flex items-center space-x-2 overflow-hidden whitespace-nowrap text-ellipsis mb-1"
-                          >
-                            {/* {tokenMetadata.icon && (
-                            <img
-                              src={tokenMetadata.icon}
-                              alt={tokenMetadata.symbol}
-                              className="flex-shrink-0 w-5 h-5 rounded-full"
-                            />
-                          )} */}
-                            <span>
-                              {tokenMetadata.symbol}：
-                              {parseFloat(
-                                toReadableDecimalsNumber(
-                                  tokenMetadata?.decimals || 0,
-                                  asset.amount
-                                )
-                              ).toFixed(4)}
-                            </span>
-                          </div>
-                        );
-                      })}
+                      <div className="text-base">{l.position}</div>
                     </td>
                     <td>
-                      {" "}
-                      {l.LiquidatedAssets.map(
-                        (asset: any, assetIndex: number) => {
-                          const tokenMetadata =
-                            asset.token_id === "wrap.near"
-                              ? NEAR_META_DATA
-                              : allTokenMetadatas[asset.token_id] || {};
-                          return (
-                            <div
-                              key={assetIndex}
-                              className="flex items-center space-x-2 overflow-hidden whitespace-nowrap text-ellipsis mb-1"
-                            >
-                              {/* {tokenMetadata.icon && (
-                              <img
-                                src={tokenMetadata.icon}
-                                alt={tokenMetadata.symbol}
-                                className="flex-shrink-0 w-5 h-5 rounded-full"
-                              />
-                            )} */}
-                              <span>
-                                {tokenMetadata.symbol}：
-                                {parseFloat(
+                      {(() => {
+                        const totalValue = l.RepaidAssets.reduce(
+                          (
+                            total: number,
+                            asset: {
+                              token_id: string;
+                              amount: string | undefined;
+                            }
+                          ) => {
+                            const tokenMetadata =
+                              asset.token_id === "wrap.near"
+                                ? NEAR_META_DATA
+                                : allTokenMetadatas[asset.token_id] || {};
+                            const tokenPrice = allTokenPrices[asset.token_id];
+
+                            const assetValue = tokenPrice
+                              ? parseFloat(
                                   toReadableDecimalsNumber(
                                     tokenMetadata?.decimals || 0,
                                     asset.amount
                                   )
-                                ).toFixed(4)}
-                              </span>
+                                ) * tokenPrice.price
+                              : 0;
+
+                            return total + assetValue;
+                          },
+                          0
+                        );
+                        return (
+                          <div className="text-sm">
+                            <div className="mb-1  whitespace-nowrap">
+                              Total Value: ${totalValue.toFixed(4)}
                             </div>
-                          );
-                        }
-                      )}
+                            {l.RepaidAssets.map(
+                              (asset: any, assetIndex: number) => {
+                                const tokenMetadata =
+                                  asset.token_id === "wrap.near"
+                                    ? NEAR_META_DATA
+                                    : allTokenMetadatas[asset.token_id] || {};
+                                const assetAmount = parseFloat(
+                                  toReadableDecimalsNumber(
+                                    tokenMetadata?.decimals || 0,
+                                    asset.amount
+                                  )
+                                );
+                                return (
+                                  <div
+                                    key={assetIndex}
+                                    className="flex items-center space-x-2 overflow-hidden whitespace-nowrap text-ellipsis mb-1"
+                                  >
+                                    <span>
+                                      {tokenMetadata.symbol}：
+                                      {assetAmount.toFixed(4)}
+                                    </span>
+                                  </div>
+                                );
+                              }
+                            )}
+                          </div>
+                        );
+                      })()}
                     </td>
+                    <td>
+                      {(() => {
+                        const totalValue = l.LiquidatedAssets.reduce(
+                          (
+                            total: number,
+                            asset: {
+                              token_id: string;
+                              amount: string | undefined;
+                            }
+                          ) => {
+                            const tokenMetadata =
+                              asset.token_id === "wrap.near"
+                                ? NEAR_META_DATA
+                                : allTokenMetadatas[asset.token_id] || {};
+                            const tokenPrice = allTokenPrices[asset.token_id];
+
+                            const assetValue = tokenPrice
+                              ? parseFloat(
+                                  toReadableDecimalsNumber(
+                                    tokenMetadata?.decimals || 0,
+                                    asset.amount
+                                  )
+                                ) * tokenPrice.price
+                              : 0;
+
+                            return total + assetValue;
+                          },
+                          0
+                        );
+                        return (
+                          <div className="text-sm">
+                            <div className="mb-1 whitespace-nowrap">
+                            Total Value: ${totalValue.toFixed(2)}
+                            </div>
+                            {l.LiquidatedAssets.map(
+                              (asset: any, assetIndex: number) => {
+                                const tokenMetadata =
+                                  asset.token_id === "wrap.near"
+                                    ? NEAR_META_DATA
+                                    : allTokenMetadatas[asset.token_id] || {};
+                                const assetAmount = parseFloat(
+                                  toReadableDecimalsNumber(
+                                    tokenMetadata?.decimals || 0,
+                                    asset.amount
+                                  )
+                                );
+                                return (
+                                  <div
+                                    key={assetIndex}
+                                    className="flex items-center space-x-2 overflow-hidden whitespace-nowrap text-ellipsis mb-1"
+                                  >
+                                    <span>
+                                      {tokenMetadata.symbol}：
+                                      {assetAmount.toFixed(4)}
+                                    </span>
+                                  </div>
+                                );
+                              }
+                            )}
+                          </div>
+                        );
+                      })()}
+                    </td>
+
                     <td className="whitespace-nowrap">
-                      <div className="underline cursor-pointer"  onClick={() =>
-                              handleTxClick(
-                                l.receipt_id,
-                                `https://nearblocks.io/txns`
-                              )
-                            }>{formatTimestamp(l.createdAt)}</div>
-                      
+                      <div
+                        className="underline cursor-pointer text-base"
+                        onClick={() =>
+                          handleTxClick(
+                            l.receipt_id,
+                            `https://nearblocks.io/txns`
+                          )
+                        }
+                      >
+                        {formatTimestamp(l.createdAt)}
+                      </div>
                     </td>
-                    <td>{l.liquidation_type}</td>
+                    <td><div className="text-base">
+                    {l.liquidation_type}
+                      </div></td>
                   </tr>
                 );
               })}

@@ -2923,7 +2923,9 @@ export async function getHistoryData(
 }
 
 export const getTxId = async (receipt_id: string) => {
-  return await fetch(`https://api3.nearblocks.io/v1/search/?keyword=${receipt_id}`)
+  return await fetch(
+    `https://api3.nearblocks.io/v1/search/?keyword=${receipt_id}`
+  )
     .then(async (res) => {
       const data = await res.json();
       return data;
