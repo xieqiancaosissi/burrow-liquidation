@@ -158,8 +158,7 @@ export default function History() {
   }
   return (
     <div
-      className="text-white bg-dark-200 rounded-lg"
-      style={{ maxWidth: "58vw", margin: "30px auto 50px auto" }}
+      className="text-white bg-dark-200 rounded-lg responsiveContainer"
     >
       <div
         className="flex items-center border-b border-dark-100 px-6 text-purple-50 text-lg font-bold"
@@ -226,10 +225,10 @@ export default function History() {
                     />
                   </div>
                 </th>
-                <th onClick={() => handleSort("RepaidAssets")}>
+                <th>
                   Repaid Assets
                 </th>
-                <th onClick={() => handleSort("LiquidatedAssets")}>
+                <th>
                   Liquidated Assets
                 </th>
                 <th>
@@ -292,7 +291,7 @@ export default function History() {
                       title={l.account_id}
                       className="flex items-center justify-center relative cursor-pointer"
                     >
-                      <div className="justify-self-start overflow-hidden w-24 whitespace-nowrap text-ellipsis text-base">
+                      <div className="justify-self-start overflow-hidden w-32 whitespace-nowrap text-ellipsis text-base">
                         <span>{l.account_id}</span>
                       </div>
                       <CopyToClipboard
@@ -309,7 +308,7 @@ export default function History() {
                     </td>
                     <td title={l.liquidation_account_id}>
                       <div className="flex items-center relative cursor-pointer text-base">
-                        <div className="justify-self-start overflow-hidden w-32 whitespace-nowrap text-ellipsis">
+                        <div className="justify-self-start overflow-hidden w-48 whitespace-nowrap text-ellipsis">
                           <span>{l.liquidation_account_id}</span>
                         </div>
                         <CopyToClipboard
@@ -346,7 +345,7 @@ export default function History() {
                       </div>
                     </td> */}
                     <td>
-                      <div className="text-base">{l.position}</div>
+                      <div className="text-base w-24">{l.position}</div>
                     </td>
                     <td>
                       {(() => {
@@ -475,7 +474,7 @@ export default function History() {
                       })()}
                     </td>
 
-                    <td className="whitespace-nowrap">
+                    <td className="whitespace-nowrap w-32">
                       <div
                         className="underline cursor-pointer text-base"
                         onClick={() =>
@@ -488,7 +487,7 @@ export default function History() {
                         {formatTimestamp(l.createdAt)}
                       </div>
                     </td>
-                    <td><div className="text-base">
+                    <td><div className="text-base w-32">
                     {l.liquidation_type}
                       </div></td>
                   </tr>

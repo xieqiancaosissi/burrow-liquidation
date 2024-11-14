@@ -222,3 +222,31 @@ input[type="number"] {
   border-color: #c0c4e9;
   cursor: not-allowed;
 }
+
+.responsiveContainer {
+  max-width: 66vw;
+  margin: 30px auto 50px auto;
+}
+
+@media (max-width: 768px) {
+  .responsiveContainer {
+    max-width: 100%;
+    margin:24px;
+  }
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.pagination-container .active-page {
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .pagination-container {
+    flex-wrap: wrap;
+  }
+}
