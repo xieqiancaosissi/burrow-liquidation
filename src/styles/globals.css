@@ -224,8 +224,22 @@ input[type="number"] {
 }
 
 .responsiveContainer {
-  max-width: 66vw;
+  max-width: 70vw;
   margin: 30px auto 50px auto;
+}
+
+@media (max-width: 1650px) {
+  .responsiveContainer {
+    max-width: 86vw;
+    margin: 30px auto 50px auto;
+  }
+}
+
+@media (max-width: 1500px) {
+  .responsiveContainer {
+    max-width: 90vw;
+    margin: 30px auto 50px auto;
+  }
 }
 
 @media (max-width: 768px) {

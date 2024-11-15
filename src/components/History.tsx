@@ -345,7 +345,7 @@ export default function History() {
                       </div>
                     </td> */}
                     <td>
-                      <div className="text-base w-24">{l.position}</div>
+                      <div className="text-base w-32">{l.position}</div>
                     </td>
                     <td>
                       {(() => {
@@ -474,7 +474,7 @@ export default function History() {
                       })()}
                     </td>
 
-                    <td className="whitespace-nowrap w-32">
+                    <td className="whitespace-nowrap w-48">
                       <div
                         className="underline cursor-pointer text-base"
                         onClick={() =>
