@@ -8,6 +8,12 @@
 body {
   background-color: #14162b;
 }
+body{
+  scrollbar-color: #2e3148 transparent;
+}
+body::-webkit-scrollbar {
+  width: 8px;
+}
 .commonTable tr th {
   height: 47px;
   font-size: 14px;
