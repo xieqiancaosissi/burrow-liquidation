@@ -209,6 +209,36 @@ export default function Home(props: any) {
                 <div
                   className="flex items-center gap-1.5 cursor-pointer"
                   onClick={() => {
+                    sortClick("gapSum");
+                  }}
+                >
+                  gapSum{" "}
+                  <SortComponent
+                    keyName="gapSum"
+                    sortKey={sortKey}
+                    sortDirection={sortDirection}
+                  />
+                </div>
+              </th>
+              <th>
+                <div
+                  className="flex items-center gap-1.5 cursor-pointer"
+                  onClick={() => {
+                    sortClick("adjustedGapSum");
+                  }}
+                >
+                  adjustedGapSum{" "}
+                  <SortComponent
+                    keyName="adjustedGapSum"
+                    sortKey={sortKey}
+                    sortDirection={sortDirection}
+                  />
+                </div>
+              </th>
+              <th>
+                <div
+                  className="flex items-center gap-1.5 cursor-pointer"
+                  onClick={() => {
                     sortClick("collateralSum");
                   }}
                 >
@@ -230,21 +260,6 @@ export default function Home(props: any) {
                   borrowedSum{" "}
                   <SortComponent
                     keyName="borrowedSum"
-                    sortKey={sortKey}
-                    sortDirection={sortDirection}
-                  />
-                </div>
-              </th>
-              <th>
-                <div
-                  className="flex items-center gap-1.5 cursor-pointer"
-                  onClick={() => {
-                    sortClick("gapSum");
-                  }}
-                >
-                  gapSum{" "}
-                  <SortComponent
-                    keyName="gapSum"
                     sortKey={sortKey}
                     sortDirection={sortDirection}
                   />
@@ -281,21 +296,6 @@ export default function Home(props: any) {
                 </div>
               </th>
               <th>
-                <div
-                  className="flex items-center gap-1.5 cursor-pointer"
-                  onClick={() => {
-                    sortClick("adjustedGapSum");
-                  }}
-                >
-                  adjustedGapSum{" "}
-                  <SortComponent
-                    keyName="adjustedGapSum"
-                    sortKey={sortKey}
-                    sortDirection={sortDirection}
-                  />
-                </div>
-              </th>
-              <th>
                 <div className="flex justify-center whitespace-nowrap">
                   view details
                 </div>
@@ -316,17 +316,17 @@ export default function Home(props: any) {
                   </td>
                   <td>{l.position}</td>
                   <td>{l.healthFactor}%</td>
+                  <td title={l.gapSum}>{format_usd(l.gapSum)}</td>
+                  <td title={l.adjustedGapSum}>
+                    {format_usd(l.adjustedGapSum)}
+                  </td>
                   <td title={l.collateralSum}>{format_usd(l.collateralSum)}</td>
                   <td title={l.borrowedSum}>{format_usd(l.borrowedSum)}</td>
-                  <td title={l.gapSum}>{format_usd(l.gapSum)}</td>
                   <td title={l.adjustedCollateralSum}>
                     {format_usd(l.adjustedCollateralSum)}
                   </td>
                   <td title={l.adjustedBorrowedSum}>
                     {format_usd(l.adjustedBorrowedSum)}
-                  </td>
-                  <td title={l.adjustedGapSum}>
-                    {format_usd(l.adjustedGapSum)}
                   </td>
                   <td>
                     <div className="flex items-center gap-2">
