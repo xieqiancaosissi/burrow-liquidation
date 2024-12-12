@@ -8,7 +8,7 @@
 body {
   background-color: #14162b;
 }
-body{
+body {
   scrollbar-color: #2e3148 transparent;
 }
 body::-webkit-scrollbar {
@@ -251,7 +251,7 @@ input[type="number"] {
 @media (max-width: 768px) {
   .responsiveContainer {
     max-width: 100%;
-    margin:24px;
+    margin: 24px;
   }
 }
 
