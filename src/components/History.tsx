@@ -349,7 +349,9 @@ export default function History() {
                     </td>
                     <td>
                       {(() => {
-                        const totalValue = l.RepaidAssets.reduce(
+    const repaidAssets = Array.isArray(l.RepaidAssets) ? l.RepaidAssets : [];
+    
+    const totalValue = repaidAssets.reduce(
                           (
                             total: number,
                             asset: {
@@ -381,7 +383,7 @@ export default function History() {
                             <div className="mb-1  whitespace-nowrap">
                               Total Value: ${totalValue.toFixed(4)}
                             </div>
-                            {l.RepaidAssets.map(
+                            {l.RepaidAssets && l.RepaidAssets.map(
                               (asset: any, assetIndex: number) => {
                                 const tokenMetadata =
                                   asset.token_id === "wrap.near"
@@ -412,7 +414,9 @@ export default function History() {
                     </td>
                     <td>
                       {(() => {
-                        const totalValue = l.LiquidatedAssets.reduce(
+    const liquidatedAssets = Array.isArray(l.LiquidatedAssets) ? l.LiquidatedAssets : [];
+    
+    const totalValue = liquidatedAssets.reduce(
                           (
                             total: number,
                             asset: {
@@ -444,7 +448,7 @@ export default function History() {
                             <div className="mb-1 whitespace-nowrap">
                             Total Value: ${totalValue.toFixed(2)}
                             </div>
-                            {l.LiquidatedAssets.map(
+                            {l.LiquidatedAssets && l.LiquidatedAssets.map(
                               (asset: any, assetIndex: number) => {
                                 const tokenMetadata =
                                   asset.token_id === "wrap.near"
