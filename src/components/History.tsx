@@ -275,52 +275,56 @@ export default function History() {
               </tr>
             </thead>
             <tbody>
-              {historyData.map((l, index) => {
-                return (
-                  <tr
-                    key={index}
-                    className="hover:bg-dark-250 border-b border-dark-100"
-                  >
-                    <td
-                      title={l.account_id}
-                      className="flex items-center justify-center relative cursor-pointer"
+              {historyData &&
+                historyData.length > 0 &&
+                historyData.map((l, index) => {
+                  return (
+                    <tr
+                      key={index}
+                      className="hover:bg-dark-250 border-b border-dark-100"
                     >
-                      <div className="justify-self-start overflow-hidden w-32 whitespace-nowrap text-ellipsis text-base">
-                        <span>{l.account_id}</span>
-                      </div>
-                      <CopyToClipboard
-                        text={l.account_id}
-                        onCopy={() => handleCopy(index + "account_id")}
+                      <td
+                        title={l.account_id}
+                        className="flex items-center justify-center relative cursor-pointer"
                       >
-                        <CopyIcon />
-                      </CopyToClipboard>
-                      {showCopyTooltip[index + "account_id"] && (
-                        <span className="absolute -top-2 bg-black text-white text-xs py-1 px-2 rounded">
-                          Copied!
-                        </span>
-                      )}
-                    </td>
-                    <td title={l.liquidation_account_id}>
-                      <div className="flex items-center relative cursor-pointer text-base">
-                        <div className="justify-self-start overflow-hidden w-48 whitespace-nowrap text-ellipsis">
-                          <span>{l.liquidation_account_id}</span>
+                        <div className="justify-self-start overflow-hidden w-32 whitespace-nowrap text-ellipsis text-base">
+                          <span>{l.account_id}</span>
                         </div>
                         <CopyToClipboard
-                          text={l.liquidation_account_id}
-                          onCopy={() =>
-                            handleCopy(index + "liquidation_account_id")
-                          }
+                          text={l.account_id}
+                          onCopy={() => handleCopy(index + "account_id")}
                         >
                           <CopyIcon />
                         </CopyToClipboard>
-                        {showCopyTooltip[index + "liquidation_account_id"] && (
-                          <span className="absolute -top-8 bg-black text-white text-xs py-1 px-2 rounded">
+                        {showCopyTooltip[index + "account_id"] && (
+                          <span className="absolute -top-2 bg-black text-white text-xs py-1 px-2 rounded">
                             Copied!
                           </span>
                         )}
-                      </div>
-                    </td>
-                    {/* <td title={l.receipt_id}>
+                      </td>
+                      <td title={l.liquidation_account_id}>
+                        <div className="flex items-center relative cursor-pointer text-base">
+                          <div className="justify-self-start overflow-hidden w-48 whitespace-nowrap text-ellipsis">
+                            <span>{l.liquidation_account_id}</span>
+                          </div>
+                          <CopyToClipboard
+                            text={l.liquidation_account_id}
+                            onCopy={() =>
+                              handleCopy(index + "liquidation_account_id")
+                            }
+                          >
+                            <CopyIcon />
+                          </CopyToClipboard>
+                          {showCopyTooltip[
+                            index + "liquidation_account_id"
+                          ] && (
+                            <span className="absolute -top-8 bg-black text-white text-xs py-1 px-2 rounded">
+                              Copied!
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      {/* <td title={l.receipt_id}>
                       <div className="flex items-center relative cursor-pointer">
                         <div className="justify-self-start overflow-hidden w-64 whitespace-nowrap text-ellipsis">
                           <span>{l.receipt_id}</span>
@@ -338,172 +342,178 @@ export default function History() {
                         )}
                       </div>
                     </td> */}
-                    <td>
-                      <div className="text-base whitespace-nowrap w-40">{l.position}</div>
-                    </td>
-                    <td>
-                      {(() => {
-                        const repaidAssets = Array.isArray(l.RepaidAssets)
-                          ? l.RepaidAssets
-                          : [];
+                      <td>
+                        <div className="text-base whitespace-nowrap w-40">
+                          {l.position}
+                        </div>
+                      </td>
+                      <td>
+                        {(() => {
+                          const repaidAssets = Array.isArray(l.RepaidAssets)
+                            ? l.RepaidAssets
+                            : [];
 
-                        const totalValue = repaidAssets.reduce(
-                          (
-                            total: number,
-                            asset: {
-                              token_id: string;
-                              amount: string | undefined;
-                            }
-                          ) => {
-                            const tokenMetadata =
-                              asset.token_id === "wrap.near"
-                                ? NEAR_META_DATA
-                                : allTokenMetadatas[asset.token_id] || {};
-                            const tokenPrice = allTokenPrices[asset.token_id];
+                          const totalValue = repaidAssets.reduce(
+                            (
+                              total: number,
+                              asset: {
+                                token_id: string;
+                                amount: string | undefined;
+                              }
+                            ) => {
+                              const tokenMetadata =
+                                asset.token_id === "wrap.near"
+                                  ? NEAR_META_DATA
+                                  : allTokenMetadatas[asset.token_id] || {};
+                              const tokenPrice = allTokenPrices[asset.token_id];
 
-                            const assetValue = tokenPrice
-                              ? parseFloat(
-                                  toReadableDecimalsNumber(
-                                    tokenMetadata?.decimals || 0,
-                                    asset.amount
-                                  )
-                                ) * tokenPrice.price
-                              : 0;
-
-                            return total + assetValue;
-                          },
-                          0
-                        );
-                        return (
-                          <div className="text-sm">
-                            <div className="mb-1  whitespace-nowrap">
-                              Total Value: ${totalValue.toFixed(4)}
-                            </div>
-                            {l.RepaidAssets &&
-                              l.RepaidAssets.map(
-                                (asset: any, assetIndex: number) => {
-                                  const tokenMetadata =
-                                    asset.token_id === "wrap.near"
-                                      ? NEAR_META_DATA
-                                      : allTokenMetadatas[asset.token_id] || {};
-                                  const assetAmount = parseFloat(
+                              const assetValue = tokenPrice
+                                ? parseFloat(
                                     toReadableDecimalsNumber(
                                       tokenMetadata?.decimals || 0,
                                       asset.amount
                                     )
-                                  );
-                                  return (
-                                    <div
-                                      key={assetIndex}
-                                      className="flex items-center space-x-2 overflow-hidden whitespace-nowrap text-ellipsis mb-1"
-                                    >
-                                      <span>
-                                        {tokenMetadata.symbol}：
-                                        {assetAmount.toFixed(4)}
-                                      </span>
-                                    </div>
-                                  );
-                                }
-                              )}
-                          </div>
-                        );
-                      })()}
-                    </td>
-                    <td>
-                      {(() => {
-                        const liquidatedAssets = Array.isArray(
-                          l.LiquidatedAssets
-                        )
-                          ? l.LiquidatedAssets
-                          : [];
+                                  ) * tokenPrice.price
+                                : 0;
 
-                        const totalValue = liquidatedAssets.reduce(
-                          (
-                            total: number,
-                            asset: {
-                              token_id: string;
-                              amount: string | undefined;
-                            }
-                          ) => {
-                            const tokenMetadata =
-                              asset.token_id === "wrap.near"
-                                ? NEAR_META_DATA
-                                : allTokenMetadatas[asset.token_id] || {};
-                            const tokenPrice = allTokenPrices[asset.token_id];
-
-                            const assetValue = tokenPrice
-                              ? parseFloat(
-                                  toReadableDecimalsNumber(
-                                    tokenMetadata?.decimals || 0,
-                                    asset.amount
-                                  )
-                                ) * tokenPrice.price
-                              : 0;
-
-                            return total + assetValue;
-                          },
-                          0
-                        );
-                        return (
-                          <div className="text-sm">
-                            <div className="mb-1 whitespace-nowrap">
-                              Total Value: ${totalValue.toFixed(2)}
+                              return total + assetValue;
+                            },
+                            0
+                          );
+                          return (
+                            <div className="text-sm">
+                              <div className="mb-1  whitespace-nowrap">
+                                Total Value: ${totalValue.toFixed(4)}
+                              </div>
+                              {l.RepaidAssets &&
+                                l.RepaidAssets.map(
+                                  (asset: any, assetIndex: number) => {
+                                    const tokenMetadata =
+                                      asset.token_id === "wrap.near"
+                                        ? NEAR_META_DATA
+                                        : allTokenMetadatas[asset.token_id] ||
+                                          {};
+                                    const assetAmount = parseFloat(
+                                      toReadableDecimalsNumber(
+                                        tokenMetadata?.decimals || 0,
+                                        asset.amount
+                                      )
+                                    );
+                                    return (
+                                      <div
+                                        key={assetIndex}
+                                        className="flex items-center space-x-2 overflow-hidden whitespace-nowrap text-ellipsis mb-1"
+                                      >
+                                        <span>
+                                          {tokenMetadata.symbol}：
+                                          {assetAmount.toFixed(4)}
+                                        </span>
+                                      </div>
+                                    );
+                                  }
+                                )}
                             </div>
-                            {l.LiquidatedAssets &&
-                              l.LiquidatedAssets.map(
-                                (asset: any, assetIndex: number) => {
-                                  const tokenMetadata =
-                                    asset.token_id === "wrap.near"
-                                      ? NEAR_META_DATA
-                                      : allTokenMetadatas[asset.token_id] || {};
-                                  const assetAmount = parseFloat(
-                                    toReadableDecimalsNumber(
-                                      tokenMetadata?.decimals || 0,
-                                      asset.amount
-                                    )
-                                  );
-                                  return (
-                                    <div
-                                      key={assetIndex}
-                                      className="flex items-center space-x-2 overflow-hidden whitespace-nowrap text-ellipsis mb-1"
-                                    >
-                                      <span>
-                                        {tokenMetadata.symbol}：
-                                        {assetAmount.toFixed(4)}
-                                      </span>
-                                    </div>
-                                  );
-                                }
-                              )}
-                          </div>
-                        );
-                      })()}
-                    </td>
-
-                    <td className="whitespace-nowrap w-48">
-                      <div
-                        className="underline cursor-pointer text-base"
-                        onClick={() =>
-                          handleTxClick(
-                            l.receipt_id,
-                            `https://nearblocks.io/txns`
+                          );
+                        })()}
+                      </td>
+                      <td>
+                        {(() => {
+                          const liquidatedAssets = Array.isArray(
+                            l.LiquidatedAssets
                           )
-                        }
-                      >
-                        {formatTimestamp(l.createdAt)}
-                      </div>
-                    </td>
-                    <td>
-                      <div className="text-base w-32">{l.liquidation_type}</div>
-                    </td>
-                  </tr>
-                );
-              })}
+                            ? l.LiquidatedAssets
+                            : [];
+
+                          const totalValue = liquidatedAssets.reduce(
+                            (
+                              total: number,
+                              asset: {
+                                token_id: string;
+                                amount: string | undefined;
+                              }
+                            ) => {
+                              const tokenMetadata =
+                                asset.token_id === "wrap.near"
+                                  ? NEAR_META_DATA
+                                  : allTokenMetadatas[asset.token_id] || {};
+                              const tokenPrice = allTokenPrices[asset.token_id];
+
+                              const assetValue = tokenPrice
+                                ? parseFloat(
+                                    toReadableDecimalsNumber(
+                                      tokenMetadata?.decimals || 0,
+                                      asset.amount
+                                    )
+                                  ) * tokenPrice.price
+                                : 0;
+
+                              return total + assetValue;
+                            },
+                            0
+                          );
+                          return (
+                            <div className="text-sm">
+                              <div className="mb-1 whitespace-nowrap">
+                                Total Value: ${totalValue.toFixed(2)}
+                              </div>
+                              {l.LiquidatedAssets &&
+                                l.LiquidatedAssets.map(
+                                  (asset: any, assetIndex: number) => {
+                                    const tokenMetadata =
+                                      asset.token_id === "wrap.near"
+                                        ? NEAR_META_DATA
+                                        : allTokenMetadatas[asset.token_id] ||
+                                          {};
+                                    const assetAmount = parseFloat(
+                                      toReadableDecimalsNumber(
+                                        tokenMetadata?.decimals || 0,
+                                        asset.amount
+                                      )
+                                    );
+                                    return (
+                                      <div
+                                        key={assetIndex}
+                                        className="flex items-center space-x-2 overflow-hidden whitespace-nowrap text-ellipsis mb-1"
+                                      >
+                                        <span>
+                                          {tokenMetadata.symbol}：
+                                          {assetAmount.toFixed(4)}
+                                        </span>
+                                      </div>
+                                    );
+                                  }
+                                )}
+                            </div>
+                          );
+                        })()}
+                      </td>
+
+                      <td className="whitespace-nowrap w-48">
+                        <div
+                          className="underline cursor-pointer text-base"
+                          onClick={() =>
+                            handleTxClick(
+                              l.receipt_id,
+                              `https://nearblocks.io/txns`
+                            )
+                          }
+                        >
+                          {formatTimestamp(l.createdAt)}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="text-base w-32">
+                          {l.liquidation_type}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
             </tbody>
           </table>
         </div>
       )}
-      {!loading && historyData.length === 0 && (
+      {!loading && historyData && historyData.length === 0 && (
         <div className="flex items-center justify-center text-base text-dark-300 my-20">
           No data
         </div>
