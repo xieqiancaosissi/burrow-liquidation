@@ -35,7 +35,9 @@ export default function Result() {
   const itemsPerPage = 10;
   const [sortKey, setSortKey] = useState<string>("amount");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
-  const [showCopyTooltip, setShowCopyTooltip] = useState<Record<string, boolean>>({});
+  const [showCopyTooltip, setShowCopyTooltip] = useState<
+    Record<string, boolean>
+  >({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -92,21 +94,20 @@ export default function Result() {
     setSortDirection(direction);
   };
 
-  const sortedItems = [...data].sort((a, b) => {
-    if (sortKey === "amount") {
-      return sortDirection === "asc"
-        ? a.amount - b.amount
-        : b.amount - a.amount;
-    } else if (sortKey === "status") {
-      return sortDirection === "asc"
-        ? a.status.localeCompare(b.status)
-        : b.status.localeCompare(a.status);
-    }
-    return 0;
-  }).slice(
-    currentPage * itemsPerPage,
-    (currentPage + 1) * itemsPerPage
-  );
+  const sortedItems = [...data]
+    .sort((a, b) => {
+      if (sortKey === "amount") {
+        return sortDirection === "asc"
+          ? a.amount - b.amount
+          : b.amount - a.amount;
+      } else if (sortKey === "status") {
+        return sortDirection === "asc"
+          ? a.status.localeCompare(b.status)
+          : b.status.localeCompare(a.status);
+      }
+      return 0;
+    })
+    .slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
 
   const handleCopy = (identifier: string) => {
     setShowCopyTooltip((prev) => ({ ...prev, [identifier]: true }));
