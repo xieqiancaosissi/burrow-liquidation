@@ -234,9 +234,18 @@ input[type="number"] {
   margin: 30px auto 50px auto;
 }
 
+.responsiveResultContainer {
+  max-width: 60vw;
+  margin: 30px auto 50px auto;
+}
+
 @media (max-width: 1650px) {
   .responsiveContainer {
     max-width: 86vw;
+    margin: 30px auto 50px auto;
+  }
+  .responsiveResultContainer {
+    max-width: 76vw;
     margin: 30px auto 50px auto;
   }
 }
@@ -246,10 +255,18 @@ input[type="number"] {
     max-width: 90vw;
     margin: 30px auto 50px auto;
   }
+  .responsiveResultContainer {
+    max-width: 80vw;
+    margin: 30px auto 50px auto;
+  }
 }
 
 @media (max-width: 768px) {
   .responsiveContainer {
+    max-width: 100%;
+    margin: 24px;
+  }
+  .responsiveResultContainer {
     max-width: 100%;
     margin: 24px;
   }

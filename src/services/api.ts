@@ -1,7 +1,8 @@
 import { ILiquidation, ILiquidationResponse } from "../interface/common";
 import getConfig from "./config";
 const config = getConfig();
-const { LIQUIDATION_API_URL, HISTORY_API_URL } = config;
+const { LIQUIDATION_API_URL, HISTORY_API_URL, LIQUIDATION_RESULT_API_URL } =
+  config;
 const liquidations = [
   {
     accountId: "davidnvg1511.near",
@@ -2937,6 +2938,19 @@ export const getTxId = async (receipt_id: string) => {
 
 export const getPerice = async () => {
   return await fetch(`https://api.ref.finance/list-token-price`)
+    .then(async (res) => {
+      const data = await res.json();
+      return data;
+    })
+    .catch(() => {
+      return [];
+    });
+};
+
+export const getLiquidationResult = async (key: string) => {
+  return await fetch(
+    `${LIQUIDATION_RESULT_API_URL}/get-liquidation-result?key=${key}`
+  )
     .then(async (res) => {
       const data = await res.json();
       return data;
