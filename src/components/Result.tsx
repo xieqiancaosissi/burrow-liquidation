@@ -122,10 +122,11 @@ export default function Result() {
         className="flex items-center border-b border-dark-100 px-6 text-purple-50 text-lg font-bold"
         style={{ height: "60px" }}
       >
-        Liquidation Result
+        Liquidation Result (Total: {data.length}){" "}
+        {formatTimestamp(metadata.updated_time)}
       </div>
       <div className=" px-6 pt-4 pb-2">
-        <div className="flex gap-x-10 mb-4">
+        <div className="flex gap-x-10">
           <div
             onClick={() => handleKeyChange("MainnetUtxos")}
             className={`flex justify-center px-4 py-2 items-center text-center text-black rounded-xl cursor-pointer md:text-base md:px-4 xsm:text-sm xsm:px-3 ${
@@ -150,7 +151,7 @@ export default function Result() {
         </div>
       ) : (
         <>
-          <div className="flex gap-x-10 px-6 pb-2 md:text-base md:flex-row xsm:flex-col xsm:gap-y-2 xsm:text-sm">
+          {/* <div className="flex gap-x-10 px-6 pb-2 md:text-base md:flex-row xsm:flex-col xsm:gap-y-2 xsm:text-sm">
             <p>
               <span className="text-purple-50">Timestamp:</span>{" "}
               {formatTimestamp(metadata.timestamp)}
@@ -163,7 +164,7 @@ export default function Result() {
               <span className="text-purple-50">Updated Time:</span>{" "}
               {formatTimestamp(metadata.updated_time)}
             </p>
-          </div>
+          </div> */}
           <div className="overflow-auto w-full">
             <table className="commonTable xsm:text-sm w-full">
               <thead>
