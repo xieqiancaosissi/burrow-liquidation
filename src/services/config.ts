@@ -13,6 +13,7 @@ export default function getConfig(
         REF_FI_CONTRACT_ID: "ref-finance-101.testnet",
         HISTORY_API_URL: "https://dev.data-service.ref-finance.com",
         LIQUIDATION_RESULT_API_URL: "https://api.ref.finance",
+        DASH_BOARD_API_URL: "https://api.dumpdump.fun",
       };
     case "testnet":
       return {
@@ -25,6 +26,7 @@ export default function getConfig(
         REF_FI_CONTRACT_ID: "exchange.ref-dev.testnet",
         HISTORY_API_URL: "https://dev.data-service.ref-finance.com",
         LIQUIDATION_RESULT_API_URL: "https://api.ref.finance",
+        DASH_BOARD_API_URL: "https://api.dumpdump.fun",
       };
     default:
       return {
@@ -37,6 +39,7 @@ export default function getConfig(
         REF_FI_CONTRACT_ID: "v2.ref-finance.near",
         HISTORY_API_URL: "https://api.data-service.ref.finance",
         LIQUIDATION_RESULT_API_URL: "https://api.ref.finance",
+        DASH_BOARD_API_URL: "https://api.dumpdump.fun",
       };
   }
 }

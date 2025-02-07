@@ -1,8 +1,12 @@
 import { ILiquidation, ILiquidationResponse } from "../interface/common";
 import getConfig from "./config";
 const config = getConfig();
-const { LIQUIDATION_API_URL, HISTORY_API_URL, LIQUIDATION_RESULT_API_URL } =
-  config;
+const {
+  LIQUIDATION_API_URL,
+  HISTORY_API_URL,
+  LIQUIDATION_RESULT_API_URL,
+  DASH_BOARD_API_URL,
+} = config;
 const liquidations = [
   {
     accountId: "davidnvg1511.near",
@@ -2951,6 +2955,17 @@ export const getLiquidationResult = async (key: string) => {
   return await fetch(
     `${LIQUIDATION_RESULT_API_URL}/get-liquidation-result?key=${key}`
   )
+    .then(async (res) => {
+      const data = await res.json();
+      return data;
+    })
+    .catch(() => {
+      return [];
+    });
+};
+
+export const getDashBoardData = async () => {
+  return await fetch(`${DASH_BOARD_API_URL}/api/v1/mining/dashboard/info`)
     .then(async (res) => {
       const data = await res.json();
       return data;
