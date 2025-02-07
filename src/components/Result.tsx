@@ -4,6 +4,7 @@ import { BeatLoading } from "./Loading";
 import ReactPaginate from "react-paginate";
 import { CopyIcon, SortIcon } from "./Icons";
 import CopyToClipboard from "react-copy-to-clipboard";
+import { toReadableDecimalsNumber, toReadableNumber } from "@/utils/number";
 
 interface LiquidationData {
   created_time: number;
@@ -38,6 +39,7 @@ export default function Result() {
   const [showCopyTooltip, setShowCopyTooltip] = useState<
     Record<string, boolean>
   >({});
+  const [totalAmount, setTotalAmount] = useState<number>(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,6 +50,11 @@ export default function Result() {
         const sortedData = parsedData.utxos.sort(
           (a: { amount: number }, b: { amount: number }) => b.amount - a.amount
         );
+        const total = sortedData.reduce((acc: number, item: { amount: number }) => {
+          const amount = Number(toReadableNumber(8, item.amount.toString()));
+          return acc + amount;
+        }, 0);
+        setTotalAmount(total);
         setData(sortedData);
         setMetadata({
           created_time: result.data.created_time || "",
@@ -122,7 +129,9 @@ export default function Result() {
         className="flex items-center border-b border-dark-100 px-6 text-purple-50 text-lg font-bold"
         style={{ height: "60px" }}
       >
-        Liquidation Result (Total: {data.length}){" "}
+        Liquidation Result
+        <span className="mx-2">(Total Length: {data.length}, Total Amount:{" "}
+          {totalAmount})</span> 
         {formatTimestamp(metadata.updated_time)}
       </div>
       <div className=" px-6 pt-4 pb-2">
@@ -217,7 +226,12 @@ export default function Result() {
                         </span>
                       )}
                     </td>
-                    <td>{item.amount}</td>
+                    <td>
+                      {toReadableNumber(
+                          8,
+                          item.amount.toString()
+                        )}
+                    </td>
                     <td>{item.status}</td>
                   </tr>
                 ))}
