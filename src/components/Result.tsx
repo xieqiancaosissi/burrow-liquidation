@@ -50,10 +50,13 @@ export default function Result() {
         const sortedData = parsedData.utxos.sort(
           (a: { amount: number }, b: { amount: number }) => b.amount - a.amount
         );
-        const total = sortedData.reduce((acc: number, item: { amount: number }) => {
-          const amount = Number(toReadableNumber(8, item.amount.toString()));
-          return acc + amount;
-        }, 0);
+        const total = sortedData.reduce(
+          (acc: number, item: { amount: number }) => {
+            const amount = Number(toReadableNumber(8, item.amount.toString()));
+            return acc + amount;
+          },
+          0
+        );
         setTotalAmount(total);
         setData(sortedData);
         setMetadata({
@@ -130,8 +133,9 @@ export default function Result() {
         style={{ height: "60px" }}
       >
         Liquidation Result
-        <span className="mx-2">(Total Length: {data.length}, Total Amount:{" "}
-          {totalAmount})</span> 
+        <span className="mx-2">
+          (Total Length: {data.length}, Total Amount: {totalAmount})
+        </span>
         {formatTimestamp(metadata.updated_time)}
       </div>
       <div className=" px-6 pt-4 pb-2">
@@ -226,12 +230,7 @@ export default function Result() {
                         </span>
                       )}
                     </td>
-                    <td>
-                      {toReadableNumber(
-                          8,
-                          item.amount.toString()
-                        )}
-                    </td>
+                    <td>{toReadableNumber(8, item.amount.toString())}</td>
                     <td>{item.status}</td>
                   </tr>
                 ))}
