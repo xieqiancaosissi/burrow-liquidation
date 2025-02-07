@@ -177,14 +177,13 @@ export default function DashBoardPage() {
     return (
       <div className="w-full text-white mb-4">
         <div className="text-purple-50 font-bold mb-2">{label}</div>
-        <div className={`grid grid-cols-${columnCount} md:grid-cols-2 gap-4`}>
+        <div className="flex flex-wrap -mx-4">
           {data.map(({ label, value }) => (
-            <div
-              className="bg-dark-100 p-3 rounded-lg shadow-md w-full"
-              key={label}
-            >
-              <div>
-                {label}: {value}
+            <div className={`w-${12 / columnCount} px-2 pb-4`} key={label}>
+              <div className="bg-dark-100 p-3 rounded-lg shadow-md w-full">
+                <div>
+                  {label}: {value}
+                </div>
               </div>
             </div>
           ))}
@@ -316,12 +315,6 @@ export default function DashBoardPage() {
           [
             { label: "Rates", value: (data?.ranking_rates || []).join(", ") },
             { label: "SBRs", value: (data?.ranking_sbrs || []).join(", ") },
-          ],
-          2
-        )}
-        {renderStatistics(
-          "",
-          [
             { label: "K", value: data?.ranking_k },
             { label: "Pump Rate", value: data?.ranking_pump_rate },
           ],
