@@ -16,7 +16,7 @@ export default function AlgorithmPerformance() {
     const fetchData = async () => {
       const res = await getDashBoardData();
       if (res?.data?.data) {
-        setData(res.data.data);
+        setData(res.data.data[0]);
       }
       setLoading(false);
     };
@@ -262,8 +262,8 @@ export default function AlgorithmPerformance() {
               {renderStatistics(
                 "Common",
                 [
-                  { label: "point/sol price", value: 0 },
-                  { label: "current factor I_r", value: 0 },
+                  { label: "point/sol price", value: data?.swap_token_price },
+                  { label: "current factor I_r", value: data?.last_ir },
                 ],
                 4
               )}
@@ -279,8 +279,12 @@ export default function AlgorithmPerformance() {
                 "Trading Incentives (A)",
                 [
                   {
-                    label: "distributed points and value",
-                    value: 0,
+                    label: "distributed points",
+                    value: data?.epoch_launched_reward,
+                  },
+                  {
+                    label: "distributed value",
+                    value: data?.epoch_launched_reward_value,
                   },
                 ],
                 4
@@ -288,65 +292,58 @@ export default function AlgorithmPerformance() {
               {renderStatistics(
                 "Bonding Curve Incentives (B & C)",
                 [
-                  { label: "meme count", value: 0 },
+                  { label: "meme count", value: data?.epoch_meme_created_count},
                   {
                     label: "total creator points and value",
-                    value: 0,
+                    value: data?.epoch_launched_creator_reward,
                   },
                   {
                     label: "average creator points and value",
-                    value: 0,
+                    value: data?.epoch_launched_creator_reward / data?.epoch_meme_created_count * data?.like_i_max || '0',
                   },
-                  {
-                    label: "total pre-liker points and value",
-                    value: 0,
-                  },
+                  { label: "total pre-liker points", value: data?.total_launched_creator_reward },
+                  { label: "total pre-liker value", value: data?.total_launched_creator_reward_value },
                   {
                     label: "average pre-liker points and value",
-                    value: 0,
+                    value: data?.total_launched_creator_reward / data?.hit_bonding_curve_n * data?.like_i_max,
                   },
-                  {
-                    label: "lowest and highest points per liker",
-                    value: 0,
-                  },
+                  { label: "the lowest and highest points for a per-liker in the previous epoch",  value: "-",}
                 ],
                 4
               )}
               {renderStatistics(
                 "Liker Incentives (D)",
                 [
-                  { label: "like-action count", value: 0 },
+                  { label: "like-action count", value: data?.epoch_like_count },
                   {
                     label: "like-action users count",
-                    value: 0,
+                    value: data?.epoch_like_user_count,
                   },
-                  {
-                    label: "total liker points and value",
-                    value: 0,
-                  },
+                  { label: "total liker points", value: data?.epoch_like_reward },
+                  { label: "total liker value", value: data?.epoch_like_reward_value },
                   {
                     label: "average liker points per like-action",
-                    value: 0,
+                    value: data?.epoch_like_reward / data?.epoch_like_count || "-",
                   },
                   {
                     label: "invalid like count",
-                    value: 0,
+                    value: data?.epoch_invalid_like_count,
                   },
                   {
                     label: "average graduation rate",
-                    value: 0,
+                    value: "-",
                   },
                   {
                     label: "average bonding curve rate",
-                    value: 0,
+                    value: data?.hit_bonding_curve_dr,
                   },
                   {
                     label: "average accumulated volume",
-                    value: 0,
+                    value: "-",
                   },
                   {
                     label: "combined std-dev",
-                    value: 0,
+                    value: "-",
                   },
                 ],
                 4
