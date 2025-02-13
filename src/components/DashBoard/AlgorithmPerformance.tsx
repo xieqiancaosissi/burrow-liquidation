@@ -481,6 +481,34 @@ export default function AlgorithmPerformance() {
               ],
               4
             )}
+            {renderStatistics(
+              "New User Policy",
+              [
+                {
+                  label: "LIMIT_T",
+                  value: `${data?.like_item_robot_check_x_time / 3600} hours`,
+                },
+                { label: "LIMIT_ACCV", value: 0 },
+              ],
+              4
+            )}
+            {renderStatistics(
+              "Bots Policy",
+              [
+                {
+                  label: "ULR_FOR_MIN",
+                  value: data?.like_min_reward_upper_limit_rate,
+                },
+                {
+                  label: "X",
+                  value: `${data?.like_item_robot_check_x_time / 3600} hours`,
+                },
+                { label: "N", value: data?.like_item_robot_check_n_count },
+                { label: "K", value: data?.like_multi_robot_max_k_count },
+                { label: "M", value: data?.like_multi_robot_max_rate },
+              ],
+              4
+            )}
           </div>
         </>
       )}
