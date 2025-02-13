@@ -2965,7 +2965,9 @@ export const getLiquidationResult = async (key: string) => {
 };
 
 export const getDashBoardData = async () => {
-  return await fetch(`${DASH_BOARD_API_URL}/api/v1/mining/dashboard/infos?page_count=1&page_size=10`)
+  return await fetch(
+    `${DASH_BOARD_API_URL}/api/v1/mining/dashboard/infos?page_count=1&page_size=30`
+  )
     .then(async (res) => {
       const data = await res.json();
       return data;

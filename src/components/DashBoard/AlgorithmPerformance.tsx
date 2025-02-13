@@ -70,10 +70,10 @@ export default function AlgorithmPerformance() {
         label: {
           show: false,
           position: "center",
-          formatter: '{b}: {c} ({d}%)',
+          formatter: "{b}: {c} ({d}%)",
           textStyle: {
-            fontSize: '20',
-            color: '#C0C4E9',
+            fontSize: "20",
+            color: "#C0C4E9",
           },
         },
         labelLine: {
@@ -95,12 +95,13 @@ export default function AlgorithmPerformance() {
             itemStyle: { color: "rgba(255, 205, 86, 0.8)" },
           },
           {
-            value: Math.max(
-              0,
-              (data?.last_revenue) -
-                (data?.last_swap_reward_value) -
-                (data?.last_like_reward_value )
-            ) || 0,
+            value:
+              Math.max(
+                0,
+                data?.last_revenue -
+                  data?.last_swap_reward_value -
+                  data?.last_like_reward_value
+              ) || 0,
             name: "Others",
             itemStyle: { color: "rgba(75, 192, 192, 0.8)" },
           },
@@ -109,16 +110,23 @@ export default function AlgorithmPerformance() {
     ],
   };
 
-  const totalRevenue = data?.last_swap_reward_value + data?.last_like_reward_value + Math.max(
-    0,
-    (data?.last_revenue) -
-      (data?.last_swap_reward_value) -
-      (data?.last_like_reward_value )
-  ) || 0;
+  const totalRevenue =
+    data?.last_swap_reward_value +
+      data?.last_like_reward_value +
+      Math.max(
+        0,
+        data?.last_revenue -
+          data?.last_swap_reward_value -
+          data?.last_like_reward_value
+      ) || 0;
 
   if (totalRevenue === 0) {
     revenueOption.series[0].data = [
-      { value: 1, name: "No Data", itemStyle: { color: "rgba(128, 128, 128, 0.8)" } },
+      {
+        value: 1,
+        name: "No Data",
+        itemStyle: { color: "rgba(128, 128, 128, 0.8)" },
+      },
     ];
   }
 
@@ -169,10 +177,10 @@ export default function AlgorithmPerformance() {
         label: {
           show: false,
           position: "center",
-          formatter: '{b}: {c} ({d}%)',
+          formatter: "{b}: {c} ({d}%)",
           textStyle: {
-            fontSize: '20',
-            color: '#C0C4E9',
+            fontSize: "20",
+            color: "#C0C4E9",
           },
         },
         labelLine: {
@@ -203,7 +211,11 @@ export default function AlgorithmPerformance() {
 
   if (data.user_count_each_level?.every((count: number) => count === 0)) {
     userLevelOption.series[0].data = [
-      { value: 1, name: "No Data", itemStyle: { color: "rgba(128, 128, 128, 0.8)" } },
+      {
+        value: 1,
+        name: "No Data",
+        itemStyle: { color: "rgba(128, 128, 128, 0.8)" },
+      },
     ];
   }
 
@@ -262,28 +274,31 @@ export default function AlgorithmPerformance() {
               {renderStatistics(
                 "Common",
                 [
-                  { label: "point/sol price", value: data?.swap_token_price },
-                  { label: "current factor I_r", value: data?.last_ir },
+                  { label: "PRICE", value: data?.swap_token_price },
+                  { label: "PREV_IR", value: data?.pre_ir },
+                  { label: "CUR_IR", value: data?.last_ir },
                 ],
                 4
               )}
               {renderStatistics(
                 "Ranking",
-                data.user_count_each_level?.map((count: number, index: number) => ({
-                  label: `Level ${index + 1}`,
-                  value: count,
-                })) || [],
+                data.user_count_each_level?.map(
+                  (count: number, index: number) => ({
+                    label: `Level ${index + 1}`,
+                    value: count,
+                  })
+                ) || [],
                 4
               )}
               {renderStatistics(
                 "Trading Incentives (A)",
                 [
                   {
-                    label: "distributed points",
+                    label: "POINT_FOR_TRADING",
                     value: data?.epoch_launched_reward,
                   },
                   {
-                    label: "distributed value",
+                    label: "POINT_VAL_FOR_TRADING",
                     value: data?.epoch_launched_reward_value,
                   },
                 ],
@@ -292,57 +307,107 @@ export default function AlgorithmPerformance() {
               {renderStatistics(
                 "Bonding Curve Incentives (B & C)",
                 [
-                  { label: "meme count", value: data?.epoch_meme_created_count},
+                  { label: "HIT_MEME", value: data?.epoch_meme_created_count },
                   {
-                    label: "total creator points and value",
+                    label: "POINT_FOR_CREATORS",
                     value: data?.epoch_launched_creator_reward,
                   },
                   {
-                    label: "average creator points and value",
-                    value: data?.epoch_launched_creator_reward / data?.epoch_meme_created_count * data?.like_i_max || '0',
+                    label: "POINT_VAL_FOR_CREATORS",
+                    value: data?.epoch_launched_creator_reward_value,
                   },
-                  { label: "total pre-liker points", value: data?.total_launched_creator_reward },
-                  { label: "total pre-liker value", value: data?.total_launched_creator_reward_value },
                   {
-                    label: "average pre-liker points and value",
-                    value: data?.total_launched_creator_reward / data?.hit_bonding_curve_n * data?.like_i_max,
+                    label: "AVG_POINT_PER_CREATOR",
+                    value:
+                      data?.epoch_meme_created_count > 0 &&
+                      data?.total_launched_creator_reward > 0
+                        ? data?.total_launched_creator_reward /
+                          data?.epoch_meme_created_count
+                        : 0,
                   },
-                  { label: "the lowest and highest points for a per-liker in the previous epoch",  value: "-",}
+                  {
+                    label: "AVG_POINT_VAL_PER_CREATOR",
+                    value:
+                      data?.epoch_meme_created_count > 0 &&
+                      data?.total_launched_creator_reward_value > 0
+                        ? data?.total_launched_creator_reward_value /
+                          data?.epoch_meme_created_count
+                        : 0,
+                  },
+                  {
+                    label: "POINT_FOR_EARLY_LIKERS",
+                    value: data?.total_launched_creator_reward,
+                  },
+                  {
+                    label: "POINT_VAL_FOR_EARLY_LIKERS",
+                    value: data?.total_launched_creator_reward_value,
+                  },
+                  {
+                    label: "AVG_POINT_PER_EARLY_LIKER",
+                    value:
+                      data?.epoch_like_user_count > 0
+                        ? data?.total_launched_creator_reward /
+                          data?.epoch_like_user_count
+                        : 0,
+                  },
+                  {
+                    label: "AVG_POINT_VAL_PER_EARLY_LIKER",
+                    value:
+                      data?.epoch_like_user_count > 0
+                        ? data?.total_launched_creator_reward_value /
+                          data?.epoch_like_user_count
+                        : 0,
+                  },
+                  { label: "MIN_POINT_FOR_EARLY_LIKER", value: "-" },
+                  { label: "MAX_POINT_FOR_EARLY_LIKER", value: "-" },
                 ],
                 4
               )}
               {renderStatistics(
                 "Liker Incentives (D)",
                 [
-                  { label: "like-action count", value: data?.epoch_like_count },
+                  { label: "LIKING", value: data?.epoch_like_count },
                   {
-                    label: "like-action users count",
+                    label: "LIKING_USER",
                     value: data?.epoch_like_user_count,
                   },
-                  { label: "total liker points", value: data?.epoch_like_reward },
-                  { label: "total liker value", value: data?.epoch_like_reward_value },
+                  { label: "POINT_FOR_LIKING", value: data?.epoch_like_reward },
                   {
-                    label: "average liker points per like-action",
-                    value: data?.epoch_like_reward / data?.epoch_like_count || "-",
+                    label: "POINT_VAL_FOR_LIKING",
+                    value: data?.epoch_like_reward_value,
                   },
                   {
-                    label: "invalid like count",
+                    label: "AVG_POINT_PER_LIKING",
+                    value:
+                      data?.epoch_like_count > 0
+                        ? data?.total_like_reward / data?.epoch_like_count
+                        : 0,
+                  },
+                  {
+                    label: "AVG_POINT_VAL_PER_LIKING",
+                    value:
+                      data?.epoch_like_count > 0
+                        ? data?.total_like_reward_value / data?.epoch_like_count
+                        : 0,
+                  },
+                  {
+                    label: "INVALID_LIKINGt",
                     value: data?.epoch_invalid_like_count,
                   },
                   {
-                    label: "average graduation rate",
+                    label: "AVG_R0",
                     value: "-",
                   },
                   {
-                    label: "average bonding curve rate",
+                    label: "AVG_R1",
                     value: data?.hit_bonding_curve_dr,
                   },
                   {
-                    label: "average accumulated volume",
-                    value: "-",
+                    label: "AVG_R2",
+                    value: data?.total_trade_amount,
                   },
                   {
-                    label: "combined std-dev",
+                    label: "STD_DEV",
                     value: "-",
                   },
                 ],

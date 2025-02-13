@@ -6,17 +6,22 @@ import AlgorithmPerformance from "./DashBoard/AlgorithmPerformance";
 import StatisticTrendCharts from "./DashBoard/StatisticTrendCharts";
 
 export default function DashBoardPage() {
-  const [isComponentAVisible, setIsComponentAVisible] = useState<boolean>(() => {
-    const savedState = localStorage.getItem("isComponentAVisible");
-    return savedState !== null ? JSON.parse(savedState) : true;
-  });
+  const [isComponentAVisible, setIsComponentAVisible] = useState<boolean>(
+    () => {
+      const savedState = localStorage.getItem("isComponentAVisible");
+      return savedState !== null ? JSON.parse(savedState) : true;
+    }
+  );
 
   const toggleComponent = () => {
     setIsComponentAVisible(!isComponentAVisible);
   };
 
   useEffect(() => {
-    localStorage.setItem("isComponentAVisible", JSON.stringify(isComponentAVisible));
+    localStorage.setItem(
+      "isComponentAVisible",
+      JSON.stringify(isComponentAVisible)
+    );
   }, [isComponentAVisible]);
 
   const labelA = "< Switch to Algorithm Performance";
@@ -27,7 +32,7 @@ export default function DashBoardPage() {
       <button onClick={toggleComponent} className="mb-4 p-2 text-white rounded">
         {isComponentAVisible ? `${labelB}` : `${labelA}`}
       </button>
-      {isComponentAVisible ? (  
+      {isComponentAVisible ? (
         <AlgorithmPerformance />
       ) : (
         <StatisticTrendCharts />

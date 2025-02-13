@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface Props {
   label: string;
@@ -12,4 +12,4 @@ export default function NumberDisplay({ label, value }: Props) {
       <div className="text-lg font-bold">{value}</div>
     </div>
   );
-} 
+}
