@@ -504,8 +504,8 @@ export default function AlgorithmPerformance() {
                   value: `${data?.like_item_robot_check_x_time / 3600} hours`,
                 },
                 { label: "N", value: data?.like_item_robot_check_n_count },
-                { label: "K", value: data?.like_multi_robot_max_k_count },
-                { label: "M", value: data?.like_multi_robot_max_rate },
+                { label: "K", value: data?.like_multi_robot_max_k_rate },
+                { label: "M", value: data?.like_multi_robot_max_m_count },
               ],
               4
             )}
