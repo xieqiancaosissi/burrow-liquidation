@@ -295,11 +295,11 @@ export default function AlgorithmPerformance() {
                 [
                   {
                     label: "POINT_FOR_TRADING",
-                    value: data?.epoch_launched_reward,
+                    value: data?.total_launched_reward,
                   },
                   {
                     label: "POINT_VAL_FOR_TRADING",
-                    value: data?.epoch_launched_reward_value,
+                    value: data?.total_launched_reward_value,
                   },
                 ],
                 4
@@ -307,31 +307,31 @@ export default function AlgorithmPerformance() {
               {renderStatistics(
                 "Bonding Curve Incentives (B & C)",
                 [
-                  { label: "HIT_MEME", value: data?.epoch_meme_created_count },
+                  { label: "HIT_MEME", value: data?.total_meme_created_count },
                   {
                     label: "POINT_FOR_CREATORS",
-                    value: data?.epoch_launched_creator_reward,
+                    value: data?.total_launched_creator_reward,
                   },
                   {
                     label: "POINT_VAL_FOR_CREATORS",
-                    value: data?.epoch_launched_creator_reward_value,
+                    value: data?.total_launched_creator_reward_value,
                   },
                   {
                     label: "AVG_POINT_PER_CREATOR",
                     value:
-                      data?.epoch_meme_created_count > 0 &&
+                      data?.total_meme_created_count > 0 &&
                       data?.total_launched_creator_reward > 0
                         ? data?.total_launched_creator_reward /
-                          data?.epoch_meme_created_count
+                          data?.total_meme_created_count
                         : 0,
                   },
                   {
                     label: "AVG_POINT_VAL_PER_CREATOR",
                     value:
-                      data?.epoch_meme_created_count > 0 &&
+                      data?.total_meme_created_count > 0 &&
                       data?.total_launched_creator_reward_value > 0
                         ? data?.total_launched_creator_reward_value /
-                          data?.epoch_meme_created_count
+                          data?.total_meme_created_count
                         : 0,
                   },
                   {
@@ -345,58 +345,65 @@ export default function AlgorithmPerformance() {
                   {
                     label: "AVG_POINT_PER_EARLY_LIKER",
                     value:
-                      data?.epoch_like_user_count > 0
+                      data?.total_like_user_count > 0
                         ? data?.total_launched_creator_reward /
-                          data?.epoch_like_user_count
+                          data?.total_like_user_count
                         : 0,
                   },
                   {
                     label: "AVG_POINT_VAL_PER_EARLY_LIKER",
                     value:
-                      data?.epoch_like_user_count > 0
+                      data?.total_like_user_count > 0
                         ? data?.total_launched_creator_reward_value /
-                          data?.epoch_like_user_count
+                          data?.total_like_user_count
                         : 0,
                   },
-                  { label: "MIN_POINT_FOR_EARLY_LIKER", value: "-" },
-                  { label: "MAX_POINT_FOR_EARLY_LIKER", value: "-" },
+                  {
+                    label: "MIN_POINT_FOR_EARLY_LIKER",
+                    value: data?.like_i_min,
+                  },
+                  {
+                    label: "MAX_POINT_FOR_EARLY_LIKER",
+                    value: data?.like_i_max,
+                  },
                 ],
                 4
               )}
               {renderStatistics(
                 "Liker Incentives (D)",
                 [
-                  { label: "LIKING", value: data?.epoch_like_count },
+                  { label: "LIKING", value: data?.total_like_count },
                   {
                     label: "LIKING_USER",
-                    value: data?.epoch_like_user_count,
+                    value: data?.total_like_user_count,
                   },
-                  { label: "POINT_FOR_LIKING", value: data?.epoch_like_reward },
+                  { label: "POINT_FOR_LIKING", value: data?.total_like_reward },
                   {
                     label: "POINT_VAL_FOR_LIKING",
-                    value: data?.epoch_like_reward_value,
+                    value: data?.total_like_reward_value,
                   },
                   {
                     label: "AVG_POINT_PER_LIKING",
                     value:
-                      data?.epoch_like_count > 0
-                        ? data?.total_like_reward / data?.epoch_like_count
+                      data?.total_like_count > 0
+                        ? data?.total_like_reward / data?.total_like_count
                         : 0,
                   },
                   {
                     label: "AVG_POINT_VAL_PER_LIKING",
                     value:
-                      data?.epoch_like_count > 0
-                        ? data?.total_like_reward_value / data?.epoch_like_count
+                      data?.total_like_count > 0
+                        ? data?.total_like_reward_value / data?.total_like_count
                         : 0,
                   },
                   {
                     label: "INVALID_LIKINGt",
-                    value: data?.epoch_invalid_like_count,
+                    value: data?.total_invalid_like_count,
                   },
                   {
                     label: "AVG_R0",
-                    value: "-",
+                    value:
+                      data?.epoch_average_launched_creator_reward_per_token,
                   },
                   {
                     label: "AVG_R1",
