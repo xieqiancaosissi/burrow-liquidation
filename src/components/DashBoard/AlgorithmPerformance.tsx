@@ -415,7 +415,7 @@ export default function AlgorithmPerformance() {
                   },
                   {
                     label: "STD_DEV",
-                    value: "-",
+                    value: data?.std,
                   },
                 ],
                 4
