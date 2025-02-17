@@ -50,13 +50,12 @@ export default function Result() {
         const sortedData = parsedData.utxos.sort(
           (a: { amount: number }, b: { amount: number }) => b.amount - a.amount
         );
-        const total = sortedData.reduce(
-          (acc: number, item: { amount: number }) => {
+        const total = sortedData
+          .reduce((acc: number, item: { amount: number }) => {
             const amount = Number(toReadableNumber(8, item.amount.toString()));
             return acc + amount;
-          },
-          0
-        ).toFixed(8); 
+          }, 0)
+          .toFixed(8);
         setTotalAmount(total);
         setData(sortedData);
         setMetadata({
