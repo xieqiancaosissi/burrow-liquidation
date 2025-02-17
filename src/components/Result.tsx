@@ -56,7 +56,7 @@ export default function Result() {
             return acc + amount;
           },
           0
-        );
+        ).toFixed(8); 
         setTotalAmount(total);
         setData(sortedData);
         setMetadata({
