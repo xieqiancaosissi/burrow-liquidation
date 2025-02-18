@@ -347,7 +347,7 @@ export default function AlgorithmPerformance() {
                     value:
                       data?.total_like_user_count > 0
                         ? data?.total_launched_creator_reward /
-                          data?.total_like_user_count
+                          data?.hit_bonding_curve_n
                         : 0,
                   },
                   {
