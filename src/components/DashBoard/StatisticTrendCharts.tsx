@@ -14,7 +14,7 @@ export default function StatisticTrendCharts() {
     data: [],
     epochIds: [],
   });
-  const [EPOCH_POINTS, setEPOCH_POINTS] = useState<ChartData>({
+  const [EPOCHPOINTS, setEPOCHPOINTS] = useState<ChartData>({
     data: [],
     epochIds: [],
   });
@@ -87,6 +87,36 @@ export default function StatisticTrendCharts() {
     epochIds: [],
   });
   const [loading, setLoading] = useState<boolean>(true);
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+
+  const formatNumber = (value: any, isHover: boolean, type: string) => {
+    const numericValue =
+      typeof value === "number" && !isNaN(value)
+        ? value
+        : typeof value === "string" && !isNaN(Number(value))
+        ? Number(value)
+        : 0;
+
+    if (isHover) {
+      return type === "point"
+        ? numericValue.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 6,
+          })
+        : numericValue.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 9,
+          });
+    }
+    return numericValue.toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  };
+
+  const handleMouseEnter = (item: string) => setHoveredItem(item);
+  const handleMouseLeave = () => setHoveredItem(null);
+
   useEffect(() => {
     const fetchData = async () => {
       const res = await getDashBoardData();
@@ -94,18 +124,25 @@ export default function StatisticTrendCharts() {
         setData(res.data.data);
         const epochIds = res.data.data.map((item: any) => item.epoch_id);
         setEPOCHREVChartData({
-          data: res.data.data.map((item: any) => item.epoch_revenue),
+          data: res.data.data.map((item: any) => {
+            const revenue = parseFloat(item.epoch_revenue);
+            return isNaN(revenue) ? 0 : revenue.toFixed(9);
+          }),
           epochIds: epochIds,
         });
 
-        setEPOCH_POINTS({
+        setEPOCHPOINTS({
           data: [
-            res.data.data.map(
-              (item: any) => item.epoch_launched_creator_reward_value
-            ),
-            res.data.data.map(
-              (item: any) => item.epoch_launched_creator_reward
-            ),
+            res.data.data.map((item: any) => {
+              const value = parseFloat(
+                item.epoch_launched_creator_reward_value
+              );
+              return isNaN(value) ? "0" : value.toFixed(9);
+            }),
+            res.data.data.map((item: any) => {
+              const value = parseFloat(item.epoch_launched_creator_reward);
+              return isNaN(value) ? "0" : value.toFixed(6);
+            }),
           ],
           epochIds: epochIds,
         });
@@ -160,7 +197,10 @@ export default function StatisticTrendCharts() {
         });
 
         setEPOCHTRADINGVOLData({
-          data: res.data.data.map((item: any) => item.epoch_trade_amount),
+          data: res.data.data.map((item: any) => {
+            const value = parseFloat(item.epoch_trade_amount);
+            return isNaN(value) ? 0 : value.toFixed(9);
+          }),
           epochIds: epochIds,
         });
 
@@ -176,7 +216,10 @@ export default function StatisticTrendCharts() {
 
         // PreBuy Info section
         setEPOCHPREBUYVOLData({
-          data: res.data.data.map((item: any) => item.epoch_flip_amount),
+          data: res.data.data.map((item: any) => {
+            const value = parseFloat(item.epoch_flip_amount);
+            return isNaN(value) ? 0 : value.toFixed(9);
+          }),
           epochIds: epochIds,
         });
 
@@ -235,22 +278,47 @@ export default function StatisticTrendCharts() {
               Revenue and Incentives
             </h3>
             <div className="flex gap-12 mb-4">
-              <div className="text-sm text-gray-300">
+              <div
+                className="text-sm text-gray-300 cursor-pointer"
+                onMouseEnter={() => handleMouseEnter("ACC_REV")}
+                onMouseLeave={handleMouseLeave}
+              >
                 ACC_REV:
                 <span className="text-white ml-1">
-                  {data[0]?.total_revenue}
+                  {formatNumber(
+                    data[0]?.total_revenue,
+                    hoveredItem === "ACC_REV",
+                    "revenue"
+                  )}
                 </span>
               </div>
-              <div className="text-sm text-gray-300">
+              <div
+                className="text-sm text-gray-300 cursor-pointer"
+                onMouseEnter={() => handleMouseEnter("ACC_POINT")}
+                onMouseLeave={handleMouseLeave}
+              >
                 ACC_POINT:
                 <span className="text-white ml-1">
-                  {data[0]?.total_launched_creator_reward}
+                  {formatNumber(
+                    data[0]?.total_reward,
+                    hoveredItem === "ACC_POINT",
+                    "point"
+                  )}
                 </span>
               </div>
-              <div className="text-sm text-gray-300">
+              <div
+                className="text-sm text-gray-300 cursor-pointer"
+                onMouseEnter={() => handleMouseEnter("ACC_POINT_VAL")}
+                onMouseLeave={handleMouseLeave}
+              >
                 ACC_POINT_VAL:
                 <span className="text-white ml-1">
-                  {data[0]?.total_launched_creator_reward_value}
+                  {formatNumber(
+                    data[0]?.total_reward *
+                      data[0]?.hit_bonding_curve_token_price,
+                    hoveredItem === "ACC_POINT_VAL",
+                    "value"
+                  )}
                 </span>
               </div>
               <div className="text-sm text-gray-300">
@@ -271,8 +339,8 @@ export default function StatisticTrendCharts() {
               />
               <ChartDisplay
                 data={{
-                  data: EPOCH_POINTS.data,
-                  epochIds: EPOCH_POINTS.epochIds,
+                  data: EPOCHPOINTS.data,
+                  epochIds: EPOCHPOINTS.epochIds,
                 }}
                 colors={["#36A2EB", "#FFCE56"]}
                 title="EPOCH_POINTS"
@@ -398,10 +466,18 @@ export default function StatisticTrendCharts() {
               Trading Info
             </h3>
             <div className="flex gap-12 mb-4">
-              <div className="text-sm text-gray-300">
+              <div
+                className="text-sm text-gray-300 cursor-pointer"
+                onMouseEnter={() => handleMouseEnter("TOTAL_TRADING_VOL")}
+                onMouseLeave={handleMouseLeave}
+              >
                 TOTAL_TRADING_VOL
                 <span className="text-white ml-1">
-                  {data[0]?.total_trade_amount}
+                  {formatNumber(
+                    data[0]?.total_trade_amount,
+                    hoveredItem === "TOTAL_TRADING_VOL",
+                    "volume"
+                  )}
                 </span>
               </div>
               <div className="text-sm text-gray-300">
@@ -457,10 +533,18 @@ export default function StatisticTrendCharts() {
               PreBuy(flip) Info
             </h3>
             <div className="flex gap-12 mb-4">
-              <div className="text-sm text-gray-300">
+              <div
+                className="text-sm text-gray-300 cursor-pointer"
+                onMouseEnter={() => handleMouseEnter("TOTAL_PREBUY_VOL")}
+                onMouseLeave={handleMouseLeave}
+              >
                 TOTAL_PREBUY_VOL
                 <span className="text-white ml-1">
-                  {data[0]?.total_flip_amount}
+                  {formatNumber(
+                    data[0]?.total_flip_amount,
+                    hoveredItem === "TOTAL_PREBUY_VOL",
+                    "volume"
+                  )}
                 </span>
               </div>
               <div className="text-sm text-gray-300">
@@ -512,10 +596,20 @@ export default function StatisticTrendCharts() {
                   {data[0]?.total_like_count}
                 </span>
               </div>
-              <div className="text-sm text-gray-300">
+              <div
+                className="text-sm text-gray-300 cursor-pointer"
+                onMouseEnter={() =>
+                  handleMouseEnter("TOTAL_POINT_VAL_FOR_LIKING")
+                }
+                onMouseLeave={handleMouseLeave}
+              >
                 TOTAL_POINT_VAL_FOR_LIKING
                 <span className="text-white ml-1">
-                  {data[0]?.total_like_reward}
+                  {formatNumber(
+                    data[0]?.total_like_reward,
+                    hoveredItem === "TOTAL_POINT_VAL_FOR_LIKING",
+                    "value"
+                  )}
                 </span>
               </div>
               <div className="text-sm text-gray-300">
