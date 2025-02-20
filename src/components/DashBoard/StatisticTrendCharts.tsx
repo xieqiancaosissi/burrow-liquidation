@@ -324,7 +324,7 @@ export default function StatisticTrendCharts() {
                 ACC_POINT_VAL:
                 <span className="text-white ml-1">
                   {formatNumber(
-                    data[0]?.total_reward * data[0]?.swap_token_price,
+                    data[0]?.total_reward * data[0]?.token_price,
                     hoveredItem === "ACC_POINT_VAL",
                     "value"
                   )}
@@ -333,7 +333,7 @@ export default function StatisticTrendCharts() {
               <div className="text-sm text-gray-300">
                 PRICE:
                 <span className="text-white ml-1">
-                  {data[0]?.swap_token_price}
+                  {data[0]?.token_price}
                 </span>
               </div>
             </div>
@@ -344,7 +344,7 @@ export default function StatisticTrendCharts() {
                     parseFloat(data[0]?.total_revenue || "0"),
                     parseFloat(
                       String(
-                        data[0]?.total_reward * data[0]?.swap_token_price || 0
+                        data[0]?.total_reward * data[0]?.token_price || 0
                       )
                     ),
                   ].map(Number)}

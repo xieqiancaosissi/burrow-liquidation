@@ -274,7 +274,7 @@ export default function AlgorithmPerformance() {
               {renderStatistics(
                 "Common",
                 [
-                  { label: "PRICE", value: data?.swap_token_price },
+                  { label: "PRICE", value: data?.token_price },
                   { label: "PREV_IR", value: data?.pre_ir },
                   { label: "CUR_IR", value: data?.last_ir },
                   { label: "PREV_DR_2", value: data?.swap_dr },
