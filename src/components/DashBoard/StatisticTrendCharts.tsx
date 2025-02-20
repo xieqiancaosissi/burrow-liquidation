@@ -136,12 +136,12 @@ export default function StatisticTrendCharts() {
           data: [
             res.data.data.map((item: any) => {
               const value = parseFloat(
-                item.epoch_launched_creator_reward_value
+                item.epoch_reward_value
               );
               return isNaN(value) ? "0" : value.toFixed(9);
             }),
             res.data.data.map((item: any) => {
-              const value = parseFloat(item.epoch_launched_creator_reward);
+              const value = parseFloat(item.epoch_reward);
               return isNaN(value) ? "0" : value.toFixed(6);
             }),
           ],
