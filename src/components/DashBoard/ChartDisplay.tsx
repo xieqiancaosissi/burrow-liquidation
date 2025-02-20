@@ -48,10 +48,13 @@ export default function ChartDisplay({ data, colors, title, yAxes }: Props) {
           data.epochIds[data.epochIds.length - 1 - params[0].dataIndex];
         let result = `EpochId ${epochId}<br/>`;
         params.forEach((param: any) => {
-          result += `${param.value}<br/>`;
+          result += `<span style="display:inline-block;margin-right:4px;border-radius:50%;width:10px;height:10px;background-color:${param.color};"></span>${param.value}<br/>`;
         });
         return result;
       },
+      backgroundColor: "rgba(0, 0, 0, 0.7)",
+      borderColor: "#333",
+      textStyle: { color: "#C0C4E9", fontSize: 12 },
     },
     toolbox: {
       show: true,
@@ -85,17 +88,9 @@ export default function ChartDisplay({ data, colors, title, yAxes }: Props) {
         show: false,
       },
     },
-    yAxis: [
+    yAxis: yAxes || [
       {
         type: "value",
-        // name: "Value",
-        splitLine: {
-          show: false,
-        },
-      },
-      {
-        type: "value",
-        // name: "Points",
         splitLine: {
           show: false,
         },
@@ -105,7 +100,6 @@ export default function ChartDisplay({ data, colors, title, yAxes }: Props) {
       ? (data.data as number[][]).map((d, i) => ({
           data: d.slice().reverse(),
           type: seriesType,
-          yAxisIndex: i,
           smooth: seriesType === "line",
           symbol: seriesType === "line" ? "circle" : undefined,
           symbolSize: seriesType === "line" ? [0, 0] : undefined,

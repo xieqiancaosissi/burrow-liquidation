@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import ChartDisplay from "./ChartDisplay";
 import { getDashBoardData } from "@/services/api";
 import { BeatLoading } from "../Loading";
+import PieChart from "./PieChart";
 
 interface ChartData {
   data: number[] | number[][];
@@ -148,11 +149,20 @@ export default function StatisticTrendCharts() {
         });
 
         setAdScaleData({
-          data: res.data.data.map((item: any) => {
-            const tradeReward = parseFloat(item.epoch_trade_reward) || 0;
-            const likeReward = parseFloat(item.epoch_like_reward) || 0;
-            return likeReward > 0 ? tradeReward / likeReward : 0;
-          }),
+          data: [
+            res.data.data.map((item: any) => {
+              const epochRevenue = parseFloat(item.epoch_revenue);
+              return epochRevenue === 0
+                ? 0
+                : (item.epoch_trade_reward / epochRevenue) * 100;
+            }),
+            res.data.data.map((item: any) => {
+              const epochRevenue = parseFloat(item.epoch_revenue);
+              return epochRevenue === 0
+                ? 0
+                : (item.epoch_like_reward / epochRevenue) * 100;
+            }),
+          ],
           epochIds: epochIds,
         });
 
@@ -314,8 +324,7 @@ export default function StatisticTrendCharts() {
                 ACC_POINT_VAL:
                 <span className="text-white ml-1">
                   {formatNumber(
-                    data[0]?.total_reward *
-                      data[0]?.hit_bonding_curve_token_price,
+                    data[0]?.total_reward * data[0]?.swap_token_price,
                     hoveredItem === "ACC_POINT_VAL",
                     "value"
                   )}
@@ -324,8 +333,49 @@ export default function StatisticTrendCharts() {
               <div className="text-sm text-gray-300">
                 PRICE:
                 <span className="text-white ml-1">
-                  {data[0]?.hit_bonding_curve_token_price}
+                  {data[0]?.swap_token_price}
                 </span>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="h-[300px]">
+                <PieChart
+                  data={[
+                    parseFloat(data[0]?.total_revenue || "0"),
+                    parseFloat(
+                      String(
+                        data[0]?.total_reward * data[0]?.swap_token_price || 0
+                      )
+                    ),
+                  ].map(Number)}
+                  labels={["ACC_REV", "ACC_POINT_VAL"]}
+                  colors={[
+                    "rgba(54, 162, 235, 0.8)",
+                    "rgba(255, 205, 86, 0.8)",
+                  ]}
+                />
+              </div>
+              <div className="h-[300px]">
+                <PieChart
+                  data={[
+                    parseFloat(data[0]?.total_trade_reward || "0"),
+                    parseFloat(data[0]?.total_launched_creator_reward || "0"),
+                    parseFloat(data[0]?.total_launched_reward || "0"),
+                    parseFloat(data[0]?.total_like_reward || "0"),
+                  ].map(Number)}
+                  labels={[
+                    "Trade Reward",
+                    "Creator Reward",
+                    "Launch Reward",
+                    "Like Reward",
+                  ]}
+                  colors={[
+                    "rgba(54, 162, 235, 0.8)",
+                    "rgba(255, 205, 86, 0.8)",
+                    "rgba(75, 192, 192, 0.8)",
+                    "rgba(255, 99, 132, 0.8)",
+                  ]}
+                />
               </div>
             </div>
             <div className="grid grid-cols-3 gap-4 mt-6">
@@ -350,7 +400,7 @@ export default function StatisticTrendCharts() {
                   data: adScaleData.data,
                   epochIds: adScaleData.epochIds,
                 }}
-                colors={["#4BC0C0"]}
+                colors={["rgba(54, 162, 235, 0.8)", "#FF6384"]}
                 title="AD_SCALE"
               />
             </div>

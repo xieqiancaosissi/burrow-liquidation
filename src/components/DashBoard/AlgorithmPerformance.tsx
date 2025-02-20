@@ -456,7 +456,10 @@ export default function AlgorithmPerformance() {
                 { label: "Min Rev", value: data?.hit_bonding_curve_rev_min },
                 { label: "Max Point", value: null },
                 { label: "DR Preliker", value: data?.hit_bonding_curve_dr },
-                { label: "DR Creator", value: data?.hit_bonding_curve_creator_dr },
+                {
+                  label: "DR Creator",
+                  value: data?.hit_bonding_curve_creator_dr,
+                },
               ],
               4
             )}
@@ -466,7 +469,10 @@ export default function AlgorithmPerformance() {
                 { label: "Ipvn", value: data?.swap_ipvn },
                 { label: "Ipvi", value: data?.swap_ipvi },
                 { label: "DR Trading", value: data?.swap_dr },
-                { label: "MaxAdj Trading", value: data?.swap_max_adjust_rate_dr },
+                {
+                  label: "MaxAdj Trading",
+                  value: data?.swap_max_adjust_rate_dr,
+                },
               ],
               4
             )}
@@ -483,7 +489,10 @@ export default function AlgorithmPerformance() {
                 { label: "Imin", value: data?.like_i_min },
                 { label: "Imax", value: data?.like_i_max },
                 { label: "Ir", value: data?.like_i_r },
-                { label: "MaxAdj liking", value: data?.like_ir_max_adjust_rate },
+                {
+                  label: "MaxAdj liking",
+                  value: data?.like_ir_max_adjust_rate,
+                },
               ],
               4
             )}
