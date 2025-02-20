@@ -174,13 +174,13 @@ export default function StatisticTrendCharts() {
 
         setEPOCHLAUNCHEDData({
           data: res.data.data.map(
-            (item: any) => item.epoch_meme_launched_count
+            (item: any) => item.epoch_meme_launching_count
           ),
           epochIds: epochIds,
         });
 
         setEPOCHHITData({
-          data: res.data.data.map((item: any) => item.epoch_meme_launching_count),
+          data: res.data.data.map((item: any) => item.epoch_meme_launched_count),
           epochIds: epochIds,
         });
 
