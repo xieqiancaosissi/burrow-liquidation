@@ -415,13 +415,13 @@ export default function StatisticTrendCharts() {
               <div className="text-sm text-gray-300">
                 TOTAL_LAUNCHING:{" "}
                 <span className="text-white ml-1">
-                  {data[0]?.total_meme_launched_count}
+                  {data[0]?.total_meme_launching_count}
                 </span>
               </div>
               <div className="text-sm text-gray-300">
                 TOTAL_LAUNCHED:{" "}
                 <span className="text-white ml-1">
-                  {data[0]?.total_flip_count}
+                  {data[0]?.total_meme_launched_count}
                 </span>
               </div>
             </div>
