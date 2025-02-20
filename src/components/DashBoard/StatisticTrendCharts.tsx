@@ -139,9 +139,7 @@ export default function StatisticTrendCharts() {
               return isNaN(value) ? "0" : value.toFixed(6);
             }),
             res.data.data.map((item: any) => {
-              const value = parseFloat(
-                item.epoch_reward_value
-              );
+              const value = parseFloat(item.epoch_reward_value);
               return isNaN(value) ? "0" : value.toFixed(9);
             }),
           ],
@@ -180,7 +178,9 @@ export default function StatisticTrendCharts() {
         });
 
         setEPOCHHITData({
-          data: res.data.data.map((item: any) => item.epoch_meme_launched_count),
+          data: res.data.data.map(
+            (item: any) => item.epoch_meme_launched_count
+          ),
           epochIds: epochIds,
         });
 
@@ -332,9 +332,7 @@ export default function StatisticTrendCharts() {
               </div>
               <div className="text-sm text-gray-300">
                 PRICE:
-                <span className="text-white ml-1">
-                  {data[0]?.token_price}
-                </span>
+                <span className="text-white ml-1">{data[0]?.token_price}</span>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -343,9 +341,7 @@ export default function StatisticTrendCharts() {
                   data={[
                     parseFloat(data[0]?.total_revenue || "0"),
                     parseFloat(
-                      String(
-                        data[0]?.total_reward * data[0]?.token_price || 0
-                      )
+                      String(data[0]?.total_reward * data[0]?.token_price || 0)
                     ),
                   ].map(Number)}
                   labels={["ACC_REV", "ACC_POINT_VAL"]}
@@ -417,13 +413,13 @@ export default function StatisticTrendCharts() {
                 </span>
               </div>
               <div className="text-sm text-gray-300">
-                TOTAL_LAUNCHED:{" "}
+                TOTAL_LAUNCHING:{" "}
                 <span className="text-white ml-1">
                   {data[0]?.total_meme_launched_count}
                 </span>
               </div>
               <div className="text-sm text-gray-300">
-                TOTAL_HIT:{" "}
+                TOTAL_LAUNCHED:{" "}
                 <span className="text-white ml-1">
                   {data[0]?.total_flip_count}
                 </span>
@@ -444,7 +440,7 @@ export default function StatisticTrendCharts() {
                   epochIds: EPOCHLAUNCHEDData.epochIds,
                 }}
                 colors={["#9966FF"]}
-                title="EPOCH_LAUNCHED"
+                title="EPOCH_LAUNCHING"
               />
               <ChartDisplay
                 data={{
@@ -452,7 +448,7 @@ export default function StatisticTrendCharts() {
                   epochIds: EPOCHHITData.epochIds,
                 }}
                 colors={["#FF6384"]}
-                title="EPOCH_HIT"
+                title="EPOCH_LAUNCHED"
               />
             </div>
           </div>
