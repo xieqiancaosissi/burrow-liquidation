@@ -135,14 +135,14 @@ export default function StatisticTrendCharts() {
         setEPOCHPOINTS({
           data: [
             res.data.data.map((item: any) => {
+              const value = parseFloat(item.epoch_reward);
+              return isNaN(value) ? "0" : value.toFixed(6);
+            }),
+            res.data.data.map((item: any) => {
               const value = parseFloat(
                 item.epoch_reward_value
               );
               return isNaN(value) ? "0" : value.toFixed(9);
-            }),
-            res.data.data.map((item: any) => {
-              const value = parseFloat(item.epoch_reward);
-              return isNaN(value) ? "0" : value.toFixed(6);
             }),
           ],
           epochIds: epochIds,
@@ -392,7 +392,7 @@ export default function StatisticTrendCharts() {
                   data: EPOCHPOINTS.data,
                   epochIds: EPOCHPOINTS.epochIds,
                 }}
-                colors={["#36A2EB", "#FFCE56"]}
+                colors={["#FFCE56", "#36A2EB"]}
                 title="EPOCH_POINTS"
               />
               <ChartDisplay
