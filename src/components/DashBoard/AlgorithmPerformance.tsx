@@ -277,6 +277,8 @@ export default function AlgorithmPerformance() {
                   { label: "PRICE", value: data?.swap_token_price },
                   { label: "PREV_IR", value: data?.pre_ir },
                   { label: "CUR_IR", value: data?.last_ir },
+                  { label: "PREV_DR_2", value: data?.swap_dr },
+                  { label: "CUR_DR_2", value: data?.hit_bonding_curve_dr },
                 ],
                 4
               )}
@@ -452,8 +454,9 @@ export default function AlgorithmPerformance() {
               [
                 { label: "N", value: data?.hit_bonding_curve_n },
                 { label: "Min Rev", value: data?.hit_bonding_curve_rev_min },
-                { label: "DR1", value: data?.hit_bonding_curve_dr },
-                { label: "Swap DR", value: data?.swap_dr },
+                { label: "Max Point", value: null },
+                { label: "DR Preliker", value: data?.hit_bonding_curve_dr },
+                { label: "DR Creator", value: data?.hit_bonding_curve_creator_dr },
               ],
               4
             )}
@@ -462,6 +465,8 @@ export default function AlgorithmPerformance() {
               [
                 { label: "Ipvn", value: data?.swap_ipvn },
                 { label: "Ipvi", value: data?.swap_ipvi },
+                { label: "DR Trading", value: data?.swap_dr },
+                { label: "MaxAdj Trading", value: data?.swap_max_adjust_rate_dr },
               ],
               4
             )}
@@ -478,6 +483,7 @@ export default function AlgorithmPerformance() {
                 { label: "Imin", value: data?.like_i_min },
                 { label: "Imax", value: data?.like_i_max },
                 { label: "Ir", value: data?.like_i_r },
+                { label: "MaxAdj liking", value: data?.like_ir_max_adjust_rate },
               ],
               4
             )}
