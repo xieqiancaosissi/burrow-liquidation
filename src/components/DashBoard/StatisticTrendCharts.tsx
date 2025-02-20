@@ -180,7 +180,7 @@ export default function StatisticTrendCharts() {
         });
 
         setEPOCHHITData({
-          data: res.data.data.map((item: any) => item.epoch_flip_count),
+          data: res.data.data.map((item: any) => item.epoch_meme_launching_count),
           epochIds: epochIds,
         });
 
