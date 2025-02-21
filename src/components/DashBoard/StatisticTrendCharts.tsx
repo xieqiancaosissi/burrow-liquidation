@@ -87,6 +87,8 @@ export default function StatisticTrendCharts() {
     data: [],
     epochIds: [],
   });
+  const [EPOCHMINPOINTSUMFORLIKINGData, setEPOCHMINPOINTSUMFORLIKINGData] =
+    useState<ChartData>({ data: [], epochIds: [] });
   const [loading, setLoading] = useState<boolean>(true);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
@@ -268,6 +270,11 @@ export default function StatisticTrendCharts() {
 
         setEPOCHIRData({
           data: res.data.data.map((item: any) => item.last_ir),
+          epochIds: epochIds,
+        });
+
+        setEPOCHMINPOINTSUMFORLIKINGData({
+          data: res.data.data.map((item: any) => item.epoch_like_min_reward),
           epochIds: epochIds,
         });
       }
@@ -676,6 +683,12 @@ export default function StatisticTrendCharts() {
                   {data[0]?.total_invalid_like_count}
                 </span>
               </div>
+              <div className="text-sm text-gray-300">
+              TOTAL_MIN_REWARD_SUM
+                <span className="text-white ml-1">
+                  {data[0]?.total_like_min_reward}
+                </span>
+              </div>
             </div>
             <div className="grid grid-cols-3 gap-4 mt-6">
               <ChartDisplay
@@ -709,6 +722,14 @@ export default function StatisticTrendCharts() {
                 }}
                 colors={["#FF6384"]}
                 title="EPOCH_AVG_POINT_FOR_LIKING"
+              />
+              <ChartDisplay
+                data={{
+                  data: EPOCHMINPOINTSUMFORLIKINGData.data,
+                  epochIds: EPOCHMINPOINTSUMFORLIKINGData.epochIds,
+                }}
+                colors={["#00FFD1"]}
+                title="EPOCH_MIN_POINT_SUM_FOR_LIKING"
               />
               <ChartDisplay
                 data={{
