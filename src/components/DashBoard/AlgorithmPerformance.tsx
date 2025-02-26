@@ -238,6 +238,10 @@ export default function AlgorithmPerformance() {
     );
   }
 
+  const averageGraduationRate = (data?.total_like_count / data?.total_like_user_count) * data?.total_average_points_per_like;
+  const averageHitBondingCurveRate = (data?.total_trade_amount / data?.total_trade_user_count) * data?.hit_bonding_curve_dr;
+  const averageAccumulatedVolume = data?.total_trade_amount / data?.total_trade_user_count;
+
   return (
     <div className="flex h-screen">
       {loading ? (
@@ -309,7 +313,7 @@ export default function AlgorithmPerformance() {
               {renderStatistics(
                 "Bonding Curve Incentives (B & C)",
                 [
-                  { label: "HIT_MEME", value: data?.total_meme_created_count },
+                  { label: "LAUNCHED_MEME", value: data?.total_meme_launched_count },
                   {
                     label: "POINT_FOR_CREATORS",
                     value: data?.total_launched_creator_reward,
@@ -338,26 +342,24 @@ export default function AlgorithmPerformance() {
                   },
                   {
                     label: "POINT_FOR_EARLY_LIKERS",
-                    value: data?.total_launched_creator_reward,
+                    value: data?.total_like_reward,
                   },
                   {
                     label: "POINT_VAL_FOR_EARLY_LIKERS",
-                    value: data?.total_launched_creator_reward_value,
+                    value: data?.total_like_reward_value,
                   },
                   {
                     label: "AVG_POINT_PER_EARLY_LIKER",
                     value:
                       data?.total_like_user_count > 0
-                        ? data?.total_launched_creator_reward /
-                          data?.hit_bonding_curve_n
+                        ? data?.total_like_reward / data?.hit_bonding_curve_n
                         : 0,
                   },
                   {
                     label: "AVG_POINT_VAL_PER_EARLY_LIKER",
                     value:
                       data?.total_like_user_count > 0
-                        ? data?.total_launched_creator_reward_value /
-                          data?.total_like_user_count
+                        ? data?.total_like_reward_value / data?.hit_bonding_curve_n
                         : 0,
                   },
                   {
@@ -404,16 +406,15 @@ export default function AlgorithmPerformance() {
                   },
                   {
                     label: "AVG_R0",
-                    value:
-                      data?.epoch_average_launched_creator_reward_per_token,
+                    value: averageGraduationRate,
                   },
                   {
                     label: "AVG_R1",
-                    value: data?.hit_bonding_curve_dr,
+                    value: averageHitBondingCurveRate,
                   },
                   {
                     label: "AVG_R2",
-                    value: data?.total_trade_amount,
+                    value: averageAccumulatedVolume,
                   },
                   {
                     label: "STD_DEV",
@@ -476,39 +477,59 @@ export default function AlgorithmPerformance() {
               ],
               4
             )}
+             {renderStatistics(
+              "Liking Reward",
+              [],
+              4
+            )}
             {renderStatistics(
-              " Graduation Rate Reward",
+              "Weight of 3 dimensions",
               [
-                { label: "Log Base", value: data?.like_log_base },
                 { label: "Alpha", value: data?.like_alpha },
                 { label: "Beta", value: data?.like_beta },
                 { label: "Gamma", value: data?.like_gamma },
+              ],
+              3
+            )}
+             {renderStatistics(
+              "Volume dimension params",
+              [
+                { label: "recent_n", value: null },
+                { label: "max_acc_vol", value: null },
+                { label: "base", value: null },
+                { label: "extension_rate_slash", value: null },
+                { label: "offset_rate_e2", value: null },
+              ],
+              3
+            )}
+             {renderStatistics(
+              "Z and Incentive range params",
+              [
                 { label: "Zs", value: data?.like_zs },
                 { label: "Zr", value: data?.like_zr },
-                { label: "Is", value: data?.like_i_s },
                 { label: "Imin", value: data?.like_i_min },
                 { label: "Imax", value: data?.like_i_max },
+                { label: "Is", value: data?.like_i_s },
+              ],
+              3
+            )}
+             {renderStatistics(
+              "Auto-adjustment params",
+              [
                 { label: "Ir", value: data?.like_i_r },
+                {
+                  label: "tdr_liking",
+                  value: null,
+                },
                 {
                   label: "MaxAdj liking",
                   value: data?.like_ir_max_adjust_rate,
                 },
               ],
-              4
+              3
             )}
-            {renderStatistics(
-              "New User Policy",
-              [
-                {
-                  label: "LIMIT_T",
-                  value: `${data?.like_item_robot_check_x_time / 3600} hours`,
-                },
-                { label: "LIMIT_ACCV", value: 0 },
-              ],
-              4
-            )}
-            {renderStatistics(
-              "Bots Policy",
+             {renderStatistics(
+              "Antibot params",
               [
                 {
                   label: "ULR_FOR_MIN",
@@ -521,6 +542,17 @@ export default function AlgorithmPerformance() {
                 { label: "N", value: data?.like_item_robot_check_n_count },
                 { label: "K", value: data?.like_multi_robot_max_k_rate },
                 { label: "M", value: data?.like_multi_robot_max_m_count },
+              ],
+              3
+            )}
+            {renderStatistics(
+              "New User Policy",
+              [
+                {
+                  label: "LIMIT_T",
+                  value: `${data?.like_item_robot_check_x_time / 3600} hours`,
+                },
+                { label: "LIMIT_ACCV", value: 0 },
               ],
               4
             )}
