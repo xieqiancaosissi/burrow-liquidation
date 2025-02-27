@@ -494,11 +494,11 @@ export default function AlgorithmPerformance() {
              {renderStatistics(
               "Volume dimension params",
               [
-                { label: "recent_n", value: null },
-                { label: "max_acc_vol", value: null },
-                { label: "base", value: null },
-                { label: "extension_rate_slash", value: null },
-                { label: "offset_rate_e2", value: null },
+                { label: "recent_n", value: data?.like_recent_n },
+                { label: "max_acc_vol", value: data?.like_multi_robot_max_m_count },
+                { label: "base", value: data?.like_log_base },
+                { label: "extension_rate_slash", value: data?.like_extension_rate_slash },
+                { label: "offset_rate_e2", value: data?.like_e2 },
               ],
               3
             )}
