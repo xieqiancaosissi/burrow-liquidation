@@ -280,7 +280,12 @@ export default function StatisticTrendCharts() {
       }
       setLoading(false);
     };
+
     fetchData();
+
+    const intervalId = setInterval(fetchData, 60000);
+
+    return () => clearInterval(intervalId);
   }, []);
   return (
     <div className="text-white">

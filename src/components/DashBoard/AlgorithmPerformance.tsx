@@ -21,6 +21,10 @@ export default function AlgorithmPerformance() {
       setLoading(false);
     };
     fetchData();
+    
+    const intervalId = setInterval(fetchData, 60000);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   const revenueOption = {
