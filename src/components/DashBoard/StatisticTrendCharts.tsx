@@ -308,7 +308,7 @@ export default function StatisticTrendCharts() {
                 ACC_REV:
                 <span className="text-white ml-1">
                   {formatNumber(
-                    data[0]?.total_revenue, 
+                    data[0]?.total_revenue,
                     hoveredItem === "ACC_REV",
                     "revenue"
                   )}
@@ -689,7 +689,7 @@ export default function StatisticTrendCharts() {
                 </span>
               </div>
               <div className="text-sm text-gray-300">
-              TOTAL_MIN_REWARD_SUM
+                TOTAL_MIN_REWARD_SUM
                 <span className="text-white ml-1">
                   {data[0]?.total_like_min_reward}
                 </span>

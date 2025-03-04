@@ -21,7 +21,7 @@ export default function AlgorithmPerformance() {
       setLoading(false);
     };
     fetchData();
-    
+
     const intervalId = setInterval(fetchData, 60000);
 
     return () => clearInterval(intervalId);
@@ -31,7 +31,7 @@ export default function AlgorithmPerformance() {
     title: {
       text: "Revenue Distribution",
       left: "25%",
-      top: 60,
+      top: 40,
       textStyle: {
         color: "#C0C4E9",
         fontSize: 20,
@@ -72,16 +72,16 @@ export default function AlgorithmPerformance() {
           shadowColor: "rgba(0, 0, 0, 0)",
         },
         label: {
-          show: false,
-          position: "center",
+          show: true,
+          position: "outside",
           formatter: "{b}: {c} ({d}%)",
           textStyle: {
-            fontSize: "20",
+            fontSize: "10",
             color: "#C0C4E9",
           },
         },
         labelLine: {
-          show: false,
+          show: true,
         },
         emphasis: {
           scale: true,
@@ -127,9 +127,19 @@ export default function AlgorithmPerformance() {
   if (totalRevenue === 0) {
     revenueOption.series[0].data = [
       {
-        value: 1,
-        name: "No Data",
-        itemStyle: { color: "rgba(128, 128, 128, 0.8)" },
+        value: 0,
+        name: "Swap Reward",
+        itemStyle: { color: "rgba(54, 162, 235, 0.8)" },
+      },
+      {
+        value: 0,
+        name: "Like Reward",
+        itemStyle: { color: "rgba(255, 205, 86, 0.8)" },
+      },
+      {
+        value: 0,
+        name: "Others",
+        itemStyle: { color: "rgba(75, 192, 192, 0.8)" },
       },
     ];
   }
@@ -138,7 +148,7 @@ export default function AlgorithmPerformance() {
     title: {
       text: "User Ranking",
       left: "29%",
-      top: 60,
+      top: 40,
       textStyle: {
         color: "#C0C4E9",
         fontSize: 20,
@@ -179,16 +189,16 @@ export default function AlgorithmPerformance() {
           shadowColor: "rgba(0, 0, 0, 0)",
         },
         label: {
-          show: false,
-          position: "center",
+          show: true,
+          position: "outside",
           formatter: "{b}: {c} ({d}%)",
           textStyle: {
-            fontSize: "20",
+            fontSize: "10",
             color: "#C0C4E9",
           },
         },
         labelLine: {
-          show: false,
+          show: true,
         },
         emphasis: {
           scale: true,
@@ -223,16 +233,36 @@ export default function AlgorithmPerformance() {
     ];
   }
 
-  function renderStatistics(label: string, data: any[], columnCount: number) {
+  function StatisticsSection({
+    label,
+    data,
+    columnCount,
+  }: {
+    label: string;
+    data: any[];
+    columnCount: number;
+  }) {
+    const [hoveredItem, setHoveredItem] = useState<string | null>(null);
     return (
-      <div className="w-full text-white mb-4">
-        <div className="text-purple-50 font-bold mb-2">{label}</div>
+      <div className="w-full text-white">
+        {label && <div className="text-purple-50 font-bold mb-2">{label}</div>}
         <div className="flex flex-wrap -mx-4">
-          {data.map(({ label, value }) => (
+          {data.map(({ label, value, valueDetail }) => (
             <div className={`w-${12 / columnCount} px-2 pb-4`} key={label}>
-              <div className="bg-dark-100 p-3 rounded-lg shadow-md w-full">
+              <div
+                className={`${
+                  valueDetail ? "cursor-pointer hover:bg-opacity-50" : ""
+                } bg-dark-100 p-3 rounded-lg shadow-md w-full relative`}
+                onMouseEnter={() => valueDetail && setHoveredItem(label)}
+                onMouseLeave={() => valueDetail && setHoveredItem(null)}
+              >
                 <div>
-                  {label}: {value}
+                  {label}: {valueDetail ? <span>{value}</span> : value}
+                  {hoveredItem === label && valueDetail && (
+                    <div className="w-auto flex items-center absolute z-10 bg-gray-800 text-white px-3 py-1.5 rounded-md text-sm -top-12 left-1/2 transform -translate-x-1/2">
+                      {valueDetail}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -241,10 +271,6 @@ export default function AlgorithmPerformance() {
       </div>
     );
   }
-
-  const averageGraduationRate = (data?.total_like_count / data?.total_like_user_count) * data?.total_average_points_per_like;
-  const averageHitBondingCurveRate = (data?.total_trade_amount / data?.total_trade_user_count) * data?.hit_bonding_curve_dr;
-  const averageAccumulatedVolume = data?.total_trade_amount / data?.total_trade_user_count;
 
   return (
     <div className="flex h-screen">
@@ -279,171 +305,150 @@ export default function AlgorithmPerformance() {
               <p className="flex items-center text-purple-50 text-lg font-bold mb-4">
                 Statistics
               </p>
-              {renderStatistics(
-                "Common",
-                [
-                  { label: "PRICE", value: data?.token_price },
-                  { label: "PREV_IR", value: data?.pre_ir },
-                  { label: "CUR_IR", value: data?.last_ir },
-                  { label: "PREV_DR_2", value: data?.swap_dr },
-                  { label: "CUR_DR_2", value: data?.hit_bonding_curve_dr },
-                ],
-                4
-              )}
-              {renderStatistics(
-                "Ranking",
-                data.user_count_each_level?.map(
-                  (count: number, index: number) => ({
-                    label: `Level ${index + 1}`,
-                    value: count,
-                  })
-                ) || [],
-                4
-              )}
-              {renderStatistics(
-                "Trading Incentives (A)",
-                [
+              <StatisticsSection
+                label="Common"
+                data={[
+                  { label: "Price", value: data?.token_price },
+                  { label: "Prev_ir", value: data?.pre_ir },
+                  { label: "Cur_ir", value: data?.last_ir },
+                  { label: "Prev_swap_dr", value: data?.pre_swap_dr },
+                  { label: "Cur_swap_dr", value: data?.swap_dr },
+                ]}
+                columnCount={5}
+              />
+              <StatisticsSection
+                label="Trading Incentives (A)"
+                data={[
                   {
-                    label: "POINT_FOR_TRADING",
+                    label: "Point_for_trading",
                     value: data?.total_launched_reward,
+                    valueDetail: `${data?.total_launched_reward_value}`,
+                  },
+                ]}
+                columnCount={1}
+              />
+              <StatisticsSection
+                label="Bonding Curve Incentives (B & C)"
+                data={[
+                  { label: "New_meme", value: data?.total_meme_created_count },
+                  {
+                    label: "Launching_meme",
+                    value: data?.total_meme_launching_count,
                   },
                   {
-                    label: "POINT_VAL_FOR_TRADING",
-                    value: data?.total_launched_reward_value,
+                    label: "Launched_meme",
+                    value: data?.total_meme_launched_count,
                   },
-                ],
-                4
-              )}
-              {renderStatistics(
-                "Bonding Curve Incentives (B & C)",
-                [
-                  { label: "LAUNCHED_MEME", value: data?.total_meme_launched_count },
+                ]}
+                columnCount={3}
+              />
+              <StatisticsSection
+                label=""
+                data={[
                   {
-                    label: "POINT_FOR_CREATORS",
+                    label: "Point_for_creators",
                     value: data?.total_launched_creator_reward,
+                    valueDetail: `${data?.total_launched_creator_reward_value}`,
                   },
                   {
-                    label: "POINT_VAL_FOR_CREATORS",
-                    value: data?.total_launched_creator_reward_value,
-                  },
-                  {
-                    label: "AVG_POINT_PER_CREATOR",
+                    label: "Avg_point_per_creator",
                     value:
-                      data?.total_meme_created_count > 0 &&
-                      data?.total_launched_creator_reward > 0
-                        ? data?.total_launched_creator_reward /
-                          data?.total_meme_created_count
-                        : 0,
+                      data?.total_launched_creator_reward /
+                      data?.total_meme_created_count,
+                    valueDetail: `${
+                      data?.total_launched_creator_reward_value /
+                      data?.total_meme_created_count
+                    }`,
                   },
+                ]}
+                columnCount={3}
+              />
+              <StatisticsSection
+                label=""
+                data={[
                   {
-                    label: "AVG_POINT_VAL_PER_CREATOR",
-                    value:
-                      data?.total_meme_created_count > 0 &&
-                      data?.total_launched_creator_reward_value > 0
-                        ? data?.total_launched_creator_reward_value /
-                          data?.total_meme_created_count
-                        : 0,
-                  },
-                  {
-                    label: "POINT_FOR_EARLY_LIKERS",
+                    label: "Point_for_early_likers",
                     value: data?.total_like_reward,
+                    valueDetail: `${data?.total_like_reward_value}`,
                   },
                   {
-                    label: "POINT_VAL_FOR_EARLY_LIKERS",
-                    value: data?.total_like_reward_value,
+                    label: "Avg_point_per_early_liker",
+                    value: data?.total_like_reward / data?.hit_bonding_curve_n,
+                    valueDetail: `${
+                      data?.total_like_reward_value / data?.hit_bonding_curve_n
+                    }`,
                   },
                   {
-                    label: "AVG_POINT_PER_EARLY_LIKER",
-                    value:
-                      data?.total_like_user_count > 0
-                        ? data?.total_like_reward / data?.hit_bonding_curve_n
-                        : 0,
-                  },
-                  {
-                    label: "AVG_POINT_VAL_PER_EARLY_LIKER",
-                    value:
-                      data?.total_like_user_count > 0
-                        ? data?.total_like_reward_value / data?.hit_bonding_curve_n
-                        : 0,
-                  },
-                  {
-                    label: "MIN_POINT_FOR_EARLY_LIKER",
+                    label: "Min_point_for_early_liker",
                     value: data?.like_i_min,
                   },
                   {
-                    label: "MAX_POINT_FOR_EARLY_LIKER",
+                    label: "Max_point_for_early_liker",
                     value: data?.like_i_max,
                   },
-                ],
-                4
-              )}
-              {renderStatistics(
-                "Liker Incentives (D)",
-                [
-                  { label: "LIKING", value: data?.total_like_count },
+                ]}
+                columnCount={3}
+              />
+              <StatisticsSection
+                label="Liker Incentives (D)"
+                data={[
+                  { label: "Liking", value: data?.total_like_count },
                   {
-                    label: "LIKING_USER",
-                    value: data?.total_like_user_count,
-                  },
-                  { label: "POINT_FOR_LIKING", value: data?.total_like_reward },
-                  {
-                    label: "POINT_VAL_FOR_LIKING",
-                    value: data?.total_like_reward_value,
-                  },
-                  {
-                    label: "AVG_POINT_PER_LIKING",
-                    value:
-                      data?.total_like_count > 0
-                        ? data?.total_like_reward / data?.total_like_count
-                        : 0,
-                  },
-                  {
-                    label: "AVG_POINT_VAL_PER_LIKING",
-                    value:
-                      data?.total_like_count > 0
-                        ? data?.total_like_reward_value / data?.total_like_count
-                        : 0,
-                  },
-                  {
-                    label: "INVALID_LIKINGt",
+                    label: "Invalid_liking",
                     value: data?.total_invalid_like_count,
                   },
+                  { label: "Minimum_reward_like_count", value: null },
+                ]}
+                columnCount={4}
+              />
+              <StatisticsSection
+                label=""
+                data={[
+                  { label: "Liking_user", value: data?.total_like_user_count },
                   {
-                    label: "AVG_R0",
-                    value: averageGraduationRate,
+                    label: "Point_for_liking",
+                    value: data?.total_like_reward,
+                    valueDetail: `${data?.total_like_reward_value}`,
                   },
                   {
-                    label: "AVG_R1",
-                    value: averageHitBondingCurveRate,
+                    label: "Avg_point_per_liking",
+                    value:
+                      data?.total_like_reward / data?.total_like_user_count,
+                    valueDetail: `${
+                      data?.total_like_reward_value /
+                      data?.total_like_user_count
+                    }`,
                   },
-                  {
-                    label: "AVG_R2",
-                    value: averageAccumulatedVolume,
-                  },
-                  {
-                    label: "STD_DEV",
-                    value: data?.std,
-                  },
-                ],
-                4
-              )}
+                ]}
+                columnCount={4}
+              />
+              <StatisticsSection
+                label=""
+                data={[
+                  { label: "Avg_r0", value: null },
+                  { label: "Avg_r1", value: null },
+                  { label: "Avg_r2", value: null },
+                  { label: "Std_dev", value: data?.std },
+                ]}
+                columnCount={4}
+              />
             </div>
           </div>
           <div className="w-2/6 p-6">
             <p className="flex items-center text-purple-50 text-lg font-bold mb-4">
               Current Configuration
             </p>
-            {renderStatistics(
-              "Trading",
-              [
+            <StatisticsSection
+              label="Trading"
+              data={[
                 { label: "Buy Fee Rate", value: data?.buy_fee_rate },
                 { label: "Sell Fee Rate", value: data?.sell_fee_rate },
-              ],
-              2
-            )}
-            {renderStatistics(
-              "Ranking",
-              [
+              ]}
+              columnCount={2}
+            />
+            <StatisticsSection
+              label="Ranking"
+              data={[
                 {
                   label: "Rates",
                   value: (data?.ranking_rates || []).join(", "),
@@ -451,12 +456,12 @@ export default function AlgorithmPerformance() {
                 { label: "SBRs", value: (data?.ranking_sbrs || []).join(", ") },
                 { label: "K", value: data?.ranking_k },
                 { label: "Pump Rate", value: data?.ranking_pump_rate },
-              ],
-              2
-            )}
-            {renderStatistics(
-              "Hit Bonding Curve",
-              [
+              ]}
+              columnCount={2}
+            />
+            <StatisticsSection
+              label="Hit Bonding Curve"
+              data={[
                 { label: "N", value: data?.hit_bonding_curve_n },
                 { label: "Min Rev", value: data?.hit_bonding_curve_rev_min },
                 { label: "Max Point", value: null },
@@ -465,12 +470,12 @@ export default function AlgorithmPerformance() {
                   label: "DR Creator",
                   value: data?.hit_bonding_curve_creator_dr,
                 },
-              ],
-              4
-            )}
-            {renderStatistics(
-              "TradingIncentives",
-              [
+              ]}
+              columnCount={4}
+            />
+            <StatisticsSection
+              label="TradingIncentives"
+              data={[
                 { label: "Ipvn", value: data?.swap_ipvn },
                 { label: "Ipvi", value: data?.swap_ipvi },
                 { label: "DR Trading", value: data?.swap_dr },
@@ -478,48 +483,54 @@ export default function AlgorithmPerformance() {
                   label: "MaxAdj Trading",
                   value: data?.swap_max_adjust_rate_dr,
                 },
-              ],
-              4
-            )}
-             {renderStatistics(
-              "Liking Reward",
-              [],
-              4
-            )}
-            {renderStatistics(
-              "Weight of 3 dimensions",
-              [
+              ]}
+              columnCount={4}
+            />
+            <StatisticsSection
+              label="Liking Reward"
+              data={[]}
+              columnCount={4}
+            />
+            <StatisticsSection
+              label="Weight of 3 dimensions"
+              data={[
                 { label: "Alpha", value: data?.like_alpha },
                 { label: "Beta", value: data?.like_beta },
                 { label: "Gamma", value: data?.like_gamma },
-              ],
-              3
-            )}
-             {renderStatistics(
-              "Volume dimension params",
-              [
+              ]}
+              columnCount={3}
+            />
+            <StatisticsSection
+              label="Volume dimension params"
+              data={[
                 { label: "recent_n", value: data?.like_recent_n },
-                { label: "max_acc_vol", value: data?.like_multi_robot_max_m_count },
+                {
+                  label: "max_acc_vol",
+                  value: data?.like_multi_robot_max_m_count,
+                },
                 { label: "base", value: data?.like_log_base },
-                { label: "extension_rate_slash", value: data?.like_extension_rate_slash },
+                {
+                  label: "extension_rate_slash",
+                  value: data?.like_extension_rate_slash,
+                },
                 { label: "offset_rate_e2", value: data?.like_e2 },
-              ],
-              3
-            )}
-             {renderStatistics(
-              "Z and Incentive range params",
-              [
+              ]}
+              columnCount={3}
+            />
+            <StatisticsSection
+              label="Z and Incentive range params"
+              data={[
                 { label: "Zs", value: data?.like_zs },
                 { label: "Zr", value: data?.like_zr },
                 { label: "Imin", value: data?.like_i_min },
                 { label: "Imax", value: data?.like_i_max },
                 { label: "Is", value: data?.like_i_s },
-              ],
-              3
-            )}
-             {renderStatistics(
-              "Auto-adjustment params",
-              [
+              ]}
+              columnCount={3}
+            />
+            <StatisticsSection
+              label="Auto-adjustment params"
+              data={[
                 { label: "Ir", value: data?.like_i_r },
                 {
                   label: "tdr_liking",
@@ -529,14 +540,14 @@ export default function AlgorithmPerformance() {
                   label: "MaxAdj liking",
                   value: data?.like_ir_max_adjust_rate,
                 },
-              ],
-              3
-            )}
-             {renderStatistics(
-              "Antibot params",
-              [
+              ]}
+              columnCount={3}
+            />
+            <StatisticsSection
+              label="Antibot params"
+              data={[
                 {
-                  label: "ULR_FOR_MIN",
+                  label: "Ulr_for_min",
                   value: data?.like_min_reward_upper_limit_rate,
                 },
                 {
@@ -546,20 +557,20 @@ export default function AlgorithmPerformance() {
                 { label: "N", value: data?.like_item_robot_check_n_count },
                 { label: "K", value: data?.like_multi_robot_max_k_rate },
                 { label: "M", value: data?.like_multi_robot_max_m_count },
-              ],
-              3
-            )}
-            {renderStatistics(
-              "New User Policy",
-              [
+              ]}
+              columnCount={3}
+            />
+            <StatisticsSection
+              label="New User Policy"
+              data={[
                 {
-                  label: "LIMIT_T",
+                  label: "Limit_t",
                   value: `${data?.like_item_robot_check_x_time / 3600} hours`,
                 },
-                { label: "LIMIT_ACCV", value: 0 },
-              ],
-              4
-            )}
+                { label: "Limit_accv", value: 0 },
+              ]}
+              columnCount={4}
+            />
           </div>
         </>
       )}
