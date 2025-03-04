@@ -74,7 +74,7 @@ export default function AlgorithmPerformance() {
         label: {
           show: true,
           position: "outside",
-          formatter: "{b}: {c} ({d}%)",
+          formatter: "{b}: {c}",
           textStyle: {
             fontSize: "10",
             color: "#C0C4E9",
@@ -191,7 +191,7 @@ export default function AlgorithmPerformance() {
         label: {
           show: true,
           position: "outside",
-          formatter: "{b}: {c} ({d}%)",
+          formatter: "{b}: {c}",
           textStyle: {
             fontSize: "10",
             color: "#C0C4E9",
