@@ -481,7 +481,7 @@ export default function StatisticTrendCharts() {
                       String(data[0]?.total_reward * data[0]?.token_price || 0)
                     ),
                   ].map(Number)}
-                  labels={["ACC_REV", "ACC_POINT_VAL"]}
+                  labels={["ACC REV", "ACC TOKEN"]}
                   colors={[
                     "rgba(54, 162, 235, 0.8)",
                     "rgba(255, 205, 86, 0.8)",

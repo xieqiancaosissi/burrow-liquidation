@@ -18,12 +18,21 @@ const PieChart: React.FC<PieChartProps> = ({ data, labels, colors }) => {
     },
     legend: {
       orient: "vertical",
-      right: "25%",
+      right: "15%",
       bottom: "5%",
-      textStyle: { color: "#C0C4E9", fontSize: 12 },
+      textStyle: {
+        color: "#C0C4E9",
+        fontSize: 12,
+      },
       itemGap: 12,
       itemWidth: 10,
       itemHeight: 10,
+      formatter: (name: string) => {
+        const value = option.series[0].data.find(
+          (item: { name: string; value: number }) => item.name === name
+        )?.value || 0;
+        return `${name}: ${value}`;
+      },
     },
     series: [
       {
