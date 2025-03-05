@@ -41,17 +41,13 @@ export default function ChartDisplay({
   const getSeriesConfig = (d: number[], i: number) => ({
     data: d.slice().reverse(),
     type: chartType,
-    smooth: true,
+    smooth: false,
     symbol: chartType === "line" ? "circle" : undefined,
     symbolSize: chartType === "line" ? 4 : undefined,
     lineStyle:
       chartType === "line"
         ? {
             width: 2,
-            cap: "round",
-            join: "round",
-            borderRadius: 10,
-            smooth: true,
           }
         : undefined,
     itemStyle: {
