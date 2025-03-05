@@ -3,6 +3,24 @@ import ChartDisplay from "./ChartDisplay";
 import { getDashBoardData } from "@/services/api";
 import { BeatLoading } from "../Loading";
 import PieChart from "./PieChart";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 interface ChartData {
   data: number[] | number[][];
@@ -23,6 +41,7 @@ export default function StatisticTrendCharts() {
     data: [],
     epochIds: [],
   });
+
   const [EPOCHMEMEData, setEPOCHMEMEData] = useState<ChartData>({
     data: [],
     epochIds: [],
@@ -89,6 +108,12 @@ export default function StatisticTrendCharts() {
   });
   const [EPOCHMINPOINTSUMFORLIKINGData, setEPOCHMINPOINTSUMFORLIKINGData] =
     useState<ChartData>({ data: [], epochIds: [] });
+  const [EPOCHMINREWARDTOKENData, setEPOCHMINREWARDTOKENData] =
+    useState<ChartData>({ data: [], epochIds: [] });
+  const [PERIODCONTENTCREATORData, setPERIODCONTENTCREATORData] =
+    useState<ChartData>({ data: [], epochIds: [] });
+  const [PERIODCONTENTCREATORTOKENData, setPERIODCONTENTCREATORTOKENData] =
+    useState<ChartData>({ data: [], epochIds: [] });
   const [loading, setLoading] = useState<boolean>(true);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
@@ -120,6 +145,81 @@ export default function StatisticTrendCharts() {
   const handleMouseEnter = (item: string) => setHoveredItem(item);
   const handleMouseLeave = () => setHoveredItem(null);
 
+  const EpochProgressBar = () => {
+    const startDate = new Date(new Date().getFullYear(), 0, 1);
+    const currentDate = new Date();
+    const progressInMinutes = Math.floor(
+      (currentDate.getTime() - startDate.getTime()) / (600 * 1000)
+    );
+    const totalMinutesInYear = Math.floor((365 * 24 * 60 * 60) / 600);
+
+    return (
+      <div className="mb-6">
+        <div className="bg-gray-700 h-6 rounded-full overflow-hidden">
+          <div
+            className="bg-[#2050e9] h-full transition-all duration-500"
+            style={{
+              width: `${(progressInMinutes / totalMinutesInYear) * 100}%`,
+            }}
+          >
+            <span className="px-4 text-white text-xs">
+              {progressInMinutes} / {totalMinutesInYear} bars
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const PeriodProgressBar = () => {
+    const startDate = new Date(new Date().getFullYear(), 0, 1);
+    const currentDate = new Date();
+    const dayInMs = 24 * 60 * 60 * 1000;
+    const periodLength = 7 * dayInMs; // 7 days in milliseconds
+
+    const currentPeriod = Math.floor(
+      (currentDate.getTime() - startDate.getTime()) / periodLength
+    );
+    const totalPeriodsInYear = Math.floor(365 / 7);
+
+    const currentPeriodStartDate = new Date(
+      startDate.getTime() + currentPeriod * periodLength
+    );
+    const progressInCurrentPeriod =
+      ((currentDate.getTime() - currentPeriodStartDate.getTime()) /
+        periodLength) *
+      100;
+
+    return (
+      <div className="mb-6">
+        <div className="flex gap-12 mb-4">
+          <div className="text-sm text-gray-300">
+            current period:
+            <span className="text-white ml-1">{currentPeriod}</span>
+          </div>
+          <div className="text-sm text-gray-300">
+            finalized period:
+            <span className="text-white ml-1">{data[0]?.epoch_id || "-"}</span>
+          </div>
+          <div className="text-sm text-gray-300">
+            period last:
+            <span className="text-white ml-1">7 days</span>
+          </div>
+        </div>
+        <div className="bg-gray-700 h-6 rounded-full overflow-hidden">
+          <div
+            className="bg-[#2050e9] h-full transition-all duration-500"
+            style={{ width: `${progressInCurrentPeriod}%` }}
+          >
+            <span className="px-4 text-white text-xs">
+              {Math.floor(progressInCurrentPeriod)}% of current period
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       const res = await getDashBoardData();
@@ -149,20 +249,24 @@ export default function StatisticTrendCharts() {
         });
 
         setAdScaleData({
-          data: [
-            res.data.data.map((item: any) => {
-              const epochRevenue = parseFloat(item.epoch_revenue);
-              return epochRevenue === 0
-                ? 0
-                : (item.epoch_trade_reward / epochRevenue) * 100;
-            }),
-            res.data.data.map((item: any) => {
-              const epochRevenue = parseFloat(item.epoch_revenue);
-              return epochRevenue === 0
-                ? 0
-                : (item.epoch_like_reward / epochRevenue) * 100;
-            }),
-          ],
+          data: res.data.data.map((item: any) => {
+            const likeReward = parseFloat(item.epoch_like_reward) || 0;
+            const epochRevenue = parseFloat(item.epoch_revenue) || 1;
+            const tokenPrice = parseFloat(item.token_price) || 1;
+
+            if (
+              !likeReward ||
+              !epochRevenue ||
+              !tokenPrice ||
+              isNaN(likeReward) ||
+              isNaN(epochRevenue) ||
+              isNaN(tokenPrice)
+            ) {
+              return 0;
+            }
+
+            return likeReward / (epochRevenue / tokenPrice);
+          }),
           epochIds: epochIds,
         });
 
@@ -297,6 +401,32 @@ export default function StatisticTrendCharts() {
         <div className="grid grid-cols-1 gap-4">
           <div className="px-4 pt-4 border border-dark-100 rounded bg-dark-650 shadow-2xl">
             <h3 className="text-xl font-bold mb-4 text-gray-300">
+              Epoch Progress
+            </h3>
+            <div className="flex gap-12 mb-4">
+              <div className="text-sm text-gray-300">
+                cur epoch:
+                <span className="text-white ml-1">
+                  {Math.floor(
+                    (new Date().getTime() -
+                      new Date(new Date().getFullYear(), 0, 1).getTime()) /
+                      (600 * 1000)
+                  )}
+                </span>
+              </div>
+              <div className="text-sm text-gray-300">
+                finalized epoch:
+                <span className="text-white ml-1">{data[0]?.epoch_id}</span>
+              </div>
+              <div className="text-sm text-gray-300">
+                epoch last:
+                <span className="text-white ml-1">600 seconds</span>
+              </div>
+            </div>
+            <EpochProgressBar />
+          </div>
+          <div className="px-4 pt-4 border border-dark-100 rounded bg-dark-650 shadow-2xl">
+            <h3 className="text-xl font-bold mb-4 text-gray-300">
               Revenue and Incentives
             </h3>
             <div className="flex gap-12 mb-4">
@@ -305,7 +435,7 @@ export default function StatisticTrendCharts() {
                 onMouseEnter={() => handleMouseEnter("ACC_REV")}
                 onMouseLeave={handleMouseLeave}
               >
-                ACC_REV:
+                ACC REV:
                 <span className="text-white ml-1">
                   {formatNumber(
                     data[0]?.total_revenue,
@@ -315,35 +445,30 @@ export default function StatisticTrendCharts() {
                 </span>
               </div>
               <div
-                className="text-sm text-gray-300 cursor-pointer"
-                onMouseEnter={() => handleMouseEnter("ACC_POINT")}
+                className="text-sm text-gray-300 cursor-pointer relative"
+                onMouseEnter={() => handleMouseEnter("ACC_TOKEN")}
                 onMouseLeave={handleMouseLeave}
               >
-                ACC_POINT:
+                ACC TOKEN:
                 <span className="text-white ml-1">
                   {formatNumber(
                     data[0]?.total_reward,
-                    hoveredItem === "ACC_POINT",
+                    hoveredItem === "ACC_TOKEN",
                     "point"
                   )}
                 </span>
-              </div>
-              <div
-                className="text-sm text-gray-300 cursor-pointer"
-                onMouseEnter={() => handleMouseEnter("ACC_POINT_VAL")}
-                onMouseLeave={handleMouseLeave}
-              >
-                ACC_POINT_VAL:
-                <span className="text-white ml-1">
-                  {formatNumber(
-                    data[0]?.total_reward * data[0]?.token_price,
-                    hoveredItem === "ACC_POINT_VAL",
-                    "value"
-                  )}
-                </span>
+                {hoveredItem === "ACC_TOKEN" && (
+                  <div className="absolute z-10 bg-gray-800 text-white px-3 py-1.5 rounded-md text-sm -top-10 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                    {formatNumber(
+                      data[0]?.total_reward * data[0]?.token_price,
+                      true,
+                      "value"
+                    )}
+                  </div>
+                )}
               </div>
               <div className="text-sm text-gray-300">
-                PRICE:
+                TOKEN PRICE:
                 <span className="text-white ml-1">{data[0]?.token_price}</span>
               </div>
             </div>
@@ -393,7 +518,7 @@ export default function StatisticTrendCharts() {
                   epochIds: EPOCHREVChartData.epochIds,
                 }}
                 colors={["#FF6384"]}
-                title="EPOCH_REV"
+                title="EPOCH REV"
               />
               <ChartDisplay
                 data={{
@@ -401,15 +526,16 @@ export default function StatisticTrendCharts() {
                   epochIds: EPOCHPOINTS.epochIds,
                 }}
                 colors={["#FFCE56", "#36A2EB"]}
-                title="EPOCH_POINTS"
+                title="EPOCH TOKEN"
               />
               <ChartDisplay
                 data={{
                   data: adScaleData.data,
                   epochIds: adScaleData.epochIds,
                 }}
-                colors={["rgba(54, 162, 235, 0.8)", "#FF6384"]}
-                title="AD_SCALE"
+                colors={["rgba(54, 162, 235, 0.8)"]}
+                title="LIKING TOKEN RATIO"
+                chartType="line"
               />
             </div>
           </div>
@@ -419,19 +545,19 @@ export default function StatisticTrendCharts() {
             </h3>
             <div className="flex gap-12 mb-4">
               <div className="text-sm text-gray-300">
-                TOTAL_MEME:{" "}
+                TOTAL MEME:{" "}
                 <span className="text-white ml-1">
                   {data[0]?.total_meme_created_count}
                 </span>
               </div>
               <div className="text-sm text-gray-300">
-                TOTAL_LAUNCHING:{" "}
+                TOTAL LAUNCHING:{" "}
                 <span className="text-white ml-1">
                   {data[0]?.total_meme_launching_count}
                 </span>
               </div>
               <div className="text-sm text-gray-300">
-                TOTAL_LAUNCHED:{" "}
+                TOTAL LAUNCHED:{" "}
                 <span className="text-white ml-1">
                   {data[0]?.total_meme_launched_count}
                 </span>
@@ -444,7 +570,7 @@ export default function StatisticTrendCharts() {
                   epochIds: EPOCHMEMEData.epochIds,
                 }}
                 colors={["#FF9F40"]}
-                title="EPOCH_MEME"
+                title="EPOCH MEME"
               />
               <ChartDisplay
                 data={{
@@ -452,7 +578,7 @@ export default function StatisticTrendCharts() {
                   epochIds: EPOCHLAUNCHEDData.epochIds,
                 }}
                 colors={["#9966FF"]}
-                title="EPOCH_LAUNCHING"
+                title="EPOCH LAUNCHING"
               />
               <ChartDisplay
                 data={{
@@ -460,7 +586,7 @@ export default function StatisticTrendCharts() {
                   epochIds: EPOCHHITData.epochIds,
                 }}
                 colors={["#FF6384"]}
-                title="EPOCH_LAUNCHED"
+                title="EPOCH LAUNCHED"
               />
             </div>
           </div>
@@ -468,25 +594,25 @@ export default function StatisticTrendCharts() {
             <h3 className="text-xl font-bold mb-4 text-gray-300">Users Info</h3>
             <div className="flex gap-12 mb-4">
               <div className="text-sm text-gray-300">
-                TOTAL_USER
+                TOTAL USERS
                 <span className="text-white ml-1">
                   {data[0]?.total_user_count}
                 </span>
               </div>
               <div className="text-sm text-gray-300">
-                TOTAL_TRADING_USER
+                TOTAL TRADING USERS
                 <span className="text-white ml-1">
                   {data[0]?.total_trade_user_count}
                 </span>
               </div>
               <div className="text-sm text-gray-300">
-                TOTAL_PREBUY_USER
+                TOTAL PREBUY USERS
                 <span className="text-white ml-1">
                   {data[0]?.total_flip_user_count}
                 </span>
               </div>
               <div className="text-sm text-gray-300">
-                TOTAL_LIKING_USER
+                TOTAL LIKING USERS
                 <span className="text-white ml-1">
                   {data[0]?.total_like_user_count}
                 </span>
@@ -499,7 +625,7 @@ export default function StatisticTrendCharts() {
                   epochIds: EPOCHLIKINGUSERData.epochIds,
                 }}
                 colors={["#36A2EB"]}
-                title="EPOCH_LIKING_USER"
+                title="EPOCH LIKING USERS"
               />
               <ChartDisplay
                 data={{
@@ -507,7 +633,7 @@ export default function StatisticTrendCharts() {
                   epochIds: EPOCHPREBUYUSERData.epochIds,
                 }}
                 colors={["#4BC0C0"]}
-                title="EPOCH_PREBUY_USER"
+                title="EPOCH PREBUY USERS"
               />
               <ChartDisplay
                 data={{
@@ -515,7 +641,7 @@ export default function StatisticTrendCharts() {
                   epochIds: EPOCHTRADINGData.epochIds,
                 }}
                 colors={["#FF9F40"]}
-                title="EPOCH_TRADING_USER"
+                title="EPOCH TRADING USERS"
               />
             </div>
           </div>
@@ -529,7 +655,7 @@ export default function StatisticTrendCharts() {
                 onMouseEnter={() => handleMouseEnter("TOTAL_TRADING_VOL")}
                 onMouseLeave={handleMouseLeave}
               >
-                TOTAL_TRADING_VOL
+                ACC TRADING VOL
                 <span className="text-white ml-1">
                   {formatNumber(
                     data[0]?.total_trade_amount,
@@ -539,13 +665,13 @@ export default function StatisticTrendCharts() {
                 </span>
               </div>
               <div className="text-sm text-gray-300">
-                TOTAL_TRADING_DEAL
+                TOTAL TRADING DEALS
                 <span className="text-white ml-1">
                   {data[0]?.total_trade_count}
                 </span>
               </div>
               <div className="text-sm text-gray-300">
-                TOTAL_TRADING_USER
+                TOTAL TRADING USERS
                 <span className="text-white ml-1">
                   {data[0]?.total_trade_user_count}
                 </span>
@@ -558,7 +684,7 @@ export default function StatisticTrendCharts() {
                   epochIds: EPOCHTRADINGDEALData.epochIds,
                 }}
                 colors={["#9966FF"]}
-                title="EPOCH_TRADING_DEAL"
+                title="EPOCH TRADING DEALS"
               />
               <ChartDisplay
                 data={{
@@ -566,7 +692,7 @@ export default function StatisticTrendCharts() {
                   epochIds: EPOCHTRADINGVOLData.epochIds,
                 }}
                 colors={["#FF6384"]}
-                title="EPOCH_TRADING_VOL"
+                title="EPOCH TRADING VOL"
               />
               <ChartDisplay
                 data={{
@@ -574,7 +700,7 @@ export default function StatisticTrendCharts() {
                   epochIds: EPOCHBOUGHTData.epochIds,
                 }}
                 colors={["#36A2EB"]}
-                title="EPOCH_BOUGHT"
+                title="EPOCH BUYING VOL"
               />
               <ChartDisplay
                 data={{
@@ -582,7 +708,7 @@ export default function StatisticTrendCharts() {
                   epochIds: EPOCHSOLDData.epochIds,
                 }}
                 colors={["#4BC0C0"]}
-                title="EPOCH_SOLD"
+                title="EPOCH SELLING VOL"
               />
             </div>
           </div>
@@ -596,7 +722,7 @@ export default function StatisticTrendCharts() {
                 onMouseEnter={() => handleMouseEnter("TOTAL_PREBUY_VOL")}
                 onMouseLeave={handleMouseLeave}
               >
-                TOTAL_PREBUY_VOL
+                ACC PREBUY VOL
                 <span className="text-white ml-1">
                   {formatNumber(
                     data[0]?.total_flip_amount,
@@ -606,13 +732,13 @@ export default function StatisticTrendCharts() {
                 </span>
               </div>
               <div className="text-sm text-gray-300">
-                TOTAL_PREBUY_ORDER
+                TOTAL PREBUY DEALS
                 <span className="text-white ml-1">
                   {data[0]?.total_flip_count}
                 </span>
               </div>
               <div className="text-sm text-gray-300">
-                TOTAL_PREBUY_USER
+                TOTAL PREBUY USERS
                 <span className="text-white ml-1">
                   {data[0]?.total_flip_user_count}
                 </span>
@@ -625,7 +751,7 @@ export default function StatisticTrendCharts() {
                   epochIds: EPOCHPREBUYVOLData.epochIds,
                 }}
                 colors={["#FF9F40"]}
-                title="EPOCH_PREBUY_VOL"
+                title="EPOCH PREBUY VOL"
               />
               <ChartDisplay
                 data={{
@@ -633,7 +759,7 @@ export default function StatisticTrendCharts() {
                   epochIds: EPOCHPREBUYORDERData.epochIds,
                 }}
                 colors={["#9966FF"]}
-                title="EPOCH_PREBUY_ORDER"
+                title="EPOCH PREBUY ORDERS"
               />
               <ChartDisplay
                 data={{
@@ -641,55 +767,60 @@ export default function StatisticTrendCharts() {
                   epochIds: EPOCHPREBUYUSERFLIPData.epochIds,
                 }}
                 colors={["#FF6384"]}
-                title="EPOCH_PREBUY_USER"
+                title="EPOCH PREBUY USERS"
               />
             </div>
           </div>
           <div className="px-4 pt-4 border border-dark-100 rounded bg-dark-650 shadow-2xl">
             <h3 className="text-xl font-bold mb-4 text-gray-300">like info</h3>
             <div className="flex gap-12 mb-4">
-              <div className="text-sm text-gray-300">
-                TOTAL_POINT_FOR_LIKING
-                <span className="text-white ml-1">
-                  {data[0]?.total_like_reward}
-                </span>
-              </div>
               <div
-                className="text-sm text-gray-300 cursor-pointer"
-                onMouseEnter={() =>
-                  handleMouseEnter("TOTAL_POINT_VAL_FOR_LIKING")
-                }
+                className="text-sm text-gray-300 cursor-pointer relative"
+                onMouseEnter={() => handleMouseEnter("TOTAL_POINT_FOR_LIKING")}
                 onMouseLeave={handleMouseLeave}
               >
-                TOTAL_POINT_VAL_FOR_LIKING
+                TOTAL LIKING TOKEN
                 <span className="text-white ml-1">
                   {formatNumber(
-                    data[0]?.total_like_reward_value,
-                    hoveredItem === "TOTAL_POINT_VAL_FOR_LIKING",
-                    "value"
+                    data[0]?.total_like_reward,
+                    hoveredItem === "TOTAL_POINT_FOR_LIKING",
+                    "point"
                   )}
                 </span>
+                {hoveredItem === "TOTAL_POINT_FOR_LIKING" && (
+                  <div className="absolute z-10 bg-gray-800 text-white px-3 py-1.5 rounded-md text-sm -top-10 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                    {formatNumber(
+                      data[0]?.total_like_reward_value,
+                      true,
+                      "value"
+                    )}
+                  </div>
+                )}
               </div>
               <div className="text-sm text-gray-300">
-                TOTAL_LIKING_USER
+                TOTAL LIKING USER
                 <span className="text-white ml-1">
                   {data[0]?.total_like_user_count}
                 </span>
               </div>
               <div className="text-sm text-gray-300">
-                TOTAL_LIKING
+                TOTAL LIKING
                 <span className="text-white ml-1">
                   {data[0]?.total_like_count}
                 </span>
               </div>
               <div className="text-sm text-gray-300">
-                TOTAL_INVALID_LIKING
+                INVALID LIKING
                 <span className="text-white ml-1">
                   {data[0]?.total_invalid_like_count}
                 </span>
               </div>
               <div className="text-sm text-gray-300">
-                TOTAL_MIN_REWARD_SUM
+                MIN REWARD LIKING
+                <span className="text-white ml-1">-</span>
+              </div>
+              <div className="text-sm text-gray-300">
+                MIN REWARD LIKING TOKEN
                 <span className="text-white ml-1">
                   {data[0]?.total_like_min_reward}
                 </span>
@@ -702,7 +833,7 @@ export default function StatisticTrendCharts() {
                   epochIds: EPOCHLIKINGUSERData.epochIds,
                 }}
                 colors={["#36A2EB"]}
-                title="EPOCH_LIKING_USER"
+                title="EPOCH LIKING USER"
               />
               <ChartDisplay
                 data={{
@@ -710,7 +841,7 @@ export default function StatisticTrendCharts() {
                   epochIds: EPOCHLIKINGData.epochIds,
                 }}
                 colors={["#4BC0C0"]}
-                title="EPOCH_LIKING"
+                title="EPOCH LIKING"
               />
               <ChartDisplay
                 data={{
@@ -718,15 +849,23 @@ export default function StatisticTrendCharts() {
                   epochIds: EPOCHLIKEREWARDData.epochIds,
                 }}
                 colors={["#FF9F40", "#9966FF"]}
-                title="EPOCH_POINT_FOR_LIKING"
+                title="EPOCH LIKING TOKEN"
               />
-              <ChartDisplay
+              {/* <ChartDisplay
                 data={{
                   data: EPOCHAVGPOINTFORLIKINGData.data,
                   epochIds: EPOCHAVGPOINTFORLIKINGData.epochIds,
                 }}
                 colors={["#FF6384"]}
                 title="EPOCH_AVG_POINT_FOR_LIKING"
+              /> */}
+              <ChartDisplay
+                data={{
+                  data: EPOCHMINREWARDTOKENData.data,
+                  epochIds: EPOCHMINREWARDTOKENData.epochIds,
+                }}
+                colors={["#FF6384"]}
+                title="EPOCH MIN REWARD LIKING"
               />
               <ChartDisplay
                 data={{
@@ -734,7 +873,7 @@ export default function StatisticTrendCharts() {
                   epochIds: EPOCHMINPOINTSUMFORLIKINGData.epochIds,
                 }}
                 colors={["#00FFD1"]}
-                title="EPOCH_MIN_POINT_SUM_FOR_LIKING"
+                title="EPOCH MIN REWARD TOKEN"
               />
               <ChartDisplay
                 data={{
@@ -742,7 +881,41 @@ export default function StatisticTrendCharts() {
                   epochIds: EPOCHIRData.epochIds,
                 }}
                 colors={["#36A2EB"]}
-                title="EPOCH_IR"
+                title="EPOCH IR"
+              />
+            </div>
+          </div>
+          <div className="px-4 pt-4 border border-dark-100 rounded bg-dark-650 shadow-2xl">
+            <h3 className="text-xl font-bold mb-4 text-gray-300">
+              social sharing
+            </h3>
+            <PeriodProgressBar />
+            <div className="flex gap-12 mb-4">
+              <div className="text-sm text-gray-300">
+                TOTAL CONTENT CREATOR
+                <span className="text-white ml-1">-</span>
+              </div>
+              <div className="text-sm text-gray-300">
+                TOTAL CONTENT CREATOR TOKEN
+                <span className="text-white ml-1">-</span>
+              </div>
+            </div>
+            <div className="grid grid-cols-3 gap-4 mt-6">
+              <ChartDisplay
+                data={{
+                  data: PERIODCONTENTCREATORData.data,
+                  epochIds: PERIODCONTENTCREATORData.epochIds,
+                }}
+                colors={["#FF9F40"]}
+                title="PERIOD CONTENT CREATOR"
+              />
+              <ChartDisplay
+                data={{
+                  data: PERIODCONTENTCREATORTOKENData.data,
+                  epochIds: PERIODCONTENTCREATORTOKENData.epochIds,
+                }}
+                colors={["#9966FF"]}
+                title="PERIOD CONTENT CREATOR TOKEN"
               />
             </div>
           </div>

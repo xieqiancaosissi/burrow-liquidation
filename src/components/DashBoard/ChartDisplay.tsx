@@ -9,9 +9,16 @@ interface Props {
   colors: string[];
   title: string;
   yAxes?: any[];
+  chartType?: "line" | "bar";
 }
 
-export default function ChartDisplay({ data, colors, title, yAxes }: Props) {
+export default function ChartDisplay({
+  data,
+  colors,
+  title,
+  yAxes,
+  chartType = "bar",
+}: Props) {
   const [seriesType, setSeriesType] = useState<"line" | "bar">("bar");
 
   const isAllZero = Array.isArray(data.data[0])
@@ -30,6 +37,28 @@ export default function ChartDisplay({ data, colors, title, yAxes }: Props) {
       </div>
     );
   }
+
+  const getSeriesConfig = (d: number[], i: number) => ({
+    data: d.slice().reverse(),
+    type: chartType,
+    smooth: true,
+    symbol: chartType === "line" ? "circle" : undefined,
+    symbolSize: chartType === "line" ? 4 : undefined,
+    lineStyle:
+      chartType === "line"
+        ? {
+            width: 2,
+            cap: "round",
+            join: "round",
+            borderRadius: 10,
+            smooth: true,
+          }
+        : undefined,
+    itemStyle: {
+      color: colors[i],
+      borderRadius: chartType === "bar" ? [5, 5, 0, 0] : 0,
+    },
+  });
 
   const option = {
     title: {
@@ -97,56 +126,8 @@ export default function ChartDisplay({ data, colors, title, yAxes }: Props) {
       },
     ],
     series: Array.isArray(data.data[0])
-      ? (data.data as number[][]).map((d, i) => ({
-          data: d.slice().reverse(),
-          type: seriesType,
-          smooth: seriesType === "line",
-          symbol: seriesType === "line" ? "circle" : undefined,
-          symbolSize: seriesType === "line" ? [0, 0] : undefined,
-          itemStyle: {
-            color: colors[i],
-            borderRadius: [5, 5, 0, 0],
-          },
-          areaStyle: {
-            color: {
-              type: "linearGradient",
-              x: 0,
-              y: 0,
-              x2: 0,
-              y2: 1,
-              colorStops: [
-                { offset: 0, color: colors[i] },
-                { offset: 1, color: "rgb(20,22,43)" },
-              ],
-            },
-          },
-        }))
-      : [
-          {
-            data: (data.data as number[]).slice().reverse(),
-            type: seriesType,
-            smooth: seriesType === "line",
-            symbol: seriesType === "line" ? "circle" : undefined,
-            symbolSize: seriesType === "line" ? [0, 0] : undefined,
-            itemStyle: {
-              color: colors[0],
-              borderRadius: [5, 5, 0, 0],
-            },
-            areaStyle: {
-              color: {
-                type: "linearGradient",
-                x: 0,
-                y: 0,
-                x2: 0,
-                y2: 1,
-                colorStops: [
-                  { offset: 0, color: colors[0] },
-                  { offset: 1, color: "rgb(20,22,43)" },
-                ],
-              },
-            },
-          },
-        ],
+      ? (data.data as number[][]).map((d, i) => getSeriesConfig(d, i))
+      : [getSeriesConfig(data.data as number[], 0)],
     grid: {
       show: true,
       borderColor: "transparent",
