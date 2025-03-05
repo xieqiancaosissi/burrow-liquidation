@@ -494,8 +494,8 @@ export default function AlgorithmPerformance() {
             <StatisticsSection
               data={[
                 { label: "DR Preliker", value: data?.hit_bonding_curve_dr },
-                { label: "min Point", value: 0, isError: true },
-                { label: "max Point", value: 0, isError: true },
+                { label: "min Point", value: data?.last_hit_bonding_reward_last },
+                { label: "max Point", value: data?.last_hit_bonding_reward_top },
               ]}
             />
             <StatisticsSection
@@ -553,10 +553,10 @@ export default function AlgorithmPerformance() {
               data={[
                 {
                   label: "ERS",
-                  value: 0,
+                  value: data?.like_extension_rate_slash,
                   isError: true,
                 },
-                { label: "OR e2", value: 0, isError: true },
+                { label: "OR e2", value: data?.like_e2 },
               ]}
             />
             <StatisticsSection
