@@ -258,7 +258,7 @@ export default function History() {
                           >
                             <option value="all">All</option>
                             <option value="liquidate">Liquidation</option>
-                            <option value="both">Both</option>
+                            <option value="force">force close</option>
                           </select>
                           <button
                             onClick={() => setIsModalOpen(false)}
