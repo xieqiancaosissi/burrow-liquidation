@@ -420,7 +420,7 @@ export default function AlgorithmPerformance() {
                     label: "invalid liking",
                     value: data?.epoch_invalid_like_count,
                   },
-                  { label: "minimum reward", value: 0, isError: true },
+                  { label: "minimum reward", value: data?.epoch_min_reward_like_count },
                 ]}
               />
               <StatisticsSection
@@ -444,9 +444,9 @@ export default function AlgorithmPerformance() {
               />
               <StatisticsSection
                 data={[
-                  { label: "avg r0", value: 0, isError: true },
-                  { label: "avg r1", value: 0, isError: true },
-                  { label: "avg r2", value: 0, isError: true },
+                  { label: "u0", value: data?.like_u0 },
+                  { label: "u1", value: data?.like_u1 },
+                  { label: "u2", value: data?.like_u2 },
                   { label: "std dev", value: data?.std },
                 ]}
               />
@@ -470,18 +470,10 @@ export default function AlgorithmPerformance() {
                   label: "Volume Criteria",
                   value: data?.ranking_rates || [],
                 },
-              ]}
-            />
-            <StatisticsSection
-              data={[
                 { label: "SBRs", value: data?.ranking_sbrs || [] },
                 { label: "K", value: data?.ranking_k },
-              ]}
-            />
-            <StatisticsSection
-              data={[
                 { label: "ECR", value: data?.ranking_pump_rate },
-                { label: "ECV", value: 999, isError: true },
+                { label: "ECV", value: data?.user_level_max_external_vol },
               ]}
             />
             <StatisticsSection
@@ -489,17 +481,9 @@ export default function AlgorithmPerformance() {
               data={[
                 { label: "N", value: data?.hit_bonding_curve_n },
                 { label: "min Rev", value: data?.hit_bonding_curve_rev_min },
-              ]}
-            />
-            <StatisticsSection
-              data={[
                 { label: "DR Preliker", value: data?.hit_bonding_curve_dr },
                 { label: "min Point", value: data?.last_hit_bonding_reward_last },
                 { label: "max Point", value: data?.last_hit_bonding_reward_top },
-              ]}
-            />
-            <StatisticsSection
-              data={[
                 {
                   label: "DR Creator",
                   value: data?.hit_bonding_curve_creator_dr,
@@ -536,25 +520,16 @@ export default function AlgorithmPerformance() {
               label="Volume dimension params"
               data={[
                 { label: "recent n", value: data?.like_recent_n },
-                { label: "VirtualVolSpan", value: 432, isError: true },
-                { label: "VirtualVolDiscount", value: 0.5, isError: true },
-              ]}
-            />
-            <StatisticsSection
-              data={[
+                { label: "VirtualVolSpan", value: data?.like_virtual_vol_span },
+                { label: "VirtualVolDiscount", value: data?.like_virtual_vol_discount },
                 {
                   label: "max acc vol",
                   value: data?.like_multi_robot_max_m_count,
                 },
                 { label: "base", value: data?.like_log_base },
-              ]}
-            />
-            <StatisticsSection
-              data={[
                 {
                   label: "ERS",
                   value: data?.like_extension_rate_slash,
-                  isError: true,
                 },
                 { label: "OR e2", value: data?.like_e2 },
               ]}
@@ -564,10 +539,6 @@ export default function AlgorithmPerformance() {
               data={[
                 { label: "Zs", value: data?.like_zs },
                 { label: "Zr", value: data?.like_zr },
-              ]}
-            />
-            <StatisticsSection
-              data={[
                 { label: "Imin", value: data?.like_i_min },
                 { label: "Is", value: data?.like_i_s },
                 { label: "Imax", value: data?.like_i_max },
@@ -579,8 +550,7 @@ export default function AlgorithmPerformance() {
                 { label: "Ir", value: data?.like_i_r },
                 {
                   label: "tdr liking",
-                  value: 0,
-                  isError: true,
+                  value: data?.like_tdr,
                 },
                 {
                   label: "MaxAdj liking",
@@ -599,10 +569,6 @@ export default function AlgorithmPerformance() {
                   label: "antibot range",
                   value: range,
                 },
-              ]}
-            />
-            <StatisticsSection
-              data={[
                 {
                   label: "X",
                   value: data?.like_item_robot_check_x_time
