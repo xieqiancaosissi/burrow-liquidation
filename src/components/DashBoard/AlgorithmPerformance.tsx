@@ -345,13 +345,11 @@ export default function AlgorithmPerformance() {
                 data={[
                   {
                     label: "internal tokens",
-                    value: 0,
-                    isError: true,
+                    value: data?.total_invalid_like_count,
                   },
                   {
                     label: "external tokens",
-                    value: 0,
-                    isError: true,
+                    value: data?.total_min_reward_like_count,
                   },
                 ]}
               />
