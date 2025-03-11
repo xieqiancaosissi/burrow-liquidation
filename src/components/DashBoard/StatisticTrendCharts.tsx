@@ -149,7 +149,7 @@ export default function StatisticTrendCharts() {
     const currentDate = new Date().getTime(); 
     const epochCreateTime = data[0]?.epoch_create_time * 1000;
     const epochTime = data[0]?.epoch_time * 1000;
-    const progressInEpoch = Math.floor((currentDate - epochCreateTime) / epochTime * 100);
+    const progressInEpoch = epochCreateTime && epochTime ? Math.floor((currentDate - epochCreateTime) / epochTime * 100) : 0;
     
     const displayProgress = progressInEpoch >= 100 ? 0 : progressInEpoch;
 
@@ -396,7 +396,8 @@ export default function StatisticTrendCharts() {
 
     return () => clearInterval(intervalId);
   }, []);
-  const curEpoch = Math.floor((new Date().getTime() - data[0]?.epoch_create_time * 1000) / data[0]?.epoch_time * 1000) + data[0]?.epoch_id;
+  const curEpoch = data[0] ? 
+  Math.floor((new Date().getTime() - data[0]?.epoch_create_time * 1000) / data[0]?.epoch_time * 1000) + data[0]?.epoch_id : "";
   return (
     <div className="text-white">
       {loading ? (
