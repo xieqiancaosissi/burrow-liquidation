@@ -146,24 +146,22 @@ export default function StatisticTrendCharts() {
   const handleMouseLeave = () => setHoveredItem(null);
 
   const EpochProgressBar = () => {
-    const startDate = new Date(new Date().getFullYear(), 0, 1);
-    const currentDate = new Date();
-    const progressInMinutes = Math.floor(
-      (currentDate.getTime() - startDate.getTime()) / (600 * 1000)
-    );
-    const totalMinutesInYear = Math.floor((365 * 24 * 60 * 60) / 600);
-
+    const currentDate = new Date().getTime(); 
+    const epochCreateTime = data[0]?.epoch_create_time * 1000;
+    const epochTime = data[0]?.epoch_time * 1000;
+    const progressInEpoch = Math.floor((currentDate - epochCreateTime) / epochTime * 100);
+    
     return (
       <div className="mb-6">
         <div className="bg-gray-700 h-6 rounded-full overflow-hidden">
           <div
             className="bg-[#2050e9] h-full transition-all duration-500"
             style={{
-              width: `${(progressInMinutes / totalMinutesInYear) * 100}%`,
+              width: `${progressInEpoch}%`,
             }}
           >
             <span className="px-4 text-white text-xs">
-              {progressInMinutes} / {totalMinutesInYear} bars
+              {progressInEpoch.toFixed(2)}% of current epoch
             </span>
           </div>
         </div>
@@ -391,6 +389,7 @@ export default function StatisticTrendCharts() {
 
     return () => clearInterval(intervalId);
   }, []);
+  const curEpoch = Math.floor((new Date().getTime() - data[0]?.epoch_create_time * 1000) / data[0]?.epoch_time * 1000) + data[0]?.epoch_id;
   return (
     <div className="text-white">
       {loading ? (
@@ -407,11 +406,7 @@ export default function StatisticTrendCharts() {
               <div className="text-sm text-gray-300">
                 cur epoch:
                 <span className="text-white ml-1">
-                  {Math.floor(
-                    (new Date().getTime() -
-                      new Date(new Date().getFullYear(), 0, 1).getTime()) /
-                      (600 * 1000)
-                  )}
+                  {curEpoch}
                 </span>
               </div>
               <div className="text-sm text-gray-300">
@@ -420,7 +415,7 @@ export default function StatisticTrendCharts() {
               </div>
               <div className="text-sm text-gray-300">
                 epoch last:
-                <span className="text-white ml-1">600 seconds</span>
+                <span className="text-white ml-1">{data[0]?.epoch_time}</span>
               </div>
             </div>
             <EpochProgressBar />
