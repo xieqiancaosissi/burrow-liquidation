@@ -151,17 +151,19 @@ export default function StatisticTrendCharts() {
     const epochTime = data[0]?.epoch_time * 1000;
     const progressInEpoch = Math.floor((currentDate - epochCreateTime) / epochTime * 100);
     
+    const displayProgress = progressInEpoch >= 100 ? 0 : progressInEpoch;
+
     return (
       <div className="mb-6">
         <div className="bg-gray-700 h-6 rounded-full overflow-hidden">
           <div
             className="bg-[#2050e9] h-full transition-all duration-500"
             style={{
-              width: `${progressInEpoch}%`,
+              width: `${displayProgress}%`,
             }}
           >
             <span className="px-4 text-white text-xs">
-              {progressInEpoch.toFixed(2)}% of current epoch
+              {displayProgress.toFixed(2)}% of current epoch
             </span>
           </div>
         </div>
@@ -377,6 +379,11 @@ export default function StatisticTrendCharts() {
 
         setEPOCHMINPOINTSUMFORLIKINGData({
           data: res.data.data.map((item: any) => item.epoch_like_min_reward),
+          epochIds: epochIds,
+        });
+
+        setEPOCHMINREWARDTOKENData({
+          data: res.data.data.map((item: any) => item.epoch_min_reward_like_count),
           epochIds: epochIds,
         });
       }
@@ -812,7 +819,7 @@ export default function StatisticTrendCharts() {
               </div>
               <div className="text-sm text-gray-300">
                 MIN REWARD LIKING
-                <span className="text-white ml-1">-</span>
+                <span className="text-white ml-1"> {data[0]?.total_min_reward_like_count}</span>
               </div>
               <div className="text-sm text-gray-300">
                 MIN REWARD LIKING TOKEN
