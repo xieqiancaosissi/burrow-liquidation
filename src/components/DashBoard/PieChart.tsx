@@ -52,7 +52,7 @@ const PieChart: React.FC<PieChartProps> = ({ data, labels, colors }) => {
           scaleSize: 5,
         },
         data: data.map((value, index) => ({
-          value: parseFloat(value.toFixed(9)),
+          value: parseFloat(value.toFixed(6)),
           name: labels[index],
           itemStyle: {
             color: colors[index] || "rgba(54, 162, 235, 0.8)",

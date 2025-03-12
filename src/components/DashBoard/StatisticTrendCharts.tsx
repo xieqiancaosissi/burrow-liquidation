@@ -494,15 +494,15 @@ export default function StatisticTrendCharts() {
               <div className="h-[300px]">
                 <PieChart
                   data={[
-                    parseFloat(data[0]?.total_trade_reward || "0").toFixed(6),
-                    parseFloat(data[0]?.total_launched_creator_reward || "0").toFixed(6),
-                    parseFloat(data[0]?.total_launched_reward || "0").toFixed(6),
-                    parseFloat(data[0]?.total_like_reward || "0").toFixed(6),
+                    parseFloat(data[0]?.total_trade_reward || "0"),
+                    parseFloat(data[0]?.total_launched_creator_reward || "0"),
+                    parseFloat(data[0]?.total_launched_reward || "0") - parseFloat(data[0]?.total_launched_creator_reward || "0"),
+                    parseFloat(data[0]?.total_like_reward || "0"),
                   ].map(Number)}
                   labels={[
                     "Trade Reward",
                     "Creator Reward",
-                    "Launch Reward",
+                    "Preliker Reward",
                     "Like Reward",
                   ]}
                   colors={[
