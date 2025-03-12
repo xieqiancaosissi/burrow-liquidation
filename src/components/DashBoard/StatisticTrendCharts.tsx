@@ -397,7 +397,7 @@ export default function StatisticTrendCharts() {
     return () => clearInterval(intervalId);
   }, []);
   const curEpoch = data[0] ? 
-  Math.floor((new Date().getTime() / 1000 - data[0]?.epoch_create_time) / data[0]?.epoch_time) + data[0]?.epoch_id : "";
+  Math.ceil((new Date().getTime() / 1000 - data[0]?.epoch_create_time) / data[0]?.epoch_time) + data[0]?.epoch_id : "";
   return (
     <div className="text-white">
       {loading ? (
