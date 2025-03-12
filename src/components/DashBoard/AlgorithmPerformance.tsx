@@ -493,11 +493,6 @@ export default function AlgorithmPerformance() {
               data={[
                 { label: "Ipvn", value: data?.swap_ipvn },
                 { label: "Ipvi", value: data?.swap_ipvi },
-              ]}
-            />
-            <StatisticsSection
-              label="Trading Incentive"
-              data={[
                 { label: "DR Trading", value: data?.swap_dr },
                 {
                   label: "MaxAdjR",
