@@ -292,10 +292,10 @@ export default function AlgorithmPerformance() {
     );
   }
 
-  const Is = data?.like_i_s;
-  const Imin = data?.like_i_min;
-  const ULR_FOR_MIN = data?.like_min_reward_upper_limit_rate;
-  const range = ((Is - Imin) * (ULR_FOR_MIN - 1)) / Imin;
+  const Is =  Number(data?.like_i_s);
+  const Imin = Number(data?.like_i_min);
+  const ULR_FOR_MIN = Number(data?.like_min_reward_upper_limit_rate);
+  const range = (Imin * (ULR_FOR_MIN - 1)) / (Is - Imin);
 
   return (
     <div className="flex h-screen">
