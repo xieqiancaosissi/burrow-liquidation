@@ -479,10 +479,10 @@ export default function StatisticTrendCharts() {
               <div className="h-[300px]">
                 <PieChart
                   data={[
-                    parseFloat(data[0]?.total_revenue || "0"),
+                    parseFloat(data[0]?.total_revenue || "0").toFixed(6),
                     parseFloat(
                       String(data[0]?.total_reward * data[0]?.token_price || 0)
-                    ),
+                    ).toFixed(6),
                   ].map(Number)}
                   labels={["ACC REV", "ACC TOKEN"]}
                   colors={[
@@ -494,10 +494,10 @@ export default function StatisticTrendCharts() {
               <div className="h-[300px]">
                 <PieChart
                   data={[
-                    parseFloat(data[0]?.total_trade_reward || "0"),
-                    parseFloat(data[0]?.total_launched_creator_reward || "0"),
-                    parseFloat(data[0]?.total_launched_reward || "0"),
-                    parseFloat(data[0]?.total_like_reward || "0"),
+                    parseFloat(data[0]?.total_trade_reward || "0").toFixed(6),
+                    parseFloat(data[0]?.total_launched_creator_reward || "0").toFixed(6),
+                    parseFloat(data[0]?.total_launched_reward || "0").toFixed(6),
+                    parseFloat(data[0]?.total_like_reward || "0").toFixed(6),
                   ].map(Number)}
                   labels={[
                     "Trade Reward",
