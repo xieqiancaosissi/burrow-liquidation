@@ -251,8 +251,8 @@ export default function StatisticTrendCharts() {
         setAdScaleData({
           data: res.data.data.map((item: any) => {
             const likeReward = parseFloat(item.epoch_like_reward) || 0;
-            const epochRevenue = parseFloat(item.epoch_revenue) || 1;
-            const tokenPrice = parseFloat(item.token_price) || 1;
+            const epochRevenue = parseFloat(item.epoch_revenue) || 0;
+            const tokenPrice = parseFloat(item.token_price) || 0;
 
             if (
               !likeReward ||
