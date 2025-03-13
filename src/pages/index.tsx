@@ -1,12 +1,9 @@
 import React from "react";
 import dynamic from "next/dynamic";
-const LiquidationComponent = dynamic(
-  () => import("../components/Liquidation"),
-  {
-    ssr: false,
-  }
-);
+const DashBoardComponent = dynamic(() => import("../components/DashBoard"), {
+  ssr: false,
+});
 
-export default function LiquidationIndex() {
-  return <LiquidationComponent />;
+export default function DashBoard() {
+  return <DashBoardComponent />;
 }
