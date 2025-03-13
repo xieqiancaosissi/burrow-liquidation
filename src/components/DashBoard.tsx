@@ -5,7 +5,7 @@ import { BeatLoading } from "./Loading";
 import AlgorithmPerformance from "./DashBoard/AlgorithmPerformance";
 import StatisticTrendCharts from "./DashBoard/StatisticTrendCharts";
 
-const PASSWORD = "123456";
+const PASSWORD = "FlipN2025";
 
 export default function DashBoardPage() {
   const [isComponentAVisible, setIsComponentAVisible] = useState<boolean>(
@@ -79,11 +79,13 @@ export default function DashBoardPage() {
       <button onClick={toggleComponent} className="mb-4 p-2 text-white rounded">
         {isComponentAVisible ? `${labelB}` : `${labelA}`}
       </button>
-      {isComponentAVisible ? (
-        <AlgorithmPerformance />
-      ) : (
-        <StatisticTrendCharts />
-      )}
+      {localStorage.getItem("isLoggedIn") === "true" ? (
+        isComponentAVisible ? (
+          <AlgorithmPerformance />
+        ) : (
+          <StatisticTrendCharts />
+        )
+      ) : null}
     </div>
   );
 }
