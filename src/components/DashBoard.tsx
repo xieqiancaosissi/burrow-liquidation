@@ -33,7 +33,12 @@ export default function DashBoardPage() {
     if (isLoggedIn) {
       setIsModalVisible(false);
     }
-  }, []);
+    if (isModalVisible) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [isModalVisible]);
 
   const handleLogin = () => {
     if (password === PASSWORD) {
@@ -50,7 +55,7 @@ export default function DashBoardPage() {
   return (
     <div className="p-4">
       {isModalVisible && (
-        <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-md flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-md flex items-center justify-center z-50 overflow-hidden">
           <div className="bg-dark-200 p-6 rounded shadow-md">
             <input
               type="number"
