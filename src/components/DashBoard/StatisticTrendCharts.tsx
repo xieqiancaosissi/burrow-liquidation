@@ -146,11 +146,14 @@ export default function StatisticTrendCharts() {
   const handleMouseLeave = () => setHoveredItem(null);
 
   const EpochProgressBar = () => {
-    const currentDate = new Date().getTime() / 1000; 
+    const currentDate = new Date().getTime() / 1000;
     const epochCreateTime = data[0]?.epoch_create_time;
     const epochTime = data[0]?.epoch_time;
-    const progressInEpoch = epochCreateTime && epochTime ? Math.floor((currentDate - epochCreateTime) / epochTime * 100) : 0;
-    
+    const progressInEpoch =
+      epochCreateTime && epochTime
+        ? Math.floor(((currentDate - epochCreateTime) / epochTime) * 100)
+        : 0;
+
     const displayProgress = progressInEpoch >= 100 ? 100 : progressInEpoch;
 
     return (
@@ -383,7 +386,9 @@ export default function StatisticTrendCharts() {
         });
 
         setEPOCHMINREWARDTOKENData({
-          data: res.data.data.map((item: any) => item.epoch_min_reward_like_count),
+          data: res.data.data.map(
+            (item: any) => item.epoch_min_reward_like_count
+          ),
           epochIds: epochIds,
         });
       }
@@ -396,8 +401,12 @@ export default function StatisticTrendCharts() {
 
     return () => clearInterval(intervalId);
   }, []);
-  const curEpoch = data[0] ? 
-  Math.ceil((new Date().getTime() / 1000 - data[0]?.epoch_create_time) / data[0]?.epoch_time) + data[0]?.epoch_id : "";
+  const curEpoch = data[0]
+    ? Math.ceil(
+        (new Date().getTime() / 1000 - data[0]?.epoch_create_time) /
+          data[0]?.epoch_time
+      ) + data[0]?.epoch_id
+    : "";
   return (
     <div className="text-white">
       {loading ? (
@@ -413,9 +422,7 @@ export default function StatisticTrendCharts() {
             <div className="flex gap-12 mb-4">
               <div className="text-sm text-gray-300">
                 cur epoch:
-                <span className="text-white ml-1">
-                  {curEpoch}
-                </span>
+                <span className="text-white ml-1">{curEpoch}</span>
               </div>
               <div className="text-sm text-gray-300">
                 finalized epoch:
@@ -496,7 +503,8 @@ export default function StatisticTrendCharts() {
                   data={[
                     parseFloat(data[0]?.total_trade_reward || "0"),
                     parseFloat(data[0]?.total_launched_creator_reward || "0"),
-                    parseFloat(data[0]?.total_launched_reward || "0") - parseFloat(data[0]?.total_launched_creator_reward || "0"),
+                    parseFloat(data[0]?.total_launched_reward || "0") -
+                      parseFloat(data[0]?.total_launched_creator_reward || "0"),
                     parseFloat(data[0]?.total_like_reward || "0"),
                   ].map(Number)}
                   labels={[
@@ -820,7 +828,10 @@ export default function StatisticTrendCharts() {
               </div>
               <div className="text-sm text-gray-300">
                 MIN REWARD LIKING
-                <span className="text-white ml-1"> {data[0]?.total_min_reward_like_count}</span>
+                <span className="text-white ml-1">
+                  {" "}
+                  {data[0]?.total_min_reward_like_count}
+                </span>
               </div>
               <div className="text-sm text-gray-300">
                 MIN REWARD LIKING TOKEN

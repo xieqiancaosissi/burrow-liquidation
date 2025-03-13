@@ -292,7 +292,7 @@ export default function AlgorithmPerformance() {
     );
   }
 
-  const Is =  Number(data?.like_i_s);
+  const Is = Number(data?.like_i_s);
   const Imin = Number(data?.like_i_min);
   const ULR_FOR_MIN = Number(data?.like_min_reward_upper_limit_rate);
   const range = (Imin * (ULR_FOR_MIN - 1)) / (Is - Imin);
@@ -418,7 +418,10 @@ export default function AlgorithmPerformance() {
                     label: "invalid liking",
                     value: data?.epoch_invalid_like_count,
                   },
-                  { label: "minimum reward", value: data?.epoch_min_reward_like_count },
+                  {
+                    label: "minimum reward",
+                    value: data?.epoch_min_reward_like_count,
+                  },
                 ]}
               />
               <StatisticsSection
@@ -480,8 +483,14 @@ export default function AlgorithmPerformance() {
                 { label: "N", value: data?.hit_bonding_curve_n },
                 { label: "min Rev", value: data?.hit_bonding_curve_rev_min },
                 { label: "DR Preliker", value: data?.hit_bonding_curve_dr },
-                { label: "min Point", value: data?.last_hit_bonding_reward_last },
-                { label: "max Point", value: data?.last_hit_bonding_reward_top },
+                {
+                  label: "min Point",
+                  value: data?.last_hit_bonding_reward_last,
+                },
+                {
+                  label: "max Point",
+                  value: data?.last_hit_bonding_reward_top,
+                },
                 {
                   label: "DR Creator",
                   value: data?.hit_bonding_curve_creator_dr,
@@ -514,7 +523,10 @@ export default function AlgorithmPerformance() {
               data={[
                 { label: "recent n", value: data?.like_recent_n },
                 { label: "VirtualVolSpan", value: data?.like_virtual_vol_span },
-                { label: "VirtualVolDiscount", value: data?.like_virtual_vol_discount },
+                {
+                  label: "VirtualVolDiscount",
+                  value: data?.like_virtual_vol_discount,
+                },
                 {
                   label: "max acc vol",
                   value: data?.like_multi_robot_max_m_count,

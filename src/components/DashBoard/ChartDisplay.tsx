@@ -39,10 +39,13 @@ export default function ChartDisplay({
   }
 
   const getSeriesConfig = (d: number[], i: number) => ({
-    data: d.slice().reverse().map(val => {
-      const numericValue = Number(val);
-      return parseFloat(numericValue.toFixed(6));
-    }),
+    data: d
+      .slice()
+      .reverse()
+      .map((val) => {
+        const numericValue = Number(val);
+        return parseFloat(numericValue.toFixed(6));
+      }),
     type: chartType,
     smooth: false,
     symbol: chartType === "line" ? "circle" : undefined,

@@ -28,9 +28,10 @@ const PieChart: React.FC<PieChartProps> = ({ data, labels, colors }) => {
       itemWidth: 10,
       itemHeight: 10,
       formatter: (name: string) => {
-        const value = option.series[0].data.find(
-          (item: { name: string; value: number }) => item.name === name
-        )?.value || 0;
+        const value =
+          option.series[0].data.find(
+            (item: { name: string; value: number }) => item.name === name
+          )?.value || 0;
         return `${name}: ${value}`;
       },
     },

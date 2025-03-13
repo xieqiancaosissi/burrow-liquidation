@@ -2978,9 +2978,7 @@ export const getDashBoardData = async () => {
 };
 
 export const getSocialDashBoardData = async () => {
-  return await fetch(
-    `${DASH_BOARD_API_URL}/api/v1/mining/socialdashboard/info`
-  )
+  return await fetch(`${DASH_BOARD_API_URL}/api/v1/mining/socialdashboard/info`)
     .then(async (res) => {
       const data = await res.json();
       return data;
