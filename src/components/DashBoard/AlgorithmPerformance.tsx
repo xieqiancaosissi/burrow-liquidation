@@ -345,13 +345,13 @@ export default function AlgorithmPerformance() {
                 data={[
                   {
                     label: "internal tokens",
-                    value: data?.epoch_trade_reward,
-                    valueDetail: `${data?.epoch_trade_reward_value}`,
+                    value: data?.total_trade_flip_reward,
+                    valueDetail: `${data?.total_trade_flip_reward_value}`,
                   },
                   {
                     label: "external tokens",
-                    value: data?.epoch_trade_flip_reward,
-                    valueDetail: `${data?.epoch_trade_flip_reward_value}`,
+                    value: data?.total_trade_pump_reward,
+                    valueDetail: `${data?.total_trade_pump_reward_value}`,
                   },
                 ]}
               />
