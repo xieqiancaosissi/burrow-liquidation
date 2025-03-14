@@ -12,6 +12,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { useDashboard } from "@/context/DashboardContext";
 
 ChartJS.register(
   CategoryScale,
@@ -28,6 +29,7 @@ interface ChartData {
 }
 
 export default function StatisticTrendCharts() {
+  const { toggleComponent } = useDashboard();
   const [data, setData] = useState<any>([]);
   const [EPOCHREVChartData, setEPOCHREVChartData] = useState<ChartData>({
     data: [],
@@ -408,533 +410,553 @@ export default function StatisticTrendCharts() {
       ) + data[0]?.epoch_id
     : "";
   return (
-    <div className="text-white">
-      {loading ? (
-        <div className="flex items-center justify-center w-full h-full">
-          <BeatLoading />
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 gap-4">
-          <div className="px-4 pt-4 border border-dark-100 rounded bg-dark-650 shadow-2xl">
-            <h3 className="text-xl font-bold mb-4 text-gray-300">
-              Epoch Progress
-            </h3>
-            <div className="flex gap-12 mb-4">
-              <div className="text-sm text-gray-300">
-                cur epoch:
-                <span className="text-white ml-1">{curEpoch}</span>
-              </div>
-              <div className="text-sm text-gray-300">
-                finalized epoch:
-                <span className="text-white ml-1">{data[0]?.epoch_id}</span>
-              </div>
-              <div className="text-sm text-gray-300">
-                epoch last:
-                <span className="text-white ml-1">{data[0]?.epoch_time}</span>
-              </div>
-            </div>
-            <EpochProgressBar />
+    <div className="flex flex-col gap-4">
+      <button
+        onClick={() => toggleComponent()}
+        className="self-start p-2 text-white w-full rounded flex justify-end"
+      >
+        Switch to Time Based Chart {">"}
+      </button>
+      <div className="text-white">
+        {loading ? (
+          <div className="flex items-center justify-center w-full h-full">
+            <BeatLoading />
           </div>
-          <div className="px-4 pt-4 border border-dark-100 rounded bg-dark-650 shadow-2xl">
-            <h3 className="text-xl font-bold mb-4 text-gray-300">
-              Revenue and Incentives
-            </h3>
-            <div className="flex gap-12 mb-4">
-              <div
-                className="text-sm text-gray-300 cursor-pointer"
-                onMouseEnter={() => handleMouseEnter("ACC_REV")}
-                onMouseLeave={handleMouseLeave}
-              >
-                ACC REV:
-                <span className="text-white ml-1">
-                  {formatNumber(
-                    data[0]?.total_revenue,
-                    hoveredItem === "ACC_REV",
-                    "revenue"
-                  )}
-                </span>
+        ) : (
+          <div className="grid grid-cols-1 gap-4">
+            <div className="px-4 pt-4 border border-dark-100 rounded bg-dark-650 shadow-2xl">
+              <h3 className="text-xl font-bold mb-4 text-gray-300">
+                Epoch Progress
+              </h3>
+              <div className="flex gap-12 mb-4">
+                <div className="text-sm text-gray-300">
+                  cur epoch:
+                  <span className="text-white ml-1">{curEpoch}</span>
+                </div>
+                <div className="text-sm text-gray-300">
+                  finalized epoch:
+                  <span className="text-white ml-1">{data[0]?.epoch_id}</span>
+                </div>
+                <div className="text-sm text-gray-300">
+                  epoch last:
+                  <span className="text-white ml-1">{data[0]?.epoch_time}</span>
+                </div>
               </div>
-              <div
-                className="text-sm text-gray-300 cursor-pointer relative"
-                onMouseEnter={() => handleMouseEnter("ACC_TOKEN")}
-                onMouseLeave={handleMouseLeave}
-              >
-                ACC TOKEN:
-                <span className="text-white ml-1">
-                  {formatNumber(
-                    data[0]?.total_reward,
-                    hoveredItem === "ACC_TOKEN",
-                    "point"
-                  )}
-                </span>
-                {hoveredItem === "ACC_TOKEN" && (
-                  <div className="absolute z-10 bg-gray-800 text-white px-3 py-1.5 rounded-md text-sm -top-10 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
-                    {formatNumber(
-                      data[0]?.total_reward * data[0]?.token_price,
-                      true,
-                      "value"
-                    )}
-                  </div>
-                )}
-              </div>
-              <div className="text-sm text-gray-300">
-                TOKEN PRICE:
-                <span className="text-white ml-1">{data[0]?.token_price}</span>
-              </div>
+              <EpochProgressBar />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="h-[300px]">
-                <PieChart
-                  data={[
-                    parseFloat(data[0]?.total_revenue || "0").toFixed(6),
-                    parseFloat(
-                      String(data[0]?.total_reward * data[0]?.token_price || 0)
-                    ).toFixed(6),
-                  ].map(Number)}
-                  labels={["ACC REV", "ACC TOKEN"]}
-                  colors={[
-                    "rgba(54, 162, 235, 0.8)",
-                    "rgba(255, 205, 86, 0.8)",
-                  ]}
-                />
+            <div className="px-4 pt-4 border border-dark-100 rounded bg-dark-650 shadow-2xl">
+              <h3 className="text-xl font-bold mb-4 text-gray-300">
+                Revenue and Incentives
+              </h3>
+              <div className="flex gap-12 mb-4">
+                <div
+                  className="text-sm text-gray-300 cursor-pointer"
+                  onMouseEnter={() => handleMouseEnter("ACC_REV")}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  ACC REV:
+                  <span className="text-white ml-1">
+                    {formatNumber(
+                      data[0]?.total_revenue,
+                      hoveredItem === "ACC_REV",
+                      "revenue"
+                    )}
+                  </span>
+                </div>
+                <div
+                  className="text-sm text-gray-300 cursor-pointer relative"
+                  onMouseEnter={() => handleMouseEnter("ACC_TOKEN")}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  ACC TOKEN:
+                  <span className="text-white ml-1">
+                    {formatNumber(
+                      data[0]?.total_reward,
+                      hoveredItem === "ACC_TOKEN",
+                      "point"
+                    )}
+                  </span>
+                  {hoveredItem === "ACC_TOKEN" && (
+                    <div className="absolute z-10 bg-gray-800 text-white px-3 py-1.5 rounded-md text-sm -top-10 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                      {formatNumber(
+                        data[0]?.total_reward * data[0]?.token_price,
+                        true,
+                        "value"
+                      )}
+                    </div>
+                  )}
+                </div>
+                <div className="text-sm text-gray-300">
+                  TOKEN PRICE:
+                  <span className="text-white ml-1">
+                    {data[0]?.token_price}
+                  </span>
+                </div>
               </div>
-              <div className="h-[300px]">
-                <PieChart
-                  data={[
-                    parseFloat(data[0]?.total_trade_reward || "0"),
-                    parseFloat(data[0]?.total_launched_creator_reward || "0"),
-                    parseFloat(data[0]?.total_launched_reward || "0") -
+              <div className="grid grid-cols-2 gap-4">
+                <div className="h-[300px]">
+                  <PieChart
+                    data={[
+                      parseFloat(data[0]?.total_revenue || "0").toFixed(6),
+                      parseFloat(
+                        String(
+                          data[0]?.total_reward * data[0]?.token_price || 0
+                        )
+                      ).toFixed(6),
+                    ].map(Number)}
+                    labels={["ACC REV", "ACC TOKEN"]}
+                    colors={[
+                      "rgba(54, 162, 235, 0.8)",
+                      "rgba(255, 205, 86, 0.8)",
+                    ]}
+                  />
+                </div>
+                <div className="h-[300px]">
+                  <PieChart
+                    data={[
+                      parseFloat(data[0]?.total_trade_reward || "0"),
                       parseFloat(data[0]?.total_launched_creator_reward || "0"),
-                    parseFloat(data[0]?.total_like_reward || "0"),
-                  ].map(Number)}
-                  labels={[
-                    "Trade Reward",
-                    "Creator Reward",
-                    "Preliker Reward",
-                    "Like Reward",
-                  ]}
-                  colors={[
-                    "rgba(54, 162, 235, 0.8)",
-                    "rgba(255, 205, 86, 0.8)",
-                    "rgba(75, 192, 192, 0.8)",
-                    "rgba(255, 99, 132, 0.8)",
-                  ]}
+                      parseFloat(data[0]?.total_launched_reward || "0") -
+                        parseFloat(
+                          data[0]?.total_launched_creator_reward || "0"
+                        ),
+                      parseFloat(data[0]?.total_like_reward || "0"),
+                    ].map(Number)}
+                    labels={[
+                      "Trade Reward",
+                      "Creator Reward",
+                      "Preliker Reward",
+                      "Like Reward",
+                    ]}
+                    colors={[
+                      "rgba(54, 162, 235, 0.8)",
+                      "rgba(255, 205, 86, 0.8)",
+                      "rgba(75, 192, 192, 0.8)",
+                      "rgba(255, 99, 132, 0.8)",
+                    ]}
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-4 mt-6">
+                <ChartDisplay
+                  data={{
+                    data: EPOCHREVChartData.data,
+                    epochIds: EPOCHREVChartData.epochIds,
+                  }}
+                  colors={["#FF6384"]}
+                  title="EPOCH REV"
+                />
+                <ChartDisplay
+                  data={{
+                    data: EPOCHPOINTS.data,
+                    epochIds: EPOCHPOINTS.epochIds,
+                  }}
+                  colors={["#FFCE56", "#36A2EB"]}
+                  title="EPOCH TOKEN"
+                />
+                <ChartDisplay
+                  data={{
+                    data: adScaleData.data,
+                    epochIds: adScaleData.epochIds,
+                  }}
+                  colors={["rgba(54, 162, 235, 0.8)"]}
+                  title="LIKING TOKEN RATIO"
+                  chartType="line"
                 />
               </div>
             </div>
-            <div className="grid grid-cols-3 gap-4 mt-6">
-              <ChartDisplay
-                data={{
-                  data: EPOCHREVChartData.data,
-                  epochIds: EPOCHREVChartData.epochIds,
-                }}
-                colors={["#FF6384"]}
-                title="EPOCH REV"
-              />
-              <ChartDisplay
-                data={{
-                  data: EPOCHPOINTS.data,
-                  epochIds: EPOCHPOINTS.epochIds,
-                }}
-                colors={["#FFCE56", "#36A2EB"]}
-                title="EPOCH TOKEN"
-              />
-              <ChartDisplay
-                data={{
-                  data: adScaleData.data,
-                  epochIds: adScaleData.epochIds,
-                }}
-                colors={["rgba(54, 162, 235, 0.8)"]}
-                title="LIKING TOKEN RATIO"
-                chartType="line"
-              />
-            </div>
-          </div>
-          <div className="px-4 pt-4 border border-dark-100 rounded bg-dark-650 shadow-2xl">
-            <h3 className="text-xl font-bold mb-4 text-gray-300">
-              MEME tokens
-            </h3>
-            <div className="flex gap-12 mb-4">
-              <div className="text-sm text-gray-300">
-                TOTAL MEME:{" "}
-                <span className="text-white ml-1">
-                  {data[0]?.total_meme_created_count}
-                </span>
+            <div className="px-4 pt-4 border border-dark-100 rounded bg-dark-650 shadow-2xl">
+              <h3 className="text-xl font-bold mb-4 text-gray-300">
+                MEME tokens
+              </h3>
+              <div className="flex gap-12 mb-4">
+                <div className="text-sm text-gray-300">
+                  TOTAL MEME:{" "}
+                  <span className="text-white ml-1">
+                    {data[0]?.total_meme_created_count}
+                  </span>
+                </div>
+                <div className="text-sm text-gray-300">
+                  TOTAL LAUNCHING:{" "}
+                  <span className="text-white ml-1">
+                    {data[0]?.total_meme_launching_count}
+                  </span>
+                </div>
+                <div className="text-sm text-gray-300">
+                  TOTAL LAUNCHED:{" "}
+                  <span className="text-white ml-1">
+                    {data[0]?.total_meme_launched_count}
+                  </span>
+                </div>
               </div>
-              <div className="text-sm text-gray-300">
-                TOTAL LAUNCHING:{" "}
-                <span className="text-white ml-1">
-                  {data[0]?.total_meme_launching_count}
-                </span>
-              </div>
-              <div className="text-sm text-gray-300">
-                TOTAL LAUNCHED:{" "}
-                <span className="text-white ml-1">
-                  {data[0]?.total_meme_launched_count}
-                </span>
-              </div>
-            </div>
-            <div className="grid grid-cols-3 gap-4 mt-6">
-              <ChartDisplay
-                data={{
-                  data: EPOCHMEMEData.data,
-                  epochIds: EPOCHMEMEData.epochIds,
-                }}
-                colors={["#FF9F40"]}
-                title="EPOCH MEME"
-              />
-              <ChartDisplay
-                data={{
-                  data: EPOCHLAUNCHEDData.data,
-                  epochIds: EPOCHLAUNCHEDData.epochIds,
-                }}
-                colors={["#9966FF"]}
-                title="EPOCH LAUNCHING"
-              />
-              <ChartDisplay
-                data={{
-                  data: EPOCHHITData.data,
-                  epochIds: EPOCHHITData.epochIds,
-                }}
-                colors={["#FF6384"]}
-                title="EPOCH LAUNCHED"
-              />
-            </div>
-          </div>
-          <div className="px-4 pt-4 border border-dark-100 rounded bg-dark-650 shadow-2xl">
-            <h3 className="text-xl font-bold mb-4 text-gray-300">Users Info</h3>
-            <div className="flex gap-12 mb-4">
-              <div className="text-sm text-gray-300">
-                TOTAL USERS
-                <span className="text-white ml-1">
-                  {data[0]?.total_user_count}
-                </span>
-              </div>
-              <div className="text-sm text-gray-300">
-                TOTAL TRADING USERS
-                <span className="text-white ml-1">
-                  {data[0]?.total_trade_user_count}
-                </span>
-              </div>
-              <div className="text-sm text-gray-300">
-                TOTAL PREBUY USERS
-                <span className="text-white ml-1">
-                  {data[0]?.total_flip_user_count}
-                </span>
-              </div>
-              <div className="text-sm text-gray-300">
-                TOTAL LIKING USERS
-                <span className="text-white ml-1">
-                  {data[0]?.total_like_user_count}
-                </span>
+              <div className="grid grid-cols-3 gap-4 mt-6">
+                <ChartDisplay
+                  data={{
+                    data: EPOCHMEMEData.data,
+                    epochIds: EPOCHMEMEData.epochIds,
+                  }}
+                  colors={["#FF9F40"]}
+                  title="EPOCH MEME"
+                />
+                <ChartDisplay
+                  data={{
+                    data: EPOCHLAUNCHEDData.data,
+                    epochIds: EPOCHLAUNCHEDData.epochIds,
+                  }}
+                  colors={["#9966FF"]}
+                  title="EPOCH LAUNCHING"
+                />
+                <ChartDisplay
+                  data={{
+                    data: EPOCHHITData.data,
+                    epochIds: EPOCHHITData.epochIds,
+                  }}
+                  colors={["#FF6384"]}
+                  title="EPOCH LAUNCHED"
+                />
               </div>
             </div>
-            <div className="grid grid-cols-3 gap-4 mt-6">
-              <ChartDisplay
-                data={{
-                  data: EPOCHLIKINGUSERData.data,
-                  epochIds: EPOCHLIKINGUSERData.epochIds,
-                }}
-                colors={["#36A2EB"]}
-                title="EPOCH LIKING USERS"
-              />
-              <ChartDisplay
-                data={{
-                  data: EPOCHPREBUYUSERData.data,
-                  epochIds: EPOCHPREBUYUSERData.epochIds,
-                }}
-                colors={["#4BC0C0"]}
-                title="EPOCH PREBUY USERS"
-              />
-              <ChartDisplay
-                data={{
-                  data: EPOCHTRADINGData.data,
-                  epochIds: EPOCHTRADINGData.epochIds,
-                }}
-                colors={["#FF9F40"]}
-                title="EPOCH TRADING USERS"
-              />
-            </div>
-          </div>
-          <div className="px-4 pt-4 border border-dark-100 rounded bg-dark-650 shadow-2xl">
-            <h3 className="text-xl font-bold mb-4 text-gray-300">
-              Trading Info
-            </h3>
-            <div className="flex gap-12 mb-4">
-              <div
-                className="text-sm text-gray-300 cursor-pointer"
-                onMouseEnter={() => handleMouseEnter("TOTAL_TRADING_VOL")}
-                onMouseLeave={handleMouseLeave}
-              >
-                ACC TRADING VOL
-                <span className="text-white ml-1">
-                  {formatNumber(
-                    data[0]?.total_trade_amount,
-                    hoveredItem === "TOTAL_TRADING_VOL",
-                    "volume"
-                  )}
-                </span>
+            <div className="px-4 pt-4 border border-dark-100 rounded bg-dark-650 shadow-2xl">
+              <h3 className="text-xl font-bold mb-4 text-gray-300">
+                Users Info
+              </h3>
+              <div className="flex gap-12 mb-4">
+                <div className="text-sm text-gray-300">
+                  TOTAL USERS
+                  <span className="text-white ml-1">
+                    {data[0]?.total_user_count}
+                  </span>
+                </div>
+                <div className="text-sm text-gray-300">
+                  TOTAL TRADING USERS
+                  <span className="text-white ml-1">
+                    {data[0]?.total_trade_user_count}
+                  </span>
+                </div>
+                <div className="text-sm text-gray-300">
+                  TOTAL PREBUY USERS
+                  <span className="text-white ml-1">
+                    {data[0]?.total_flip_user_count}
+                  </span>
+                </div>
+                <div className="text-sm text-gray-300">
+                  TOTAL LIKING USERS
+                  <span className="text-white ml-1">
+                    {data[0]?.total_like_user_count}
+                  </span>
+                </div>
               </div>
-              <div className="text-sm text-gray-300">
-                TOTAL TRADING DEALS
-                <span className="text-white ml-1">
-                  {data[0]?.total_trade_count}
-                </span>
-              </div>
-              <div className="text-sm text-gray-300">
-                TOTAL TRADING USERS
-                <span className="text-white ml-1">
-                  {data[0]?.total_trade_user_count}
-                </span>
+              <div className="grid grid-cols-3 gap-4 mt-6">
+                <ChartDisplay
+                  data={{
+                    data: EPOCHLIKINGUSERData.data,
+                    epochIds: EPOCHLIKINGUSERData.epochIds,
+                  }}
+                  colors={["#36A2EB"]}
+                  title="EPOCH LIKING USERS"
+                />
+                <ChartDisplay
+                  data={{
+                    data: EPOCHPREBUYUSERData.data,
+                    epochIds: EPOCHPREBUYUSERData.epochIds,
+                  }}
+                  colors={["#4BC0C0"]}
+                  title="EPOCH PREBUY USERS"
+                />
+                <ChartDisplay
+                  data={{
+                    data: EPOCHTRADINGData.data,
+                    epochIds: EPOCHTRADINGData.epochIds,
+                  }}
+                  colors={["#FF9F40"]}
+                  title="EPOCH TRADING USERS"
+                />
               </div>
             </div>
-            <div className="grid grid-cols-4 gap-4 mt-6">
-              <ChartDisplay
-                data={{
-                  data: EPOCHTRADINGDEALData.data,
-                  epochIds: EPOCHTRADINGDEALData.epochIds,
-                }}
-                colors={["#9966FF"]}
-                title="EPOCH TRADING DEALS"
-              />
-              <ChartDisplay
-                data={{
-                  data: EPOCHTRADINGVOLData.data,
-                  epochIds: EPOCHTRADINGVOLData.epochIds,
-                }}
-                colors={["#FF6384"]}
-                title="EPOCH TRADING VOL"
-              />
-              <ChartDisplay
-                data={{
-                  data: EPOCHBOUGHTData.data,
-                  epochIds: EPOCHBOUGHTData.epochIds,
-                }}
-                colors={["#36A2EB"]}
-                title="EPOCH BUYING VOL"
-              />
-              <ChartDisplay
-                data={{
-                  data: EPOCHSOLDData.data,
-                  epochIds: EPOCHSOLDData.epochIds,
-                }}
-                colors={["#4BC0C0"]}
-                title="EPOCH SELLING VOL"
-              />
-            </div>
-          </div>
-          <div className="px-4 pt-4 border border-dark-100 rounded bg-dark-650 shadow-2xl">
-            <h3 className="text-xl font-bold mb-4 text-gray-300">
-              PreBuy(flip) Info
-            </h3>
-            <div className="flex gap-12 mb-4">
-              <div
-                className="text-sm text-gray-300 cursor-pointer"
-                onMouseEnter={() => handleMouseEnter("TOTAL_PREBUY_VOL")}
-                onMouseLeave={handleMouseLeave}
-              >
-                ACC PREBUY VOL
-                <span className="text-white ml-1">
-                  {formatNumber(
-                    data[0]?.total_flip_amount,
-                    hoveredItem === "TOTAL_PREBUY_VOL",
-                    "volume"
-                  )}
-                </span>
-              </div>
-              <div className="text-sm text-gray-300">
-                TOTAL PREBUY DEALS
-                <span className="text-white ml-1">
-                  {data[0]?.total_flip_count}
-                </span>
-              </div>
-              <div className="text-sm text-gray-300">
-                TOTAL PREBUY USERS
-                <span className="text-white ml-1">
-                  {data[0]?.total_flip_user_count}
-                </span>
-              </div>
-            </div>
-            <div className="grid grid-cols-3 gap-4 mt-6">
-              <ChartDisplay
-                data={{
-                  data: EPOCHPREBUYVOLData.data,
-                  epochIds: EPOCHPREBUYVOLData.epochIds,
-                }}
-                colors={["#FF9F40"]}
-                title="EPOCH PREBUY VOL"
-              />
-              <ChartDisplay
-                data={{
-                  data: EPOCHPREBUYORDERData.data,
-                  epochIds: EPOCHPREBUYORDERData.epochIds,
-                }}
-                colors={["#9966FF"]}
-                title="EPOCH PREBUY ORDERS"
-              />
-              <ChartDisplay
-                data={{
-                  data: EPOCHPREBUYUSERFLIPData.data,
-                  epochIds: EPOCHPREBUYUSERFLIPData.epochIds,
-                }}
-                colors={["#FF6384"]}
-                title="EPOCH PREBUY USERS"
-              />
-            </div>
-          </div>
-          <div className="px-4 pt-4 border border-dark-100 rounded bg-dark-650 shadow-2xl">
-            <h3 className="text-xl font-bold mb-4 text-gray-300">like info</h3>
-            <div className="flex gap-12 mb-4">
-              <div
-                className="text-sm text-gray-300 cursor-pointer relative"
-                onMouseEnter={() => handleMouseEnter("TOTAL_POINT_FOR_LIKING")}
-                onMouseLeave={handleMouseLeave}
-              >
-                TOTAL LIKING TOKEN
-                <span className="text-white ml-1">
-                  {formatNumber(
-                    data[0]?.total_like_reward,
-                    hoveredItem === "TOTAL_POINT_FOR_LIKING",
-                    "point"
-                  )}
-                </span>
-                {hoveredItem === "TOTAL_POINT_FOR_LIKING" && (
-                  <div className="absolute z-10 bg-gray-800 text-white px-3 py-1.5 rounded-md text-sm -top-10 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+            <div className="px-4 pt-4 border border-dark-100 rounded bg-dark-650 shadow-2xl">
+              <h3 className="text-xl font-bold mb-4 text-gray-300">
+                Trading Info
+              </h3>
+              <div className="flex gap-12 mb-4">
+                <div
+                  className="text-sm text-gray-300 cursor-pointer"
+                  onMouseEnter={() => handleMouseEnter("TOTAL_TRADING_VOL")}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  ACC TRADING VOL
+                  <span className="text-white ml-1">
                     {formatNumber(
-                      data[0]?.total_like_reward_value,
-                      true,
-                      "value"
+                      data[0]?.total_trade_amount,
+                      hoveredItem === "TOTAL_TRADING_VOL",
+                      "volume"
                     )}
-                  </div>
-                )}
+                  </span>
+                </div>
+                <div className="text-sm text-gray-300">
+                  TOTAL TRADING DEALS
+                  <span className="text-white ml-1">
+                    {data[0]?.total_trade_count}
+                  </span>
+                </div>
+                <div className="text-sm text-gray-300">
+                  TOTAL TRADING USERS
+                  <span className="text-white ml-1">
+                    {data[0]?.total_trade_user_count}
+                  </span>
+                </div>
               </div>
-              <div className="text-sm text-gray-300">
-                TOTAL LIKING USER
-                <span className="text-white ml-1">
-                  {data[0]?.total_like_user_count}
-                </span>
-              </div>
-              <div className="text-sm text-gray-300">
-                TOTAL LIKING
-                <span className="text-white ml-1">
-                  {data[0]?.total_like_count}
-                </span>
-              </div>
-              <div className="text-sm text-gray-300">
-                INVALID LIKING
-                <span className="text-white ml-1">
-                  {data[0]?.total_invalid_like_count}
-                </span>
-              </div>
-              <div className="text-sm text-gray-300">
-                MIN REWARD LIKING
-                <span className="text-white ml-1">
-                  {" "}
-                  {data[0]?.total_min_reward_like_count}
-                </span>
-              </div>
-              <div className="text-sm text-gray-300">
-                MIN REWARD LIKING TOKEN
-                <span className="text-white ml-1">
-                  {data[0]?.total_like_min_reward}
-                </span>
+              <div className="grid grid-cols-4 gap-4 mt-6">
+                <ChartDisplay
+                  data={{
+                    data: EPOCHTRADINGDEALData.data,
+                    epochIds: EPOCHTRADINGDEALData.epochIds,
+                  }}
+                  colors={["#9966FF"]}
+                  title="EPOCH TRADING DEALS"
+                />
+                <ChartDisplay
+                  data={{
+                    data: EPOCHTRADINGVOLData.data,
+                    epochIds: EPOCHTRADINGVOLData.epochIds,
+                  }}
+                  colors={["#FF6384"]}
+                  title="EPOCH TRADING VOL"
+                />
+                <ChartDisplay
+                  data={{
+                    data: EPOCHBOUGHTData.data,
+                    epochIds: EPOCHBOUGHTData.epochIds,
+                  }}
+                  colors={["#36A2EB"]}
+                  title="EPOCH BUYING VOL"
+                />
+                <ChartDisplay
+                  data={{
+                    data: EPOCHSOLDData.data,
+                    epochIds: EPOCHSOLDData.epochIds,
+                  }}
+                  colors={["#4BC0C0"]}
+                  title="EPOCH SELLING VOL"
+                />
               </div>
             </div>
-            <div className="grid grid-cols-3 gap-4 mt-6">
-              <ChartDisplay
-                data={{
-                  data: EPOCHLIKINGUSERData.data,
-                  epochIds: EPOCHLIKINGUSERData.epochIds,
-                }}
-                colors={["#36A2EB"]}
-                title="EPOCH LIKING USER"
-              />
-              <ChartDisplay
-                data={{
-                  data: EPOCHLIKINGData.data,
-                  epochIds: EPOCHLIKINGData.epochIds,
-                }}
-                colors={["#4BC0C0"]}
-                title="EPOCH LIKING"
-              />
-              <ChartDisplay
-                data={{
-                  data: EPOCHLIKEREWARDData.data,
-                  epochIds: EPOCHLIKEREWARDData.epochIds,
-                }}
-                colors={["#FF9F40", "#9966FF"]}
-                title="EPOCH LIKING TOKEN"
-              />
-              {/* <ChartDisplay
-                data={{
-                  data: EPOCHAVGPOINTFORLIKINGData.data,
-                  epochIds: EPOCHAVGPOINTFORLIKINGData.epochIds,
-                }}
-                colors={["#FF6384"]}
-                title="EPOCH_AVG_POINT_FOR_LIKING"
-              /> */}
-              <ChartDisplay
-                data={{
-                  data: EPOCHMINREWARDTOKENData.data,
-                  epochIds: EPOCHMINREWARDTOKENData.epochIds,
-                }}
-                colors={["#FF6384"]}
-                title="EPOCH MIN REWARD LIKING"
-              />
-              <ChartDisplay
-                data={{
-                  data: EPOCHMINPOINTSUMFORLIKINGData.data,
-                  epochIds: EPOCHMINPOINTSUMFORLIKINGData.epochIds,
-                }}
-                colors={["#00FFD1"]}
-                title="EPOCH MIN REWARD TOKEN"
-              />
-              <ChartDisplay
-                data={{
-                  data: EPOCHIRData.data,
-                  epochIds: EPOCHIRData.epochIds,
-                }}
-                colors={["#36A2EB"]}
-                title="EPOCH IR"
-              />
+            <div className="px-4 pt-4 border border-dark-100 rounded bg-dark-650 shadow-2xl">
+              <h3 className="text-xl font-bold mb-4 text-gray-300">
+                PreBuy(flip) Info
+              </h3>
+              <div className="flex gap-12 mb-4">
+                <div
+                  className="text-sm text-gray-300 cursor-pointer"
+                  onMouseEnter={() => handleMouseEnter("TOTAL_PREBUY_VOL")}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  ACC PREBUY VOL
+                  <span className="text-white ml-1">
+                    {formatNumber(
+                      data[0]?.total_flip_amount,
+                      hoveredItem === "TOTAL_PREBUY_VOL",
+                      "volume"
+                    )}
+                  </span>
+                </div>
+                <div className="text-sm text-gray-300">
+                  TOTAL PREBUY DEALS
+                  <span className="text-white ml-1">
+                    {data[0]?.total_flip_count}
+                  </span>
+                </div>
+                <div className="text-sm text-gray-300">
+                  TOTAL PREBUY USERS
+                  <span className="text-white ml-1">
+                    {data[0]?.total_flip_user_count}
+                  </span>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-4 mt-6">
+                <ChartDisplay
+                  data={{
+                    data: EPOCHPREBUYVOLData.data,
+                    epochIds: EPOCHPREBUYVOLData.epochIds,
+                  }}
+                  colors={["#FF9F40"]}
+                  title="EPOCH PREBUY VOL"
+                />
+                <ChartDisplay
+                  data={{
+                    data: EPOCHPREBUYORDERData.data,
+                    epochIds: EPOCHPREBUYORDERData.epochIds,
+                  }}
+                  colors={["#9966FF"]}
+                  title="EPOCH PREBUY ORDERS"
+                />
+                <ChartDisplay
+                  data={{
+                    data: EPOCHPREBUYUSERFLIPData.data,
+                    epochIds: EPOCHPREBUYUSERFLIPData.epochIds,
+                  }}
+                  colors={["#FF6384"]}
+                  title="EPOCH PREBUY USERS"
+                />
+              </div>
+            </div>
+            <div className="px-4 pt-4 border border-dark-100 rounded bg-dark-650 shadow-2xl">
+              <h3 className="text-xl font-bold mb-4 text-gray-300">
+                like info
+              </h3>
+              <div className="flex gap-12 mb-4">
+                <div
+                  className="text-sm text-gray-300 cursor-pointer relative"
+                  onMouseEnter={() =>
+                    handleMouseEnter("TOTAL_POINT_FOR_LIKING")
+                  }
+                  onMouseLeave={handleMouseLeave}
+                >
+                  TOTAL LIKING TOKEN
+                  <span className="text-white ml-1">
+                    {formatNumber(
+                      data[0]?.total_like_reward,
+                      hoveredItem === "TOTAL_POINT_FOR_LIKING",
+                      "point"
+                    )}
+                  </span>
+                  {hoveredItem === "TOTAL_POINT_FOR_LIKING" && (
+                    <div className="absolute z-10 bg-gray-800 text-white px-3 py-1.5 rounded-md text-sm -top-10 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                      {formatNumber(
+                        data[0]?.total_like_reward_value,
+                        true,
+                        "value"
+                      )}
+                    </div>
+                  )}
+                </div>
+                <div className="text-sm text-gray-300">
+                  TOTAL LIKING USER
+                  <span className="text-white ml-1">
+                    {data[0]?.total_like_user_count}
+                  </span>
+                </div>
+                <div className="text-sm text-gray-300">
+                  TOTAL LIKING
+                  <span className="text-white ml-1">
+                    {data[0]?.total_like_count}
+                  </span>
+                </div>
+                <div className="text-sm text-gray-300">
+                  INVALID LIKING
+                  <span className="text-white ml-1">
+                    {data[0]?.total_invalid_like_count}
+                  </span>
+                </div>
+                <div className="text-sm text-gray-300">
+                  MIN REWARD LIKING
+                  <span className="text-white ml-1">
+                    {" "}
+                    {data[0]?.total_min_reward_like_count}
+                  </span>
+                </div>
+                <div className="text-sm text-gray-300">
+                  MIN REWARD LIKING TOKEN
+                  <span className="text-white ml-1">
+                    {data[0]?.total_like_min_reward}
+                  </span>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-4 mt-6">
+                <ChartDisplay
+                  data={{
+                    data: EPOCHLIKINGUSERData.data,
+                    epochIds: EPOCHLIKINGUSERData.epochIds,
+                  }}
+                  colors={["#36A2EB"]}
+                  title="EPOCH LIKING USER"
+                />
+                <ChartDisplay
+                  data={{
+                    data: EPOCHLIKINGData.data,
+                    epochIds: EPOCHLIKINGData.epochIds,
+                  }}
+                  colors={["#4BC0C0"]}
+                  title="EPOCH LIKING"
+                />
+                <ChartDisplay
+                  data={{
+                    data: EPOCHLIKEREWARDData.data,
+                    epochIds: EPOCHLIKEREWARDData.epochIds,
+                  }}
+                  colors={["#FF9F40", "#9966FF"]}
+                  title="EPOCH LIKING TOKEN"
+                />
+                {/* <ChartDisplay
+                  data={{
+                    data: EPOCHAVGPOINTFORLIKINGData.data,
+                    epochIds: EPOCHAVGPOINTFORLIKINGData.epochIds,
+                  }}
+                  colors={["#FF6384"]}
+                  title="EPOCH_AVG_POINT_FOR_LIKING"
+                /> */}
+                <ChartDisplay
+                  data={{
+                    data: EPOCHMINREWARDTOKENData.data,
+                    epochIds: EPOCHMINREWARDTOKENData.epochIds,
+                  }}
+                  colors={["#FF6384"]}
+                  title="EPOCH MIN REWARD LIKING"
+                />
+                <ChartDisplay
+                  data={{
+                    data: EPOCHMINPOINTSUMFORLIKINGData.data,
+                    epochIds: EPOCHMINPOINTSUMFORLIKINGData.epochIds,
+                  }}
+                  colors={["#00FFD1"]}
+                  title="EPOCH MIN REWARD TOKEN"
+                />
+                <ChartDisplay
+                  data={{
+                    data: EPOCHIRData.data,
+                    epochIds: EPOCHIRData.epochIds,
+                  }}
+                  colors={["#36A2EB"]}
+                  title="EPOCH IR"
+                />
+              </div>
+            </div>
+            <div className="px-4 pt-4 border border-dark-100 rounded bg-dark-650 shadow-2xl">
+              <h3 className="text-xl font-bold mb-4 text-gray-300">
+                social sharing
+              </h3>
+              <PeriodProgressBar />
+              <div className="flex gap-12 mb-4">
+                <div className="text-sm text-gray-300">
+                  TOTAL CONTENT CREATOR
+                  <span className="text-white ml-1">-</span>
+                </div>
+                <div className="text-sm text-gray-300">
+                  TOTAL CONTENT CREATOR TOKEN
+                  <span className="text-white ml-1">-</span>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-4 mt-6">
+                <ChartDisplay
+                  data={{
+                    data: PERIODCONTENTCREATORData.data,
+                    epochIds: PERIODCONTENTCREATORData.epochIds,
+                  }}
+                  colors={["#FF9F40"]}
+                  title="PERIOD CONTENT CREATOR"
+                />
+                <ChartDisplay
+                  data={{
+                    data: PERIODCONTENTCREATORTOKENData.data,
+                    epochIds: PERIODCONTENTCREATORTOKENData.epochIds,
+                  }}
+                  colors={["#9966FF"]}
+                  title="PERIOD CONTENT CREATOR TOKEN"
+                />
+              </div>
             </div>
           </div>
-          <div className="px-4 pt-4 border border-dark-100 rounded bg-dark-650 shadow-2xl">
-            <h3 className="text-xl font-bold mb-4 text-gray-300">
-              social sharing
-            </h3>
-            <PeriodProgressBar />
-            <div className="flex gap-12 mb-4">
-              <div className="text-sm text-gray-300">
-                TOTAL CONTENT CREATOR
-                <span className="text-white ml-1">-</span>
-              </div>
-              <div className="text-sm text-gray-300">
-                TOTAL CONTENT CREATOR TOKEN
-                <span className="text-white ml-1">-</span>
-              </div>
-            </div>
-            <div className="grid grid-cols-3 gap-4 mt-6">
-              <ChartDisplay
-                data={{
-                  data: PERIODCONTENTCREATORData.data,
-                  epochIds: PERIODCONTENTCREATORData.epochIds,
-                }}
-                colors={["#FF9F40"]}
-                title="PERIOD CONTENT CREATOR"
-              />
-              <ChartDisplay
-                data={{
-                  data: PERIODCONTENTCREATORTOKENData.data,
-                  epochIds: PERIODCONTENTCREATORTOKENData.epochIds,
-                }}
-                colors={["#9966FF"]}
-                title="PERIOD CONTENT CREATOR TOKEN"
-              />
-            </div>
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

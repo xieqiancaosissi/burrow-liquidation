@@ -2964,9 +2964,12 @@ export const getLiquidationResult = async (key: string) => {
     });
 };
 
-export const getDashBoardData = async () => {
+export const getDashBoardData = async (
+  pageSize: number = 30,
+  pageCount: number = 1
+) => {
   return await fetch(
-    `${DASH_BOARD_API_URL}/api/v1/mining/dashboard/infos?page_count=1&page_size=30`
+    `${DASH_BOARD_API_URL}/api/v1/mining/dashboard/infos?page_count=${pageCount}&page_size=${pageSize}`
   )
     .then(async (res) => {
       const data = await res.json();
