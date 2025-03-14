@@ -142,7 +142,7 @@ export default function TimeBasedChart() {
         group.memeCreated += parseFloat(item.epoch_meme_created_count);
         group.memeLaunched += parseFloat(item.epoch_meme_launched_count);
         group.memeLaunching += parseFloat(item.epoch_meme_launching_count);
-        group.totalUsers += parseFloat(item.total_user_count);
+        group.totalUsers = parseFloat(item.total_user_count);
         group.likeUsers += parseFloat(item.epoch_like_user_count);
         group.flipUsers += parseFloat(item.epoch_flip_user_count);
         group.tradeUsers += parseFloat(item.epoch_trade_user_count);
@@ -199,7 +199,7 @@ export default function TimeBasedChart() {
         group.memeCreated += parseFloat(item.epoch_meme_created_count);
         group.memeLaunched += parseFloat(item.epoch_meme_launched_count);
         group.memeLaunching += parseFloat(item.epoch_meme_launching_count);
-        group.totalUsers += parseFloat(item.total_user_count);
+        group.totalUsers = parseFloat(item.total_user_count);
         group.likeUsers += parseFloat(item.epoch_like_user_count);
         group.flipUsers += parseFloat(item.epoch_flip_user_count);
         group.tradeUsers += parseFloat(item.epoch_trade_user_count);
@@ -258,7 +258,7 @@ export default function TimeBasedChart() {
         group.memeCreated += parseFloat(item.epoch_meme_created_count);
         group.memeLaunched += parseFloat(item.epoch_meme_launched_count);
         group.memeLaunching += parseFloat(item.epoch_meme_launching_count);
-        group.totalUsers += parseFloat(item.total_user_count);
+        group.totalUsers = parseFloat(item.total_user_count);
         group.likeUsers += parseFloat(item.epoch_like_user_count);
         group.flipUsers += parseFloat(item.epoch_flip_user_count);
         group.tradeUsers += parseFloat(item.epoch_trade_user_count);
