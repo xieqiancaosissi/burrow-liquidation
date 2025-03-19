@@ -320,14 +320,14 @@ export default function TimeBasedChart() {
       color: "#FF6384",
     },
     {
-      name: "Launched",
-      data: chartData.map((d) => d.memeLaunched || 0),
-      color: "#4BC0C0",
-    },
-    {
       name: "Launching",
       data: chartData.map((d) => d.memeLaunching || 0),
       color: "#9966FF",
+    },
+    {
+      name: "Launched",
+      data: chartData.map((d) => d.memeLaunched || 0),
+      color: "#4BC0C0",
     },
   ];
 
