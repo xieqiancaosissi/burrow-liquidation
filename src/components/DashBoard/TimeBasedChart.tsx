@@ -25,11 +25,11 @@ export default function TimeBasedChart() {
         const totalNeeded = (() => {
           switch (timeUnit) {
             case "hour":
-              return 24 * 6;
+              return  24 * 6; // 30 hours
             case "day":
-              return 7 * 24 * 6;
+              return 30 * 24 * 6; // 30 days
             case "week":
-              return 30 * 24 * 6;
+              return 30 * 7 * 24 * 6; // 30 weeks
             default:
               return 24 * 6;
           }
