@@ -19,6 +19,8 @@ export interface DataItem {
   epoch_trade_count: string;
   epoch_trade_amount: string;
   epoch_like_count: string;
+  epoch_trade_flip_reward: string;
+  epoch_trade_pump_reward: string;
 }
 
 export interface ChartData {
@@ -40,4 +42,6 @@ export interface ChartData {
   tradeCount: number;
   tradeAmount: number;
   likeCount: number;
+  tradeFlipReward: number;
+  tradePumpReward: number;
 }

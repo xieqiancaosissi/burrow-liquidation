@@ -25,7 +25,7 @@ export default function TimeBasedChart() {
         const totalNeeded = (() => {
           switch (timeUnit) {
             case "hour":
-              return  24 * 6; // 30 hours
+              return 24 * 6; // 30 hours
             case "day":
               return 30 * 24 * 6; // 30 days
             case "week":
@@ -126,6 +126,8 @@ export default function TimeBasedChart() {
             tradeCount: 0,
             tradeAmount: 0,
             likeCount: 0,
+            tradeFlipReward: 0,
+            tradePumpReward: 0,
           });
         }
 
@@ -149,6 +151,8 @@ export default function TimeBasedChart() {
         group.tradeCount += parseFloat(item.epoch_trade_count);
         group.tradeAmount += parseFloat(item.epoch_trade_amount);
         group.likeCount += parseFloat(item.epoch_like_count);
+        group.tradeFlipReward += parseFloat(item.epoch_trade_flip_reward);
+        group.tradePumpReward += parseFloat(item.epoch_trade_pump_reward);
       });
 
       const sortedGroups = Array.from(timeGroups.values()).sort(
@@ -183,6 +187,8 @@ export default function TimeBasedChart() {
             tradeCount: 0,
             tradeAmount: 0,
             likeCount: 0,
+            tradeFlipReward: 0,
+            tradePumpReward: 0,
           });
         }
 
@@ -206,6 +212,8 @@ export default function TimeBasedChart() {
         group.tradeCount += parseFloat(item.epoch_trade_count);
         group.tradeAmount += parseFloat(item.epoch_trade_amount);
         group.likeCount += parseFloat(item.epoch_like_count);
+        group.tradeFlipReward += parseFloat(item.epoch_trade_flip_reward);
+        group.tradePumpReward += parseFloat(item.epoch_trade_pump_reward);
       });
 
       const sortedGroups = Array.from(timeGroups.values()).sort(
@@ -242,6 +250,8 @@ export default function TimeBasedChart() {
             tradeCount: 0,
             tradeAmount: 0,
             likeCount: 0,
+            tradeFlipReward: 0,
+            tradePumpReward: 0,
           });
         }
 
@@ -265,6 +275,8 @@ export default function TimeBasedChart() {
         group.tradeCount += parseFloat(item.epoch_trade_count);
         group.tradeAmount += parseFloat(item.epoch_trade_amount);
         group.likeCount += parseFloat(item.epoch_like_count);
+        group.tradeFlipReward += parseFloat(item.epoch_trade_flip_reward);
+        group.tradePumpReward += parseFloat(item.epoch_trade_pump_reward);
       });
 
       const sortedGroups = Array.from(timeGroups.values()).sort(
@@ -399,6 +411,19 @@ export default function TimeBasedChart() {
     },
   ];
 
+  const tradeRewardData = [
+    {
+      name: "Internal Tokens",
+      data: chartData.map((d) => d.tradeFlipReward || 0),
+      color: "#FF9F40",
+    },
+    {
+      name: "External Tokens",
+      data: chartData.map((d) => d.tradePumpReward || 0),
+      color: "#36A2EB",
+    },
+  ];
+
   return (
     <div className="text-white">
       {loading ? (
@@ -469,7 +494,7 @@ export default function TimeBasedChart() {
             />
           </div>
           <h2 className="text-2xl font-bold text-center">Trading</h2>
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-3 gap-6">
             <ChartComponent
               title="Trade Count"
               chartOption={getChartOption(xAxisData, tradeCountData, timeUnit)}
@@ -477,6 +502,10 @@ export default function TimeBasedChart() {
             <ChartComponent
               title="Trade Amount"
               chartOption={getChartOption(xAxisData, tradeAmountData, timeUnit)}
+            />
+            <ChartComponent
+              title="Trade Rewards"
+              chartOption={getChartOption(xAxisData, tradeRewardData, timeUnit)}
             />
           </div>
           <h2 className="text-2xl font-bold text-center">Liking</h2>
