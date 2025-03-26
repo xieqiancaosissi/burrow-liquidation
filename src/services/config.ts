@@ -14,7 +14,6 @@ export default function getConfig(
         HISTORY_API_URL: "https://dev.data-service.ref-finance.com",
         LIQUIDATION_RESULT_API_URL: "https://api.ref.finance",
         DASH_BOARD_API_URL: "https://api.flipn.fun",
-        BOT_DASH_BOARD_API_URL: "https://api.dumpdump.fun",
       };
     case "testnet":
       return {
@@ -28,7 +27,6 @@ export default function getConfig(
         HISTORY_API_URL: "https://dev.data-service.ref-finance.com",
         LIQUIDATION_RESULT_API_URL: "https://api.ref.finance",
         DASH_BOARD_API_URL: "https://api.dumpdump.fun",
-        BOT_DASH_BOARD_API_URL: "https://api.dumpdump.fun",
       };
     default:
       return {
@@ -42,7 +40,6 @@ export default function getConfig(
         HISTORY_API_URL: "https://api.data-service.ref.finance",
         LIQUIDATION_RESULT_API_URL: "https://api.ref.finance",
         DASH_BOARD_API_URL: "https://api.flipn.fun",
-        BOT_DASH_BOARD_API_URL: "https://api.dumpdump.fun",
       };
   }
 }

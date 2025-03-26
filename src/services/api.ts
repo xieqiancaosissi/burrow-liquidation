@@ -6,7 +6,6 @@ const {
   HISTORY_API_URL,
   LIQUIDATION_RESULT_API_URL,
   DASH_BOARD_API_URL,
-  BOT_DASH_BOARD_API_URL,
 } = config;
 const liquidations = [
   {
@@ -2997,7 +2996,7 @@ export const getBotDashBoardData = async (
   startTime: string
 ) => {
   return await fetch(
-    `${BOT_DASH_BOARD_API_URL}/api/v1/trade/volume/count?end_time=${endTime}&from_time=${startTime}`
+    `${DASH_BOARD_API_URL}/api/v1/trade/volume/count?end_time=${endTime}&from_time=${startTime}`
   )
     .then(async (res) => {
       const data = await res.json();
