@@ -6,12 +6,8 @@ import { useDashboard } from "@/context/DashboardContext";
 
 export default function AlgorithmPerformance() {
   const { toggleComponent } = useDashboard();
-  const [data, setData] = useState<any>({
-    last_swap_reward_value: 0,
-    last_like_reward_value: 0,
-    last_revenue: 0,
-    user_count_each_level: [],
-  });
+  const [data, setData] = useState<any>({});
+  const [previousData, setPreviousData] = useState<any>({});
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -19,6 +15,7 @@ export default function AlgorithmPerformance() {
       const res = await getDashBoardData();
       if (res?.data?.data) {
         setData(res.data.data[0]);
+        setPreviousData(res.data.data[1]);
       }
       setLoading(false);
     };
@@ -345,7 +342,7 @@ export default function AlgorithmPerformance() {
                     { label: "price", value: data?.token_price },
                     { label: "prev ir", value: data?.pre_ir },
                     { label: "cur ir", value: data?.last_ir },
-                    { label: "prev DR Swap", value: data?.pre_swap_dr },
+                    { label: "prev DR Swap", value: previousData?.swap_dr },
                     { label: "cur DR Swap", value: data?.swap_dr },
                   ]}
                 />

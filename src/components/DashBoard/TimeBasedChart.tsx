@@ -1,10 +1,20 @@
-import React, { useState, useEffect } from "react";
-import { getDashBoardData } from "@/services/api";
+import React, { useState, useEffect, useCallback } from "react";
+import { getDashBoardData, getBotDashBoardData } from "@/services/api";
 import { BeatLoading } from "../Loading";
 import ChartComponent from "./ChartComponent";
 import { getChartOption } from "./getChartOption";
 import { TimeUnit, DataItem, ChartData } from "./types";
 import { useDashboard } from "@/context/DashboardContext";
+
+interface BotDataPoint {
+  time: number;
+  value: number;
+}
+
+interface BotData {
+  botTradeCount: BotDataPoint[];
+  botTradeAmount: BotDataPoint[];
+}
 
 export default function TimeBasedChart() {
   const { toggleComponent } = useDashboard();
@@ -13,6 +23,10 @@ export default function TimeBasedChart() {
   const [timeUnit, setTimeUnit] = useState<TimeUnit>("hour");
   const [isDataComplete, setIsDataComplete] = useState(false);
   const [chartData, setChartData] = useState<ChartData[]>([]);
+  const [botData, setBotData] = useState<BotData>({
+    botTradeCount: [],
+    botTradeAmount: [],
+  });
 
   useEffect(() => {
     let allData: DataItem[] = [];
@@ -424,6 +438,105 @@ export default function TimeBasedChart() {
     },
   ];
 
+  const fetchBotData = useCallback(async () => {
+    try {
+      const mainDataPoints = chartData.map((d) => ({
+        start: d.time * 1000,
+        end:
+          (d.time +
+            (() => {
+              switch (timeUnit) {
+                case "hour":
+                  return 60 * 60; // 1小时
+                case "day":
+                  return 24 * 60 * 60; // 1天
+                case "week":
+                  return 7 * 24 * 60 * 60; // 1周
+              }
+            })()) *
+          1000,
+      }));
+
+      const results = await Promise.all(
+        mainDataPoints.map((point) =>
+          getBotDashBoardData(point.end.toString(), point.start.toString())
+        )
+      );
+
+      const botDataPoints = results.map((res, index) => ({
+        time: mainDataPoints[index].start,
+        totalAmount: res?.data?.total_amount || 0,
+        totalNumber: res?.data?.total_number || 0,
+      }));
+
+      setBotData({
+        botTradeCount: botDataPoints.map((d) => ({
+          time: d.time,
+          value: d.totalNumber,
+        })),
+        botTradeAmount: botDataPoints.map((d) => ({
+          time: d.time,
+          value: d.totalAmount,
+        })),
+      });
+
+      console.log(
+        "Bot data requests:",
+        mainDataPoints.map((point, index) => ({
+          start: new Date(point.start).toLocaleString(),
+          end: new Date(point.end).toLocaleString(),
+          result: results[index]?.data,
+        }))
+      );
+    } catch (error) {
+      console.error("Error fetching bot data:", error);
+    }
+  }, [chartData, timeUnit]);
+
+  useEffect(() => {
+    if (chartData.length > 0) {
+      fetchBotData();
+    }
+  }, [chartData, fetchBotData]);
+
+  const botTradeCountData = [
+    {
+      name: "Bot Trade Count",
+      data: botData.botTradeCount.map((d) => d.value),
+      color: "#FF6384",
+    },
+  ];
+
+  const botTradeAmountData = [
+    {
+      name: "Bot Trade Amount",
+      data: botData.botTradeAmount.map((d) => d.value),
+      color: "#4BC0C0",
+    },
+  ];
+
+  const adjustBotTradeCountData = [
+    {
+      name: "Adjust Bot Trade Count",
+      data: chartData.map((d, index) => {
+        const botValue = botData.botTradeCount[index]?.value || 0;
+        return Math.max((d.tradeCount || 0) - botValue, 0);
+      }),
+      color: "#FF9F40",
+    },
+  ];
+
+  const adjustBotTradeAmountData = [
+    {
+      name: "Adjust Bot Trade Amount",
+      data: chartData.map((d, index) => {
+        const botValue = botData.botTradeAmount[index]?.value || 0;
+        return Math.max((d.tradeAmount || 0) - botValue, 0);
+      }),
+      color: "#36A2EB",
+    },
+  ];
+
   return (
     <div className="text-white">
       {loading ? (
@@ -506,6 +619,41 @@ export default function TimeBasedChart() {
             <ChartComponent
               title="Trade Rewards"
               chartOption={getChartOption(xAxisData, tradeRewardData, timeUnit)}
+            />
+          </div>
+          <h2 className="text-2xl font-bold text-center">Bot Trading</h2>
+          <div className="grid grid-cols-2 gap-6">
+            <ChartComponent
+              title="Bot Trade Count"
+              chartOption={getChartOption(
+                botData.botTradeCount.map((d) => d.time / 1000),
+                botTradeCountData,
+                timeUnit
+              )}
+            />
+            <ChartComponent
+              title="Bot Trade Amount"
+              chartOption={getChartOption(
+                botData.botTradeAmount.map((d) => d.time / 1000),
+                botTradeAmountData,
+                timeUnit
+              )}
+            />
+            <ChartComponent
+              title="Adjust Bot Trade Count"
+              chartOption={getChartOption(
+                xAxisData,
+                adjustBotTradeCountData,
+                timeUnit
+              )}
+            />
+            <ChartComponent
+              title="Adjust Bot Trade Amount"
+              chartOption={getChartOption(
+                xAxisData,
+                adjustBotTradeAmountData,
+                timeUnit
+              )}
             />
           </div>
           <h2 className="text-2xl font-bold text-center">Liking</h2>
