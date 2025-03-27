@@ -510,7 +510,7 @@ export default function TimeBasedChart() {
   const botTradeAmountData = [
     {
       name: "Bot Trade Amount",
-      data: botData.botTradeAmount.map((d) => d.value),
+      data: botData.botTradeAmount.map((d) => d.value / 1e9),
       color: "#4BC0C0",
     },
   ];
@@ -531,7 +531,7 @@ export default function TimeBasedChart() {
       name: "Adjust Bot Trade Amount",
       data: chartData.map((d, index) => {
         const botValue = botData.botTradeAmount[index]?.value || 0;
-        return Math.max((d.tradeAmount || 0) - botValue, 0);
+        return Math.max((d.tradeAmount || 0) - (botValue / 1e9), 0);
       }),
       color: "#36A2EB",
     },
