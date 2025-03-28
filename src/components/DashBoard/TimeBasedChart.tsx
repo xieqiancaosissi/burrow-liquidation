@@ -395,17 +395,43 @@ export default function TimeBasedChart() {
 
   const tradeCountData = [
     {
-      name: "Trade Count",
+      name: "Total Trade Count",
       data: chartData.map((d) => d.tradeCount || 0),
       color: "#FF6384",
+    },
+    {
+      name: "Bot Trade Count",
+      data: botData.botTradeCount.map((d) => d.value),
+      color: "#4BC0C0",
+    },
+    {
+      name: "Human Trade Count",
+      data: chartData.map((d, index) => {
+        const botValue = botData.botTradeCount[index]?.value || 0;
+        return Math.max((d.tradeCount || 0) - botValue, 0);
+      }),
+      color: "#FF9F40",
     },
   ];
 
   const tradeAmountData = [
     {
-      name: "Trade Amount",
+      name: "Total Trade Amount",
       data: chartData.map((d) => d.tradeAmount || 0),
+      color: "#FF6384",
+    },
+    {
+      name: "Bot Trade Amount",
+      data: botData.botTradeAmount.map((d) => d.value / 1e9),
       color: "#4BC0C0",
+    },
+    {
+      name: "Human Trade Amount",
+      data: chartData.map((d, index) => {
+        const botValue = botData.botTradeAmount[index]?.value || 0;
+        return Math.max((d.tradeAmount || 0) - (botValue / 1e9), 0);
+      }),
+      color: "#FF9F40",
     },
   ];
 
@@ -499,44 +525,6 @@ export default function TimeBasedChart() {
     }
   }, [chartData, fetchBotData]);
 
-  const botTradeCountData = [
-    {
-      name: "Bot Trade Count",
-      data: botData.botTradeCount.map((d) => d.value),
-      color: "#FF6384",
-    },
-  ];
-
-  const botTradeAmountData = [
-    {
-      name: "Bot Trade Amount",
-      data: botData.botTradeAmount.map((d) => d.value / 1e9),
-      color: "#4BC0C0",
-    },
-  ];
-
-  const adjustBotTradeCountData = [
-    {
-      name: "Adjust Bot Trade Count",
-      data: chartData.map((d, index) => {
-        const botValue = botData.botTradeCount[index]?.value || 0;
-        return Math.max((d.tradeCount || 0) - botValue, 0);
-      }),
-      color: "#FF9F40",
-    },
-  ];
-
-  const adjustBotTradeAmountData = [
-    {
-      name: "Adjust Bot Trade Amount",
-      data: chartData.map((d, index) => {
-        const botValue = botData.botTradeAmount[index]?.value || 0;
-        return Math.max((d.tradeAmount || 0) - (botValue / 1e9), 0);
-      }),
-      color: "#36A2EB",
-    },
-  ];
-
   return (
     <div className="text-white">
       {loading ? (
@@ -607,7 +595,7 @@ export default function TimeBasedChart() {
             />
           </div>
           <h2 className="text-2xl font-bold text-center">Trading</h2>
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 gap-6">
             <ChartComponent
               title="Trade Count"
               chartOption={getChartOption(xAxisData, tradeCountData, timeUnit)}
@@ -616,44 +604,11 @@ export default function TimeBasedChart() {
               title="Trade Amount"
               chartOption={getChartOption(xAxisData, tradeAmountData, timeUnit)}
             />
+          </div>
+          <div className="grid grid-cols-1 gap-6 mt-6">
             <ChartComponent
               title="Trade Rewards"
               chartOption={getChartOption(xAxisData, tradeRewardData, timeUnit)}
-            />
-          </div>
-          <h2 className="text-2xl font-bold text-center">Bot Trading</h2>
-          <div className="grid grid-cols-2 gap-6">
-            <ChartComponent
-              title="Bot Trade Count"
-              chartOption={getChartOption(
-                botData.botTradeCount.map((d) => d.time / 1000),
-                botTradeCountData,
-                timeUnit
-              )}
-            />
-            <ChartComponent
-              title="Bot Trade Amount"
-              chartOption={getChartOption(
-                botData.botTradeAmount.map((d) => d.time / 1000),
-                botTradeAmountData,
-                timeUnit
-              )}
-            />
-            <ChartComponent
-              title="Adjust Bot Trade Count"
-              chartOption={getChartOption(
-                xAxisData,
-                adjustBotTradeCountData,
-                timeUnit
-              )}
-            />
-            <ChartComponent
-              title="Adjust Bot Trade Amount"
-              chartOption={getChartOption(
-                xAxisData,
-                adjustBotTradeAmountData,
-                timeUnit
-              )}
             />
           </div>
           <h2 className="text-2xl font-bold text-center">Liking</h2>
