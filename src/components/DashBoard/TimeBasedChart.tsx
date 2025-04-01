@@ -14,6 +14,8 @@ interface BotDataPoint {
 interface BotData {
   botTradeCount: BotDataPoint[];
   botTradeAmount: BotDataPoint[];
+  totalUserNumber: number[];
+  totalLikeNumber: number[];
 }
 
 export default function TimeBasedChart() {
@@ -26,6 +28,8 @@ export default function TimeBasedChart() {
   const [botData, setBotData] = useState<BotData>({
     botTradeCount: [],
     botTradeAmount: [],
+    totalUserNumber: [],
+    totalLikeNumber: [],
   });
 
   useEffect(() => {
@@ -360,17 +364,18 @@ export default function TimeBasedChart() {
   const userData = [
     {
       name: "New Users",
-      data: chartData.map((d, i) => {
-        if (i === 0) return d.totalUsers || 0;
-        const prevValue = chartData[i - 1].totalUsers || 0;
-        const currentValue = d.totalUsers || 0;
+      // data: chartData.map((d, i) => {
+      //   if (i === 0) return d.totalUsers || 0;
+      //   const prevValue = chartData[i - 1].totalUsers || 0;
+      //   const currentValue = d.totalUsers || 0;
 
-        if (prevValue === 0 && currentValue > 0) {
-          return currentValue;
-        }
+      //   if (prevValue === 0 && currentValue > 0) {
+      //     return currentValue;
+      //   }
 
-        return Math.max(currentValue - prevValue, 0);
-      }),
+      //   return Math.max(currentValue - prevValue, 0);
+      // }),
+      data: botData.totalUserNumber,
       color: "#FF6384",
     },
   ];
@@ -446,7 +451,7 @@ export default function TimeBasedChart() {
   const likeUserCountData = [
     {
       name: "Like Users",
-      data: chartData.map((d) => d.likeUsers || 0),
+      data: botData.totalLikeNumber,
       color: "#36A2EB",
     },
   ];
@@ -493,6 +498,8 @@ export default function TimeBasedChart() {
         time: mainDataPoints[index].start,
         totalAmount: res?.data?.total_amount || 0,
         totalNumber: res?.data?.total_number || 0,
+        totalUserNumber: res?.data?.total_user_number || 0,
+        totalLikeNumber: res?.data?.total_like_number || 0,
       }));
 
       setBotData({
@@ -504,6 +511,8 @@ export default function TimeBasedChart() {
           time: d.time,
           value: d.totalAmount,
         })),
+        totalUserNumber: botDataPoints.map((d) => d.totalUserNumber),
+        totalLikeNumber: botDataPoints.map((d) => d.totalLikeNumber),
       });
 
       console.log(
