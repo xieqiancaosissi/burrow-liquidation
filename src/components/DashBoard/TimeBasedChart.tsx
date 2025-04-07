@@ -31,11 +31,13 @@ export default function TimeBasedChart() {
     totalUserNumber: [],
     totalLikeNumber: [],
   });
+  const [isAllDataReady, setIsAllDataReady] = useState(false);
 
   useEffect(() => {
     let allData: DataItem[] = [];
     setLoading(true);
     setIsDataComplete(false);
+    setIsAllDataReady(false);
 
     const fetchAllData = async () => {
       try {
@@ -82,6 +84,14 @@ export default function TimeBasedChart() {
     const intervalId = setInterval(fetchAllData, 60000);
     return () => clearInterval(intervalId);
   }, [timeUnit]);
+
+  useEffect(() => {
+    if (chartData.length > 0 && botData.botTradeCount.length > 0) {
+      setIsAllDataReady(true);
+    } else {
+      setIsAllDataReady(false);
+    }
+  }, [chartData, botData]);
 
   useEffect(() => {
     if (!data.length || !isDataComplete) {
@@ -720,7 +730,7 @@ export default function TimeBasedChart() {
 
   return (
     <div className="text-white">
-      {loading ? (
+      {loading || !isAllDataReady ? (
         <div className="flex items-center justify-center w-full h-full">
           <BeatLoading />
         </div>
