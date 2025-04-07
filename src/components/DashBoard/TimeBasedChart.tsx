@@ -119,6 +119,8 @@ export default function TimeBasedChart() {
 
     if (timeUnit === "hour") {
       const timeGroups = new Map();
+      
+      // First, group data points by hour
       periodData.forEach((item) => {
         const date = new Date(item.epoch_create_time * 1000);
         date.setMinutes(0, 0, 0);
@@ -172,6 +174,75 @@ export default function TimeBasedChart() {
         group.tradeFlipReward += parseFloat(item.epoch_trade_flip_reward);
         group.tradePumpReward += parseFloat(item.epoch_trade_pump_reward);
       });
+      
+      // Find the last data point for each hour
+      const lastDataPointByHour = new Map();
+      
+      periodData.forEach((item) => {
+        const date = new Date(item.epoch_create_time * 1000);
+        date.setMinutes(0, 0, 0);
+        const key = date.getTime();
+        
+        if (!lastDataPointByHour.has(key) || lastDataPointByHour.get(key).timestamp < item.epoch_create_time) {
+          lastDataPointByHour.set(key, {
+            timestamp: item.epoch_create_time,
+            item: item
+          });
+        }
+      });
+      
+      // Add the last data point from each hour to the next hour's data
+      const sortedHours = Array.from(timeGroups.keys()).sort();
+      
+      for (let i = 0; i < sortedHours.length - 1; i++) {
+        const currentHourKey = sortedHours[i];
+        const nextHourKey = sortedHours[i + 1];
+        
+        const lastDataPoint = lastDataPointByHour.get(currentHourKey);
+        
+        if (lastDataPoint) {
+          const item = lastDataPoint.item;
+          const group = timeGroups.get(nextHourKey);
+          
+          // Add the last data point from the previous hour to the current hour
+          group.revenue += parseFloat(item.epoch_revenue);
+          group.tokenValue += parseFloat(item.epoch_reward_value);
+          group.tradeReward += parseFloat(item.epoch_trade_reward);
+          group.creatorReward += parseFloat(item.epoch_launched_creator_reward);
+          group.launchedReward +=
+            parseFloat(item.epoch_launched_reward) -
+            parseFloat(item.epoch_launched_creator_reward);
+          group.likeReward += parseFloat(item.epoch_like_reward);
+          group.count += 1;
+          group.memeCreated += parseFloat(item.epoch_meme_created_count);
+          group.memeLaunched += parseFloat(item.epoch_meme_launched_count);
+          group.memeLaunching += parseFloat(item.epoch_meme_launching_count);
+          group.totalUsers = parseFloat(item.total_user_count);
+          group.likeUsers += parseFloat(item.epoch_like_user_count);
+          group.flipUsers += parseFloat(item.epoch_flip_user_count);
+          group.tradeUsers += parseFloat(item.epoch_trade_user_count);
+          group.tradeCount += parseFloat(item.epoch_trade_count);
+          group.tradeAmount += parseFloat(item.epoch_trade_amount);
+          group.likeCount += parseFloat(item.epoch_like_count);
+          group.tradeFlipReward += parseFloat(item.epoch_trade_flip_reward);
+          group.tradePumpReward += parseFloat(item.epoch_trade_pump_reward);
+        }
+      }
+      
+      // Output the number of data points for each hour for debugging
+      const hoursWithData = Array.from(timeGroups.entries())
+        .map(([timestamp, group]) => {
+          const date = new Date(timestamp);
+          return {
+            hour: `${date.getHours()}:00`,
+            count: group.count,
+            revenue: group.revenue,
+            tradeCount: group.tradeCount
+          };
+        });
+      
+      // Check if there are any data points that were not assigned to any hour group
+      const finalAssignedDataPoints = Array.from(timeGroups.values()).reduce((sum, group) => sum + group.count, 0);
 
       const sortedGroups = Array.from(timeGroups.values()).sort(
         (a, b) => a.time - b.time
@@ -179,6 +250,8 @@ export default function TimeBasedChart() {
       aggregatedData = sortedGroups;
     } else if (timeUnit === "day") {
       const timeGroups = new Map();
+      
+      // First, group data points by day
       periodData.forEach((item) => {
         const date = new Date(item.epoch_create_time * 1000);
         date.setHours(0, 0, 0, 0);
@@ -233,6 +306,60 @@ export default function TimeBasedChart() {
         group.tradeFlipReward += parseFloat(item.epoch_trade_flip_reward);
         group.tradePumpReward += parseFloat(item.epoch_trade_pump_reward);
       });
+      
+      // Find the last data point for each day
+      const lastDataPointByDay = new Map();
+      
+      periodData.forEach((item) => {
+        const date = new Date(item.epoch_create_time * 1000);
+        date.setHours(0, 0, 0, 0);
+        const key = date.getTime();
+        
+        if (!lastDataPointByDay.has(key) || lastDataPointByDay.get(key).timestamp < item.epoch_create_time) {
+          lastDataPointByDay.set(key, {
+            timestamp: item.epoch_create_time,
+            item: item
+          });
+        }
+      });
+      
+      // Add the last data point from each day to the next day's data
+      const sortedDays = Array.from(timeGroups.keys()).sort();
+      
+      for (let i = 0; i < sortedDays.length - 1; i++) {
+        const currentDayKey = sortedDays[i];
+        const nextDayKey = sortedDays[i + 1];
+        
+        const lastDataPoint = lastDataPointByDay.get(currentDayKey);
+        
+        if (lastDataPoint) {
+          const item = lastDataPoint.item;
+          const group = timeGroups.get(nextDayKey);
+          
+          // Add the last data point from the previous day to the current day
+          group.revenue += parseFloat(item.epoch_revenue);
+          group.tokenValue += parseFloat(item.epoch_reward_value);
+          group.tradeReward += parseFloat(item.epoch_trade_reward);
+          group.creatorReward += parseFloat(item.epoch_launched_creator_reward);
+          group.launchedReward +=
+            parseFloat(item.epoch_launched_reward) -
+            parseFloat(item.epoch_launched_creator_reward);
+          group.likeReward += parseFloat(item.epoch_like_reward);
+          group.count += 1;
+          group.memeCreated += parseFloat(item.epoch_meme_created_count);
+          group.memeLaunched += parseFloat(item.epoch_meme_launched_count);
+          group.memeLaunching += parseFloat(item.epoch_meme_launching_count);
+          group.totalUsers = parseFloat(item.total_user_count);
+          group.likeUsers += parseFloat(item.epoch_like_user_count);
+          group.flipUsers += parseFloat(item.epoch_flip_user_count);
+          group.tradeUsers += parseFloat(item.epoch_trade_user_count);
+          group.tradeCount += parseFloat(item.epoch_trade_count);
+          group.tradeAmount += parseFloat(item.epoch_trade_amount);
+          group.likeCount += parseFloat(item.epoch_like_count);
+          group.tradeFlipReward += parseFloat(item.epoch_trade_flip_reward);
+          group.tradePumpReward += parseFloat(item.epoch_trade_pump_reward);
+        }
+      }
 
       const sortedGroups = Array.from(timeGroups.values()).sort(
         (a, b) => a.timestamp - b.timestamp
@@ -240,6 +367,8 @@ export default function TimeBasedChart() {
       aggregatedData = sortedGroups;
     } else {
       const timeGroups = new Map();
+      
+      // First, group data points by week
       periodData.forEach((item) => {
         const date = new Date(item.epoch_create_time * 1000);
         date.setHours(0, 0, 0, 0);
@@ -296,6 +425,62 @@ export default function TimeBasedChart() {
         group.tradeFlipReward += parseFloat(item.epoch_trade_flip_reward);
         group.tradePumpReward += parseFloat(item.epoch_trade_pump_reward);
       });
+      
+      // Find the last data point for each week
+      const lastDataPointByWeek = new Map();
+      
+      periodData.forEach((item) => {
+        const date = new Date(item.epoch_create_time * 1000);
+        date.setHours(0, 0, 0, 0);
+        const dayOfWeek = date.getDay();
+        date.setDate(date.getDate() - dayOfWeek);
+        const key = date.getTime();
+        
+        if (!lastDataPointByWeek.has(key) || lastDataPointByWeek.get(key).timestamp < item.epoch_create_time) {
+          lastDataPointByWeek.set(key, {
+            timestamp: item.epoch_create_time,
+            item: item
+          });
+        }
+      });
+      
+      // Add the last data point from each week to the next week's data
+      const sortedWeeks = Array.from(timeGroups.keys()).sort();
+      
+      for (let i = 0; i < sortedWeeks.length - 1; i++) {
+        const currentWeekKey = sortedWeeks[i];
+        const nextWeekKey = sortedWeeks[i + 1];
+        
+        const lastDataPoint = lastDataPointByWeek.get(currentWeekKey);
+        
+        if (lastDataPoint) {
+          const item = lastDataPoint.item;
+          const group = timeGroups.get(nextWeekKey);
+          
+          // Add the last data point from the previous week to the current week
+          group.revenue += parseFloat(item.epoch_revenue);
+          group.tokenValue += parseFloat(item.epoch_reward_value);
+          group.tradeReward += parseFloat(item.epoch_trade_reward);
+          group.creatorReward += parseFloat(item.epoch_launched_creator_reward);
+          group.launchedReward +=
+            parseFloat(item.epoch_launched_reward) -
+            parseFloat(item.epoch_launched_creator_reward);
+          group.likeReward += parseFloat(item.epoch_like_reward);
+          group.count += 1;
+          group.memeCreated += parseFloat(item.epoch_meme_created_count);
+          group.memeLaunched += parseFloat(item.epoch_meme_launched_count);
+          group.memeLaunching += parseFloat(item.epoch_meme_launching_count);
+          group.totalUsers = parseFloat(item.total_user_count);
+          group.likeUsers += parseFloat(item.epoch_like_user_count);
+          group.flipUsers += parseFloat(item.epoch_flip_user_count);
+          group.tradeUsers += parseFloat(item.epoch_trade_user_count);
+          group.tradeCount += parseFloat(item.epoch_trade_count);
+          group.tradeAmount += parseFloat(item.epoch_trade_amount);
+          group.likeCount += parseFloat(item.epoch_like_count);
+          group.tradeFlipReward += parseFloat(item.epoch_trade_flip_reward);
+          group.tradePumpReward += parseFloat(item.epoch_trade_pump_reward);
+        }
+      }
 
       const sortedGroups = Array.from(timeGroups.values()).sort(
         (a, b) => a.timestamp - b.timestamp
@@ -364,17 +549,6 @@ export default function TimeBasedChart() {
   const userData = [
     {
       name: "New Users",
-      // data: chartData.map((d, i) => {
-      //   if (i === 0) return d.totalUsers || 0;
-      //   const prevValue = chartData[i - 1].totalUsers || 0;
-      //   const currentValue = d.totalUsers || 0;
-
-      //   if (prevValue === 0 && currentValue > 0) {
-      //     return currentValue;
-      //   }
-
-      //   return Math.max(currentValue - prevValue, 0);
-      // }),
       data: botData.totalUserNumber,
       color: "#FF6384",
     },
@@ -471,6 +645,7 @@ export default function TimeBasedChart() {
 
   const fetchBotData = useCallback(async () => {
     try {
+      // Use the same time range as the main data
       const mainDataPoints = chartData.map((d) => ({
         start: d.time * 1000,
         end:
@@ -478,22 +653,24 @@ export default function TimeBasedChart() {
             (() => {
               switch (timeUnit) {
                 case "hour":
-                  return 60 * 60; // 1小时
+                  return 60 * 60; // 1 hour
                 case "day":
-                  return 24 * 60 * 60; // 1天
+                  return 24 * 60 * 60; // 1 day
                 case "week":
-                  return 7 * 24 * 60 * 60; // 1周
+                  return 7 * 24 * 60 * 60; // 1 week
               }
             })()) *
           1000,
       }));
 
+      // Ensure bot data matches the main data time points exactly
       const results = await Promise.all(
         mainDataPoints.map((point) =>
           getBotDashBoardData(point.end.toString(), point.start.toString())
         )
       );
 
+      // Process bot data to ensure it matches the main data format
       const botDataPoints = results.map((res, index) => ({
         time: mainDataPoints[index].start,
         totalAmount: res?.data?.total_amount || 0,
@@ -502,29 +679,36 @@ export default function TimeBasedChart() {
         totalLikeNumber: res?.data?.total_like_number || 0,
       }));
 
+      // Check for missing data points and fill them with values from the previous data point
+      const filledBotDataPoints = botDataPoints.map((point, index) => {
+        if (point.totalAmount === 0 && point.totalNumber === 0 && index > 0) {
+          // If the current data point has no data, use the values from the previous data point
+          return {
+            ...point,
+            totalAmount: botDataPoints[index - 1].totalAmount,
+            totalNumber: botDataPoints[index - 1].totalNumber,
+            totalUserNumber: botDataPoints[index - 1].totalUserNumber,
+            totalLikeNumber: botDataPoints[index - 1].totalLikeNumber,
+          };
+        }
+        return point;
+      });
+
+      // Set bot data to ensure synchronization with main data
       setBotData({
-        botTradeCount: botDataPoints.map((d) => ({
+        botTradeCount: filledBotDataPoints.map((d) => ({
           time: d.time,
           value: d.totalNumber,
         })),
-        botTradeAmount: botDataPoints.map((d) => ({
+        botTradeAmount: filledBotDataPoints.map((d) => ({
           time: d.time,
           value: d.totalAmount,
         })),
-        totalUserNumber: botDataPoints.map((d) => d.totalUserNumber),
-        totalLikeNumber: botDataPoints.map((d) => d.totalLikeNumber),
+        totalUserNumber: filledBotDataPoints.map((d) => d.totalUserNumber),
+        totalLikeNumber: filledBotDataPoints.map((d) => d.totalLikeNumber),
       });
-
-      console.log(
-        "Bot data requests:",
-        mainDataPoints.map((point, index) => ({
-          start: new Date(point.start).toLocaleString(),
-          end: new Date(point.end).toLocaleString(),
-          result: results[index]?.data,
-        }))
-      );
     } catch (error) {
-      console.error("Error fetching bot data:", error);
+      // console.error("Error fetching bot data:", error);
     }
   }, [chartData, timeUnit]);
 
