@@ -158,6 +158,20 @@ export default function TimeBasedChart() {
             likeCount: 0,
             tradeFlipReward: 0,
             tradePumpReward: 0,
+            tradeRaydiumReward: 0,
+            tradeMeteorReward: 0,
+            pumpTradeBuyAmount: 0,
+            pumpTradeSellAmount: 0,
+            pumpTradeBuyCount: 0,
+            pumpTradeSellCount: 0,
+            gofundTradeBuyAmount: 0,
+            gofundTradeSellAmount: 0,
+            gofundTradeBuyCount: 0,
+            gofundTradeSellCount: 0,
+            otherTradeBuyAmount: 0,
+            otherTradeSellAmount: 0,
+            otherTradeBuyCount: 0,
+            otherTradeSellCount: 0,
           });
         }
 
@@ -181,8 +195,22 @@ export default function TimeBasedChart() {
         group.tradeCount += parseFloat(item.epoch_trade_count);
         group.tradeAmount += parseFloat(item.epoch_trade_amount);
         group.likeCount += parseFloat(item.epoch_like_count);
-        group.tradeFlipReward += parseFloat(item.epoch_trade_flip_reward);
-        group.tradePumpReward += parseFloat(item.epoch_trade_pump_reward);
+        group.tradeFlipReward += parseFloat(item.epoch_trade_flip_reward || "0");
+        group.tradePumpReward += parseFloat(item.epoch_trade_pump_reward || "0");
+        group.tradeRaydiumReward += parseFloat(item.epoch_trade_raydium_reward || "0");
+        group.tradeMeteorReward += parseFloat(item.epoch_trade_meteora_reward || "0");
+        group.pumpTradeBuyAmount += parseFloat(item.epoch_pump_trade_buy_amount || "0");
+        group.pumpTradeSellAmount += parseFloat(item.epoch_pump_trade_sell_amount || "0");
+        group.pumpTradeBuyCount += parseFloat(item.epoch_pump_trade_buy_count || "0");
+        group.pumpTradeSellCount += parseFloat(item.epoch_pump_trade_sell_count || "0");
+        group.gofundTradeBuyAmount += parseFloat(item.epoch_gofund_trade_buy_amount || "0");
+        group.gofundTradeSellAmount += parseFloat(item.epoch_gofund_trade_sell_amount || "0");
+        group.gofundTradeBuyCount += parseFloat(item.epoch_gofund_trade_buy_count || "0");
+        group.gofundTradeSellCount += parseFloat(item.epoch_gofund_trade_sell_count || "0");
+        group.otherTradeBuyAmount += parseFloat(item.epoch_other_trade_buy_amount || "0");
+        group.otherTradeSellAmount += parseFloat(item.epoch_other_trade_sell_amount || "0");
+        group.otherTradeBuyCount += parseFloat(item.epoch_other_trade_buy_count || "0");
+        group.otherTradeSellCount += parseFloat(item.epoch_other_trade_sell_count || "0");
       });
       
       // Find the last data point for each hour
@@ -234,8 +262,22 @@ export default function TimeBasedChart() {
           group.tradeCount += parseFloat(item.epoch_trade_count);
           group.tradeAmount += parseFloat(item.epoch_trade_amount);
           group.likeCount += parseFloat(item.epoch_like_count);
-          group.tradeFlipReward += parseFloat(item.epoch_trade_flip_reward);
-          group.tradePumpReward += parseFloat(item.epoch_trade_pump_reward);
+          group.tradeFlipReward += parseFloat(item.epoch_trade_flip_reward || "0");
+          group.tradePumpReward += parseFloat(item.epoch_trade_pump_reward || "0");
+          group.tradeRaydiumReward += parseFloat(item.epoch_trade_raydium_reward || "0");
+          group.tradeMeteorReward += parseFloat(item.epoch_trade_meteora_reward || "0");
+          group.pumpTradeBuyAmount += parseFloat(item.epoch_pump_trade_buy_amount || "0");
+          group.pumpTradeSellAmount += parseFloat(item.epoch_pump_trade_sell_amount || "0");
+          group.pumpTradeBuyCount += parseFloat(item.epoch_pump_trade_buy_count || "0");
+          group.pumpTradeSellCount += parseFloat(item.epoch_pump_trade_sell_count || "0");
+          group.gofundTradeBuyAmount += parseFloat(item.epoch_gofund_trade_buy_amount || "0");
+          group.gofundTradeSellAmount += parseFloat(item.epoch_gofund_trade_sell_amount || "0");
+          group.gofundTradeBuyCount += parseFloat(item.epoch_gofund_trade_buy_count || "0");
+          group.gofundTradeSellCount += parseFloat(item.epoch_gofund_trade_sell_count || "0");
+          group.otherTradeBuyAmount += parseFloat(item.epoch_other_trade_buy_amount || "0");
+          group.otherTradeSellAmount += parseFloat(item.epoch_other_trade_sell_amount || "0");
+          group.otherTradeBuyCount += parseFloat(item.epoch_other_trade_buy_count || "0");
+          group.otherTradeSellCount += parseFloat(item.epoch_other_trade_sell_count || "0");
         }
       }
       
@@ -290,6 +332,20 @@ export default function TimeBasedChart() {
             likeCount: 0,
             tradeFlipReward: 0,
             tradePumpReward: 0,
+            tradeRaydiumReward: 0,
+            tradeMeteorReward: 0,
+            pumpTradeBuyAmount: 0,
+            pumpTradeSellAmount: 0,
+            pumpTradeBuyCount: 0,
+            pumpTradeSellCount: 0,
+            gofundTradeBuyAmount: 0,
+            gofundTradeSellAmount: 0,
+            gofundTradeBuyCount: 0,
+            gofundTradeSellCount: 0,
+            otherTradeBuyAmount: 0,
+            otherTradeSellAmount: 0,
+            otherTradeBuyCount: 0,
+            otherTradeSellCount: 0,
           });
         }
 
@@ -313,8 +369,22 @@ export default function TimeBasedChart() {
         group.tradeCount += parseFloat(item.epoch_trade_count);
         group.tradeAmount += parseFloat(item.epoch_trade_amount);
         group.likeCount += parseFloat(item.epoch_like_count);
-        group.tradeFlipReward += parseFloat(item.epoch_trade_flip_reward);
-        group.tradePumpReward += parseFloat(item.epoch_trade_pump_reward);
+        group.tradeFlipReward += parseFloat(item.epoch_trade_flip_reward || "0");
+        group.tradePumpReward += parseFloat(item.epoch_trade_pump_reward || "0");
+        group.tradeRaydiumReward += parseFloat(item.epoch_trade_raydium_reward || "0");
+        group.tradeMeteorReward += parseFloat(item.epoch_trade_meteora_reward || "0");
+        group.pumpTradeBuyAmount += parseFloat(item.epoch_pump_trade_buy_amount || "0");
+        group.pumpTradeSellAmount += parseFloat(item.epoch_pump_trade_sell_amount || "0");
+        group.pumpTradeBuyCount += parseFloat(item.epoch_pump_trade_buy_count || "0");
+        group.pumpTradeSellCount += parseFloat(item.epoch_pump_trade_sell_count || "0");
+        group.gofundTradeBuyAmount += parseFloat(item.epoch_gofund_trade_buy_amount || "0");
+        group.gofundTradeSellAmount += parseFloat(item.epoch_gofund_trade_sell_amount || "0");
+        group.gofundTradeBuyCount += parseFloat(item.epoch_gofund_trade_buy_count || "0");
+        group.gofundTradeSellCount += parseFloat(item.epoch_gofund_trade_sell_count || "0");
+        group.otherTradeBuyAmount += parseFloat(item.epoch_other_trade_buy_amount || "0");
+        group.otherTradeSellAmount += parseFloat(item.epoch_other_trade_sell_amount || "0");
+        group.otherTradeBuyCount += parseFloat(item.epoch_other_trade_buy_count || "0");
+        group.otherTradeSellCount += parseFloat(item.epoch_other_trade_sell_count || "0");
       });
       
       // Find the last data point for each day
@@ -366,8 +436,22 @@ export default function TimeBasedChart() {
           group.tradeCount += parseFloat(item.epoch_trade_count);
           group.tradeAmount += parseFloat(item.epoch_trade_amount);
           group.likeCount += parseFloat(item.epoch_like_count);
-          group.tradeFlipReward += parseFloat(item.epoch_trade_flip_reward);
-          group.tradePumpReward += parseFloat(item.epoch_trade_pump_reward);
+          group.tradeFlipReward += parseFloat(item.epoch_trade_flip_reward || "0");
+          group.tradePumpReward += parseFloat(item.epoch_trade_pump_reward || "0");
+          group.tradeRaydiumReward += parseFloat(item.epoch_trade_raydium_reward || "0");
+          group.tradeMeteorReward += parseFloat(item.epoch_trade_meteora_reward || "0");
+          group.pumpTradeBuyAmount += parseFloat(item.epoch_pump_trade_buy_amount || "0");
+          group.pumpTradeSellAmount += parseFloat(item.epoch_pump_trade_sell_amount || "0");
+          group.pumpTradeBuyCount += parseFloat(item.epoch_pump_trade_buy_count || "0");
+          group.pumpTradeSellCount += parseFloat(item.epoch_pump_trade_sell_count || "0");
+          group.gofundTradeBuyAmount += parseFloat(item.epoch_gofund_trade_buy_amount || "0");
+          group.gofundTradeSellAmount += parseFloat(item.epoch_gofund_trade_sell_amount || "0");
+          group.gofundTradeBuyCount += parseFloat(item.epoch_gofund_trade_buy_count || "0");
+          group.gofundTradeSellCount += parseFloat(item.epoch_gofund_trade_sell_count || "0");
+          group.otherTradeBuyAmount += parseFloat(item.epoch_other_trade_buy_amount || "0");
+          group.otherTradeSellAmount += parseFloat(item.epoch_other_trade_sell_amount || "0");
+          group.otherTradeBuyCount += parseFloat(item.epoch_other_trade_buy_count || "0");
+          group.otherTradeSellCount += parseFloat(item.epoch_other_trade_sell_count || "0");
         }
       }
 
@@ -409,6 +493,20 @@ export default function TimeBasedChart() {
             likeCount: 0,
             tradeFlipReward: 0,
             tradePumpReward: 0,
+            tradeRaydiumReward: 0,
+            tradeMeteorReward: 0,
+            pumpTradeBuyAmount: 0,
+            pumpTradeSellAmount: 0,
+            pumpTradeBuyCount: 0,
+            pumpTradeSellCount: 0,
+            gofundTradeBuyAmount: 0,
+            gofundTradeSellAmount: 0,
+            gofundTradeBuyCount: 0,
+            gofundTradeSellCount: 0,
+            otherTradeBuyAmount: 0,
+            otherTradeSellAmount: 0,
+            otherTradeBuyCount: 0,
+            otherTradeSellCount: 0,
           });
         }
 
@@ -432,8 +530,22 @@ export default function TimeBasedChart() {
         group.tradeCount += parseFloat(item.epoch_trade_count);
         group.tradeAmount += parseFloat(item.epoch_trade_amount);
         group.likeCount += parseFloat(item.epoch_like_count);
-        group.tradeFlipReward += parseFloat(item.epoch_trade_flip_reward);
-        group.tradePumpReward += parseFloat(item.epoch_trade_pump_reward);
+        group.tradeFlipReward += parseFloat(item.epoch_trade_flip_reward || "0");
+        group.tradePumpReward += parseFloat(item.epoch_trade_pump_reward || "0");
+        group.tradeRaydiumReward += parseFloat(item.epoch_trade_raydium_reward || "0");
+        group.tradeMeteorReward += parseFloat(item.epoch_trade_meteora_reward || "0");
+        group.pumpTradeBuyAmount += parseFloat(item.epoch_pump_trade_buy_amount || "0");
+        group.pumpTradeSellAmount += parseFloat(item.epoch_pump_trade_sell_amount || "0");
+        group.pumpTradeBuyCount += parseFloat(item.epoch_pump_trade_buy_count || "0");
+        group.pumpTradeSellCount += parseFloat(item.epoch_pump_trade_sell_count || "0");
+        group.gofundTradeBuyAmount += parseFloat(item.epoch_gofund_trade_buy_amount || "0");
+        group.gofundTradeSellAmount += parseFloat(item.epoch_gofund_trade_sell_amount || "0");
+        group.gofundTradeBuyCount += parseFloat(item.epoch_gofund_trade_buy_count || "0");
+        group.gofundTradeSellCount += parseFloat(item.epoch_gofund_trade_sell_count || "0");
+        group.otherTradeBuyAmount += parseFloat(item.epoch_other_trade_buy_amount || "0");
+        group.otherTradeSellAmount += parseFloat(item.epoch_other_trade_sell_amount || "0");
+        group.otherTradeBuyCount += parseFloat(item.epoch_other_trade_buy_count || "0");
+        group.otherTradeSellCount += parseFloat(item.epoch_other_trade_sell_count || "0");
       });
       
       // Find the last data point for each week
@@ -487,8 +599,22 @@ export default function TimeBasedChart() {
           group.tradeCount += parseFloat(item.epoch_trade_count);
           group.tradeAmount += parseFloat(item.epoch_trade_amount);
           group.likeCount += parseFloat(item.epoch_like_count);
-          group.tradeFlipReward += parseFloat(item.epoch_trade_flip_reward);
-          group.tradePumpReward += parseFloat(item.epoch_trade_pump_reward);
+          group.tradeFlipReward += parseFloat(item.epoch_trade_flip_reward || "0");
+          group.tradePumpReward += parseFloat(item.epoch_trade_pump_reward || "0");
+          group.tradeRaydiumReward += parseFloat(item.epoch_trade_raydium_reward || "0");
+          group.tradeMeteorReward += parseFloat(item.epoch_trade_meteora_reward || "0");
+          group.pumpTradeBuyAmount += parseFloat(item.epoch_pump_trade_buy_amount || "0");
+          group.pumpTradeSellAmount += parseFloat(item.epoch_pump_trade_sell_amount || "0");
+          group.pumpTradeBuyCount += parseFloat(item.epoch_pump_trade_buy_count || "0");
+          group.pumpTradeSellCount += parseFloat(item.epoch_pump_trade_sell_count || "0");
+          group.gofundTradeBuyAmount += parseFloat(item.epoch_gofund_trade_buy_amount || "0");
+          group.gofundTradeSellAmount += parseFloat(item.epoch_gofund_trade_sell_amount || "0");
+          group.gofundTradeBuyCount += parseFloat(item.epoch_gofund_trade_buy_count || "0");
+          group.gofundTradeSellCount += parseFloat(item.epoch_gofund_trade_sell_count || "0");
+          group.otherTradeBuyAmount += parseFloat(item.epoch_other_trade_buy_amount || "0");
+          group.otherTradeSellAmount += parseFloat(item.epoch_other_trade_sell_amount || "0");
+          group.otherTradeBuyCount += parseFloat(item.epoch_other_trade_buy_count || "0");
+          group.otherTradeSellCount += parseFloat(item.epoch_other_trade_sell_count || "0");
         }
       }
 
@@ -642,14 +768,77 @@ export default function TimeBasedChart() {
 
   const tradeRewardData = [
     {
-      name: "Internal Tokens",
+      name: "FlipN",
       data: chartData.map((d) => d.tradeFlipReward || 0),
       color: "#FF9F40",
     },
     {
-      name: "External Tokens",
+      name: "Raydium",
+      data: chartData.map((d) => d.tradeRaydiumReward || 0),
+      color: "#4BC0C0",
+    },
+    {
+      name: "Meteora",
+      data: chartData.map((d) => d.tradeMeteorReward || 0), 
+      color: "#9966FF",
+    },
+    {
+      name: "External",
       data: chartData.map((d) => d.tradePumpReward || 0),
       color: "#36A2EB",
+    },
+  ];
+  const importTokenTradeCountData = [
+    {
+      name: "Total",
+      data: chartData.map((d) => 
+        (d.pumpTradeBuyCount || 0) + (d.pumpTradeSellCount || 0) + 
+        (d.gofundTradeBuyCount || 0) + (d.gofundTradeSellCount || 0) + 
+        (d.otherTradeBuyCount || 0) + (d.otherTradeSellCount || 0)
+      ),
+      color: "#FF6384",
+    },
+    {
+      name: "PumpFun",
+      data: chartData.map((d) => (d.pumpTradeBuyCount || 0) + (d.pumpTradeSellCount || 0)),
+      color: "#4BC0C0",
+    },
+    {
+      name: "GoTrade",
+      data: chartData.map((d) => (d.gofundTradeBuyCount || 0) + (d.gofundTradeSellCount || 0)),
+      color: "#FF9F40",
+    },
+    {
+      name: "Other",
+      data: chartData.map((d) => (d.otherTradeBuyCount || 0) + (d.otherTradeSellCount || 0)),
+      color: "#9966FF",
+    },
+  ];
+
+  const importTokenTradeAmountData = [
+    {
+      name: "Total",
+      data: chartData.map((d) => 
+        (d.pumpTradeBuyAmount || 0) + (d.pumpTradeSellAmount || 0) + 
+        (d.gofundTradeBuyAmount || 0) + (d.gofundTradeSellAmount || 0) + 
+        (d.otherTradeBuyAmount || 0) + (d.otherTradeSellAmount || 0)
+      ),
+      color: "#FF6384",
+    },
+    {
+      name: "PumpFun",
+      data: chartData.map((d) => (d.pumpTradeBuyAmount || 0) + (d.pumpTradeSellAmount || 0)),
+      color: "#4BC0C0",
+    },
+    {
+      name: "GoTrade",
+      data: chartData.map((d) => (d.gofundTradeBuyAmount || 0) + (d.gofundTradeSellAmount || 0)),
+      color: "#FF9F40",
+    },
+    {
+      name: "Other",
+      data: chartData.map((d) => (d.otherTradeBuyAmount || 0) + (d.otherTradeSellAmount || 0)),
+      color: "#9966FF",
     },
   ];
 
@@ -812,6 +1001,17 @@ export default function TimeBasedChart() {
             <ChartComponent
               title="Trade Rewards"
               chartOption={getChartOption(xAxisData, tradeRewardData, timeUnit)}
+            />
+          </div>
+          <h2 className="text-2xl font-bold text-center">Imported Token Trading</h2>
+          <div className="grid grid-cols-2 gap-6">
+            <ChartComponent
+              title="Imported Token Trade Count"
+              chartOption={getChartOption(xAxisData, importTokenTradeCountData, timeUnit)}
+            />
+            <ChartComponent
+              title="Imported Token Trade Amount"
+              chartOption={getChartOption(xAxisData, importTokenTradeAmountData, timeUnit)}
             />
           </div>
           <h2 className="text-2xl font-bold text-center">Liking</h2>

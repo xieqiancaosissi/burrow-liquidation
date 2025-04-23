@@ -21,6 +21,20 @@ export interface DataItem {
   epoch_like_count: string;
   epoch_trade_flip_reward: string;
   epoch_trade_pump_reward: string;
+  epoch_trade_raydium_reward: string;
+  epoch_trade_meteora_reward: string;
+  epoch_pump_trade_buy_amount: string;
+  epoch_pump_trade_sell_amount: string;
+  epoch_pump_trade_buy_count: string;
+  epoch_pump_trade_sell_count: string;
+  epoch_gofund_trade_buy_amount: string;
+  epoch_gofund_trade_sell_amount: string;
+  epoch_gofund_trade_buy_count: string;
+  epoch_gofund_trade_sell_count: string;
+  epoch_other_trade_buy_amount: string;
+  epoch_other_trade_sell_amount: string;
+  epoch_other_trade_buy_count: string;
+  epoch_other_trade_sell_count: string;
 }
 
 export interface ChartData {
@@ -44,4 +58,18 @@ export interface ChartData {
   likeCount: number;
   tradeFlipReward: number;
   tradePumpReward: number;
+  tradeRaydiumReward: number;
+  tradeMeteorReward: number;
+  pumpTradeBuyAmount: number;
+  pumpTradeSellAmount: number;
+  pumpTradeBuyCount: number;
+  pumpTradeSellCount: number;
+  gofundTradeBuyAmount: number;
+  gofundTradeSellAmount: number;
+  gofundTradeBuyCount: number;
+  gofundTradeSellCount: number;
+  otherTradeBuyAmount: number;
+  otherTradeSellAmount: number;
+  otherTradeBuyCount: number;
+  otherTradeSellCount: number;
 }

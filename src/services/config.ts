@@ -26,7 +26,7 @@ export default function getConfig(
         REF_FI_CONTRACT_ID: "exchange.ref-dev.testnet",
         HISTORY_API_URL: "https://dev.data-service.ref-finance.com",
         LIQUIDATION_RESULT_API_URL: "https://api.ref.finance",
-        DASH_BOARD_API_URL: "https://api.dumpdump.fun",
+        DASH_BOARD_API_URL: "https://test.flipn.fun",
       };
     default:
       return {

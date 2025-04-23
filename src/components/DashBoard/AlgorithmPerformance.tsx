@@ -350,14 +350,24 @@ export default function AlgorithmPerformance() {
                   label="Trading Incentives (A)"
                   data={[
                     {
-                      label: "internal tokens",
-                      value: data?.total_trade_flip_reward,
-                      valueDetail: `${data?.total_trade_flip_reward_value}`,
+                      label: "FlipN",
+                      value: data?.epoch_trade_flip_reward,
+                      valueDetail: `${data?.epoch_trade_flip_reward_value}`,
                     },
                     {
-                      label: "external tokens",
-                      value: data?.total_trade_pump_reward,
-                      valueDetail: `${data?.total_trade_pump_reward_value}`,
+                      label: "Raydium",
+                      value: data?.epoch_trade_raydium_reward,
+                      valueDetail: `${data?.epoch_trade_raydium_reward_value}`,
+                    },
+                    {
+                      label: "Meteora",
+                      value: data?.epoch_trade_meteora_reward,
+                      valueDetail: `${data?.epoch_trade_meteora_reward_value}`,
+                    },
+                    {
+                      label: "External",
+                      value: data?.epoch_trade_pump_reward,
+                      valueDetail: `${data?.epoch_trade_pump_reward_value}`,
                     },
                   ]}
                 />
@@ -510,6 +520,18 @@ export default function AlgorithmPerformance() {
                   {
                     label: "DR Creator",
                     value: data?.hit_bonding_curve_creator_dr,
+                  },
+                  {
+                    label: "FlipN Creator Rewards",
+                    value: data?.last_hit_bonding_reward_creator,
+                  },
+                  {
+                    label: "Raydium Creator Rewards",
+                    value: data?.last_hit_bonding_reward_creator_raydium,
+                  },
+                  {
+                    label: "Meteora Creator Rewards",
+                    value: data?.last_hit_bonding_reward_creator_meteora,
                   },
                 ]}
               />
