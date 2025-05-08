@@ -1,6 +1,6 @@
 export interface ILiquidationResponse {
-  timestamp: number;
-  data: ILiquidation[];
+  liquidations: ILiquidation[];
+  total: number;
 }
 export interface ILiquidation {
   accountId: string;

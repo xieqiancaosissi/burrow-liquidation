@@ -21,16 +21,17 @@ export default function AlgorithmPerformance() {
     };
     fetchData();
 
-    const intervalId = setInterval(fetchData, 60000);
-
-    return () => clearInterval(intervalId);
+    // Temporarily disabled auto-refresh
+    // const intervalId = setInterval(fetchData, 60000);
+    // return () => clearInterval(intervalId);
   }, []);
 
+  // Revenue Distribution chart
   const revenueOption = {
     title: {
       text: "Revenue Distribution",
-      left: "25%",
-      top: 60,
+      left: "center",
+      top: 0,
       textStyle: {
         color: "#C0C4E9",
         fontSize: 20,
@@ -45,9 +46,9 @@ export default function AlgorithmPerformance() {
       textStyle: { color: "#C0C4E9", fontSize: 12 },
     },
     legend: {
-      orient: "vertical",
-      right: "15%",
-      bottom: "5%",
+      orient: "horizontal",
+      bottom: 0,
+      left: "center",
       textStyle: {
         color: "#C0C4E9",
         fontSize: 12,
@@ -55,27 +56,18 @@ export default function AlgorithmPerformance() {
       itemGap: 12,
       itemWidth: 10,
       itemHeight: 10,
-      formatter: (name: string) => {
-        const value =
-          revenueOption.series[0].data.find(
-            (item: { name: string; value: number }) => item.name === name
-          )?.value || 0;
-        return `${name}: ${value}`;
-      },
     },
     series: [
       {
         name: "Revenue",
         type: "pie",
-        radius: ["45%", "60%"],
-        center: ["40%", "60%"],
+        radius: ["60%", "75%"],
+        center: ["50%", "52%"],
         avoidLabelOverlap: true,
         itemStyle: {
           borderRadius: 4,
           borderColor: "#14162b",
-          borderWidth: 1,
-          shadowBlur: 0,
-          shadowColor: "rgba(0, 0, 0, 0)",
+          borderWidth: 0,
         },
         label: {
           show: false,
@@ -89,18 +81,21 @@ export default function AlgorithmPerformance() {
         },
         data: [
           {
-            value: data?.last_swap_reward_value || 0,
-            name: "Swap Reward",
+            value:
+              parseFloat(data?.total_revenue || 0) -
+              parseFloat(data?.total_raydium_revenue || 0) -
+              parseFloat(data?.total_meteora_revenue || 0),
+            name: "FlipN Revenue",
             itemStyle: { color: "rgba(54, 162, 235, 0.8)" },
           },
           {
-            value: data?.last_like_reward_value || 0,
-            name: "Like Reward",
+            value: parseFloat(data?.total_raydium_revenue || 0),
+            name: "Raydium Revenue",
             itemStyle: { color: "rgba(255, 205, 86, 0.8)" },
           },
           {
-            value: Math.max(0, data?.last_revenue) || 0,
-            name: "Total",
+            value: parseFloat(data?.total_meteora_revenue || 0),
+            name: "Meteora Revenue",
             itemStyle: { color: "rgba(75, 192, 192, 0.8)" },
           },
         ],
@@ -108,41 +103,12 @@ export default function AlgorithmPerformance() {
     ],
   };
 
-  const totalRevenue =
-    data?.last_swap_reward_value +
-      data?.last_like_reward_value +
-      Math.max(
-        0,
-        data?.last_revenue -
-          data?.last_swap_reward_value -
-          data?.last_like_reward_value
-      ) || 0;
-
-  if (totalRevenue === 0) {
-    revenueOption.series[0].data = [
-      {
-        value: 0,
-        name: "Swap Reward",
-        itemStyle: { color: "rgba(54, 162, 235, 0.8)" },
-      },
-      {
-        value: 0,
-        name: "Like Reward",
-        itemStyle: { color: "rgba(255, 205, 86, 0.8)" },
-      },
-      {
-        value: 0,
-        name: "Total",
-        itemStyle: { color: "rgba(75, 192, 192, 0.8)" },
-      },
-    ];
-  }
-
+  // User Ranking chart
   const userLevelOption = {
     title: {
       text: "User Ranking",
-      left: "29%",
-      top: 60,
+      left: "center",
+      top: 0,
       textStyle: {
         color: "#C0C4E9",
         fontSize: 20,
@@ -157,9 +123,9 @@ export default function AlgorithmPerformance() {
       textStyle: { color: "#C0C4E9", fontSize: 12 },
     },
     legend: {
-      orient: "vertical",
-      right: "15%",
-      bottom: "5%",
+      orient: "horizontal",
+      bottom: 0,
+      left: "center",
       textStyle: {
         color: "#C0C4E9",
         fontSize: 12,
@@ -167,27 +133,18 @@ export default function AlgorithmPerformance() {
       itemGap: 12,
       itemWidth: 10,
       itemHeight: 10,
-      formatter: (name: string) => {
-        const value =
-          userLevelOption.series[0].data.find(
-            (item: { name: string; value: number }) => item.name === name
-          )?.value || 0;
-        return `${name}: ${value}`;
-      },
     },
     series: [
       {
         name: "User Ranking",
         type: "pie",
-        radius: ["45%", "60%"],
-        center: ["40%", "60%"],
+        radius: ["60%", "75%"],
+        center: ["50%", "52%"],
         avoidLabelOverlap: true,
         itemStyle: {
           borderRadius: 4,
           borderColor: "#14162b",
-          borderWidth: 1,
-          shadowBlur: 0,
-          shadowColor: "rgba(0, 0, 0, 0)",
+          borderWidth: 0,
         },
         label: {
           show: false,
@@ -228,6 +185,80 @@ export default function AlgorithmPerformance() {
     ];
   }
 
+  // 3. Incentive Token Distribution Chart
+  const incentiveOption = {
+    title: {
+      text: "Incentive Token Distribution",
+      left: "center",
+      top: 0,
+      textStyle: {
+        color: "#C0C4E9",
+        fontSize: 20,
+        fontWeight: "bold",
+      },
+    },
+    tooltip: {
+      trigger: "item",
+      formatter: "{b}: {c} ({d}%)",
+      backgroundColor: "rgba(0, 0, 0, 0.7)",
+      borderColor: "#333",
+      textStyle: { color: "#C0C4E9", fontSize: 12 },
+    },
+    legend: {
+      orient: "horizontal",
+      bottom: 0,
+      left: "center",
+      textStyle: {
+        color: "#C0C4E9",
+        fontSize: 12,
+      },
+      itemGap: 12,
+      itemWidth: 10,
+      itemHeight: 10,
+    },
+    series: [
+      {
+        name: "Incentive",
+        type: "pie",
+        radius: ["60%", "75%"],
+        center: ["50%", "48%"],
+        avoidLabelOverlap: true,
+        itemStyle: {
+          borderRadius: 4,
+          borderColor: "#14162b",
+          borderWidth: 0,
+        },
+        label: {
+          show: false,
+        },
+        labelLine: {
+          show: false,
+        },
+        emphasis: {
+          scale: true,
+          scaleSize: 5,
+        },
+        data: [
+          {
+            value: parseFloat(data?.total_trade_reward || 0),
+            name: "Trading Incentive",
+            itemStyle: { color: "rgba(54, 162, 235, 0.8)" },
+          },
+          {
+            value: parseFloat(data?.total_launched_creator_reward || 0),
+            name: "Creator Incentive",
+            itemStyle: { color: "rgba(255, 205, 86, 0.8)" },
+          },
+          {
+            value: 0, // Social sharing incentives (to be added in the future)
+            name: "Social Sharing Incentive",
+            itemStyle: { color: "rgba(75, 192, 192, 0.8)" },
+          },
+        ],
+      },
+    ],
+  };
+
   function StatisticsSection({
     label,
     data,
@@ -256,7 +287,17 @@ export default function AlgorithmPerformance() {
         return "0";
       }
 
-      return Number(numericValue.toFixed(4)).toString();
+      // Format based on value size to ensure consistency
+      if (Math.abs(numericValue) >= 1000) {
+        return numericValue.toLocaleString(undefined, {
+          maximumFractionDigits: 2,
+        });
+      } else if (Math.abs(numericValue) >= 1) {
+        return numericValue.toFixed(4);
+      } else {
+        // For small decimal values
+        return numericValue.toFixed(6);
+      }
     };
 
     return (
@@ -291,361 +332,277 @@ export default function AlgorithmPerformance() {
     );
   }
 
-  const Is = Number(data?.like_i_s);
-  const Imin = Number(data?.like_i_min);
-  const ULR_FOR_MIN = Number(data?.like_min_reward_upper_limit_rate);
-  const range = (Imin * (ULR_FOR_MIN - 1)) / (Is - Imin);
-
   return (
     <div className="flex flex-col gap-4">
-      <button
-        onClick={() => toggleComponent()}
-        className="self-start p-2 text-white rounded"
-      >
-        Switch to Statistic Trend Charts {">"}
-      </button>
-      <div className="flex h-screen">
+      <div className="flex justify-end w-full">
+        <button
+          onClick={() => toggleComponent()}
+          className="p-2 text-white rounded"
+        >
+          Switch to Time Based Charts {">"}
+        </button>
+      </div>
+
+      <div className="flex flex-col h-full">
         {loading ? (
           <div className="flex items-center justify-center w-full h-full">
             <BeatLoading />
           </div>
         ) : (
           <>
-            <div className="flex flex-col w-4/6 h-full">
-              <div className="flex-1 flex flex-row flex-wrap">
-                <div className="w-1/2 h-full">
-                  <div className="w-full h-96 flex items-center justify-center text-purple-50">
-                    <ReactECharts
-                      option={revenueOption}
-                      style={{ width: "100%", height: "100%" }}
-                      opts={{ renderer: "svg" }}
-                    />
-                  </div>
-                </div>
-                <div className="w-1/2 h-full">
-                  <div className="w-full h-96 flex items-center justify-center text-purple-50">
-                    <ReactECharts
-                      option={userLevelOption}
-                      style={{ width: "100%", height: "100%" }}
-                      opts={{ renderer: "svg" }}
-                    />
-                  </div>
+            {/* Top charts area */}
+            <div className="flex flex-row justify-center gap-12 mb-6">
+              <div className="w-1/3">
+                <div className="w-full h-80 flex items-center justify-center text-purple-50 relative">
+                  <ReactECharts
+                    option={revenueOption}
+                    style={{ width: "100%", height: "100%" }}
+                    opts={{ renderer: "svg" }}
+                  />
                 </div>
               </div>
-              <div className="flex-1 p-6 text-white">
-                <p className="flex items-center text-purple-50 text-lg font-bold mb-4">
-                  latest performance
-                </p>
-                <StatisticsSection
-                  label="Common Info"
-                  data={[
-                    { label: "price", value: data?.token_price },
-                    { label: "prev ir", value: data?.pre_ir },
-                    { label: "cur ir", value: data?.last_ir },
-                    { label: "prev DR Swap", value: previousData?.swap_dr },
-                    { label: "cur DR Swap", value: data?.swap_dr },
-                  ]}
-                />
-                <StatisticsSection
-                  label="Trading Incentives (A)"
-                  data={[
-                    {
-                      label: "internal tokens",
-                      value: data?.total_trade_flip_reward,
-                      valueDetail: `${data?.total_trade_flip_reward_value}`,
-                    },
-                    {
-                      label: "external tokens",
-                      value: data?.total_trade_pump_reward,
-                      valueDetail: `${data?.total_trade_pump_reward_value}`,
-                    },
-                  ]}
-                />
-                <StatisticsSection
-                  label="Launched Incentives (B & C)"
-                  data={[
-                    {
-                      label: "new meme",
-                      value: data?.epoch_meme_created_count,
-                    },
-                    {
-                      label: "launching meme",
-                      value: data?.epoch_meme_launching_count,
-                    },
-                    {
-                      label: "launched meme",
-                      value: data?.epoch_meme_launched_count,
-                    },
-                  ]}
-                />
-                <StatisticsSection
-                  data={[
-                    {
-                      label: "creator token",
-                      value: data?.epoch_launched_reward,
-                      valueDetail: `${data?.epoch_launched_reward_value}`,
-                    },
-                    {
-                      label: "avg token",
-                      value:
-                        data?.epoch_launched_reward /
-                        data?.epoch_meme_launched_count,
-                      valueDetail: `${
-                        data?.epoch_launched_reward_value /
-                        data?.epoch_meme_launched_count
-                      }`,
-                    },
-                  ]}
-                />
-                <StatisticsSection
-                  data={[
-                    {
-                      label: "pre liker token",
-                      value: data?.epoch_like_reward,
-                      valueDetail: `${data?.epoch_like_reward_value}`,
-                    },
-                    {
-                      label: "avg token",
-                      value:
-                        data?.epoch_like_reward / data?.hit_bonding_curve_n,
-                      valueDetail: `${
-                        data?.epoch_like_reward_value /
-                        data?.hit_bonding_curve_n
-                      }`,
-                    },
-                    {
-                      label: "min token",
-                      value: data?.like_i_min,
-                    },
-                    {
-                      label: "max token",
-                      value: data?.like_i_max,
-                    },
-                  ]}
-                />
-                <StatisticsSection
-                  label="Liker Incentives (D)"
-                  data={[
-                    { label: "liking", value: data?.epoch_like_count },
-                    {
-                      label: "invalid liking",
-                      value: data?.epoch_invalid_like_count,
-                    },
-                    {
-                      label: "minimum reward",
-                      value: data?.epoch_min_reward_like_count,
-                    },
-                  ]}
-                />
-                <StatisticsSection
-                  data={[
-                    {
-                      label: "liking user",
-                      value: data?.epoch_like_user_count,
-                    },
-                    {
-                      label: "liking token",
-                      value: data?.epoch_like_reward,
-                      valueDetail: `${data?.epoch_like_reward_value}`,
-                    },
-                    {
-                      label: "avg token",
-                      value:
-                        data?.epoch_like_reward / data?.epoch_like_user_count,
-                      valueDetail: `${
-                        data?.epoch_like_reward_value /
-                        data?.epoch_like_user_count
-                      }`,
-                    },
-                  ]}
-                />
-                <StatisticsSection
-                  data={[
-                    { label: "u0", value: data?.like_u0 },
-                    { label: "u1", value: data?.like_u1 },
-                    { label: "u2", value: data?.like_u2 },
-                    { label: "std dev", value: data?.std },
-                  ]}
-                />
+              <div className="w-1/3">
+                <div className="w-full h-80 flex items-center justify-center text-purple-50 relative">
+                  <ReactECharts
+                    option={userLevelOption}
+                    style={{ width: "100%", height: "100%" }}
+                    opts={{ renderer: "svg" }}
+                  />
+                </div>
+              </div>
+              <div className="w-1/3">
+                <div className="w-full h-80 flex items-center justify-center text-purple-50 relative">
+                  <ReactECharts
+                    option={incentiveOption}
+                    style={{ width: "100%", height: "100%" }}
+                    opts={{ renderer: "svg" }}
+                  />
+                </div>
               </div>
             </div>
-            <div className="w-2/6 p-6">
-              <p className="flex items-center text-purple-50 text-lg font-bold mb-4">
-                current algorithm configuration
-              </p>
-              <StatisticsSection
-                label="Fee"
-                data={[
-                  { label: "Buy Fee", value: data?.buy_fee_rate },
-                  { label: "Sell Fee", value: data?.sell_fee_rate },
-                ]}
-              />
-              <StatisticsSection
-                label="User Ranking"
-                data={[
-                  {
-                    label: "Volume Criteria",
-                    value: data?.ranking_rates || [],
-                  },
-                  { label: "SBRs", value: data?.ranking_sbrs || [] },
-                  { label: "K", value: data?.ranking_k },
-                  { label: "ECR", value: data?.ranking_pump_rate },
-                  { label: "ECV", value: data?.user_level_max_external_vol },
-                ]}
-              />
-              <StatisticsSection
-                label="Launched Incentive"
-                data={[
-                  { label: "N", value: data?.hit_bonding_curve_n },
-                  { label: "min Rev", value: data?.hit_bonding_curve_rev_min },
-                  { label: "DR Preliker", value: data?.hit_bonding_curve_dr },
-                  {
-                    label: "min Point",
-                    value: data?.last_hit_bonding_reward_last,
-                  },
-                  {
-                    label: "max Point",
-                    value: data?.last_hit_bonding_reward_top,
-                  },
-                  {
-                    label: "DR Creator",
-                    value: data?.hit_bonding_curve_creator_dr,
-                  },
-                ]}
-              />
-              <StatisticsSection
-                label="Trading Incentive"
-                data={[
-                  { label: "Ipvn", value: data?.swap_ipvn },
-                  { label: "Ipvi", value: data?.swap_ipvi },
-                  { label: "DR Trading", value: data?.swap_dr },
-                  {
-                    label: "MaxAdjR",
-                    value: data?.swap_max_adjust_rate_dr,
-                  },
-                ]}
-              />
-              <StatisticsSection label="Liking Incentive" data={[]} />
-              <StatisticsSection
-                label="Weight of 3 dimensions"
-                data={[
-                  { label: "Alpha", value: data?.like_alpha },
-                  { label: "Beta", value: data?.like_beta },
-                  { label: "Gamma", value: data?.like_gamma },
-                ]}
-              />
-              <StatisticsSection
-                label="Volume dimension params"
-                data={[
-                  { label: "recent n", value: data?.like_recent_n },
-                  {
-                    label: "VirtualVolSpan",
-                    value: data?.like_virtual_vol_span,
-                  },
-                  {
-                    label: "VirtualVolDiscount",
-                    value: data?.like_virtual_vol_discount,
-                  },
-                  {
-                    label: "max acc vol",
-                    value: data?.like_multi_robot_max_m_count,
-                  },
-                  { label: "base", value: data?.like_log_base },
-                  {
-                    label: "ERS",
-                    value: data?.like_extension_rate_slash,
-                  },
-                  { label: "OR e2", value: data?.like_e2 },
-                ]}
-              />
-              <StatisticsSection
-                label="Z and Incentive range params"
-                data={[
-                  { label: "Zs", value: data?.like_zs },
-                  { label: "Zr", value: data?.like_zr },
-                  { label: "Imin", value: data?.like_i_min },
-                  { label: "Is", value: data?.like_i_s },
-                  { label: "Imax", value: data?.like_i_max },
-                ]}
-              />
-              <StatisticsSection
-                label="Auto-adjustment params"
-                data={[
-                  { label: "Ir", value: data?.like_i_r },
-                  {
-                    label: "tdr liking",
-                    value: data?.like_tdr,
-                  },
-                  {
-                    label: "MaxAdj liking",
-                    value: data?.like_ir_max_adjust_rate,
-                  },
-                ]}
-              />
-              <StatisticsSection
-                label="Antibot params"
-                data={[
-                  {
-                    label: "ulr for min",
-                    value: data?.like_min_reward_upper_limit_rate,
-                  },
-                  {
-                    label: "antibot range",
-                    value: range,
-                  },
-                  {
-                    label: "X",
-                    value: data?.like_item_robot_check_x_time
-                      ? (data.like_item_robot_check_x_time / 600).toFixed(2)
-                      : null,
-                  },
-                  { label: "N", value: data?.like_item_robot_check_n_count },
-                  { label: "K", value: data?.like_multi_robot_max_k_rate },
-                  { label: "M", value: data?.like_multi_robot_max_m_count },
-                ]}
-              />
-              <StatisticsSection
-                label="Social Sharing Incentive"
-                data={[
-                  {
-                    label: "epoch window",
-                    value: 144 * 7,
-                    isError: true,
-                  },
-                  { label: "DR sharing", value: 0.025, isError: true },
-                ]}
-              />
-              <StatisticsSection
-                label="Tiktok"
-                data={[
-                  {
-                    label: "MaxFollowerNum",
-                    value: 1000000,
-                    isError: true,
-                  },
-                  { label: "log base", value: 2, isError: true },
-                ]}
-              />
-              <StatisticsSection
-                data={[
-                  {
-                    label: "MaxViewer",
-                    value: 100000,
-                    isError: true,
-                  },
-                  { label: "VCR", value: "[0.0001, 0.001]", isError: true },
-                ]}
-              />
-              <StatisticsSection
-                data={[
-                  {
-                    label: "MaxLiker",
-                    value: 10000,
-                    isError: true,
-                  },
-                  { label: "LCR", value: "[0.001, 0.01]", isError: true },
-                ]}
-              />
+
+            {/* Bottom left and right areas */}
+            <div className="flex">
+              {/* Bottom left - data display area */}
+              <div className="w-3/5 p-4">
+                <StatisticsSection
+                  label="Acc Trading Statistics"
+                  data={[
+                    {
+                      label: "Native Vol",
+                      value: parseFloat(data?.total_flip_amount || 0),
+                    },
+                    {
+                      label: "Raydium Vol",
+                      value:
+                        parseFloat(data?.total_raydium_trade_buy_amount || 0) +
+                        parseFloat(data?.total_raydium_trade_sell_amount || 0),
+                    },
+                    {
+                      label: "Meteora Vol",
+                      value:
+                        parseFloat(data?.total_meteora_trade_buy_amount || 0) +
+                        parseFloat(data?.total_meteora_trade_sell_amount || 0),
+                    },
+                    {
+                      label: "External Vol",
+                      value:
+                        parseFloat(data?.total_pump_trade_buy_amount || 0) +
+                        parseFloat(data?.total_pump_trade_sell_amount || 0),
+                    },
+                  ]}
+                />
+
+                <StatisticsSection
+                  label="Acc Trading Incentives"
+                  data={[
+                    { label: "pre DR", value: data?.pre_ir },
+                    { label: "cur DR", value: data?.swap_dr },
+                    {
+                      label: "For Native",
+                      value: data?.total_trade_flip_reward,
+                    },
+                    {
+                      label: "For Raydium",
+                      value: data?.total_trade_raydium_reward,
+                    },
+                    {
+                      label: "For Meteora",
+                      value: data?.total_trade_meteora_reward,
+                    },
+                    {
+                      label: "For External",
+                      value: data?.total_trade_pump_reward,
+                    },
+                  ]}
+                />
+
+                <StatisticsSection
+                  label="Acc Meme Created"
+                  data={[
+                    {
+                      label: "On Native",
+                      value:
+                        data?.total_meme_created_count -
+                        (data?.total_meme_raydium_launched_count || 0) -
+                        (data?.total_meme_meteora_launched_count || 0),
+                    },
+                    {
+                      label: "On Raydium",
+                      value: data?.total_meme_raydium_launched_count,
+                    },
+                    {
+                      label: "On Meteora",
+                      value: data?.total_meme_meteora_launched_count,
+                    },
+                  ]}
+                />
+
+                <StatisticsSection
+                  label="Acc Meme Launched"
+                  data={[
+                    {
+                      label: "On Native",
+                      value:
+                        data?.total_meme_launched_count -
+                        (data?.total_meme_raydium_launched_count || 0) -
+                        (data?.total_meme_meteora_launched_count || 0),
+                    },
+                    {
+                      label: "On Raydium",
+                      value: data?.total_meme_raydium_launched_count,
+                    },
+                    {
+                      label: "On Meteora",
+                      value: data?.total_meme_meteora_launched_count,
+                    },
+                  ]}
+                />
+
+                <StatisticsSection
+                  label="Creator Incentives"
+                  data={[
+                    {
+                      label: "For Native",
+                      value:
+                        parseFloat(data?.total_launched_creator_reward || 0) -
+                        parseFloat(
+                          data?.total_launched_raydium_creator_reward || 0
+                        ) -
+                        parseFloat(
+                          data?.total_launched_meteora_creator_reward || 0
+                        ),
+                    },
+                    {
+                      label: "For Raydium",
+                      value: data?.total_launched_raydium_creator_reward,
+                    },
+                    {
+                      label: "For Meteora",
+                      value: data?.total_launched_meteora_creator_reward,
+                    },
+                  ]}
+                />
+
+                <StatisticsSection
+                  label="Social Sharing"
+                  data={[
+                    { label: "Twitter shares", value: "N/A" },
+                    { label: "Discord shares", value: "N/A" },
+                  ]}
+                />
+
+                <StatisticsSection
+                  label="Social Sharing Incentives"
+                  data={[
+                    { label: "Twitter incentives", value: "N/A" },
+                    { label: "Discord incentives", value: "N/A" },
+                  ]}
+                />
+              </div>
+
+              {/* Bottom right - algorithm parameter display area */}
+              <div className="w-2/5 p-4">
+                <p className="flex items-center text-purple-50 text-lg font-bold mb-4">
+                  Current Algorithm Configuration
+                </p>
+                <StatisticsSection
+                  data={[
+                    {
+                      label: "token price",
+                      value: data?.token_price || 0.0001,
+                    },
+                    { label: "buy fee", value: data?.buy_fee_rate },
+                    { label: "sell fee", value: data?.sell_fee_rate },
+                    { label: "raydium discount", value: 0.75 },
+                    { label: "meteora discount", value: 0.9 },
+                    { label: "epoch last", value: data?.epoch_time || 3600 },
+                  ]}
+                />
+
+                <StatisticsSection
+                  label="User Ranking"
+                  data={[
+                    {
+                      label: "Volume Criteria",
+                      value: data?.ranking_rates || [],
+                    },
+                    { label: "SBRs", value: data?.ranking_sbrs || [] },
+                    { label: "K", value: data?.ranking_k },
+                    { label: "ECR", value: data?.ranking_pump_rate },
+                    { label: "ECV", value: data?.user_level_max_external_vol },
+                  ]}
+                />
+
+                <StatisticsSection
+                  label="Launched Incentive"
+                  data={[
+                    {
+                      label: "min Rev",
+                      value: data?.hit_bonding_curve_rev_min,
+                    },
+                    {
+                      label: "DR Creator",
+                      value: data?.hit_bonding_curve_creator_dr,
+                    },
+                  ]}
+                />
+
+                <StatisticsSection
+                  label="Trading Incentive"
+                  data={[
+                    { label: "IPVinternal", value: data?.swap_ipvn },
+                    { label: "IPVexternal", value: data?.swap_ipvi },
+                    { label: "DR Trading", value: data?.swap_dr },
+                    { label: "MaxAdjR", value: data?.swap_max_adjust_rate_dr },
+                    { label: "MaxDR", value: data?.swap_max_dr || 0.35 },
+                    {
+                      label: "LatestDRWindow",
+                      value: data?.swap_adjust_dr_recent_n || 24,
+                    },
+                  ]}
+                />
+
+                <StatisticsSection
+                  label="Social Sharing Incentive"
+                  data={[
+                    { label: "epoch window", value: 24 * 7 },
+                    { label: "DR sharing", value: 0.025 },
+                  ]}
+                />
+
+                <StatisticsSection
+                  label="Twitter"
+                  data={[
+                    { label: "MaxFollower", value: 1000000 },
+                    { label: "log base", value: 2 },
+                    { label: "MaxViewing", value: 100000 },
+                    { label: "VCR", value: "[0.0001, 0.001]" },
+                    { label: "MaxLiking", value: 10000 },
+                    { label: "LCR", value: "[0.001, 0.01]" },
+                  ]}
+                />
+              </div>
             </div>
           </>
         )}
