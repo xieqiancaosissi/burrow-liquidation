@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import ReactECharts from "echarts-for-react";
 import { BeatLoading } from "./Loading";
 import AlgorithmPerformance from "./DashBoard/AlgorithmPerformance";
-import StatisticTrendCharts from "./DashBoard/StatisticTrendCharts";
 import TimeBasedChart from "./DashBoard/TimeBasedChart";
 import { DashboardContext } from "@/context/DashboardContext";
 
@@ -12,15 +11,14 @@ const PASSWORD = "FlipN2025";
 export default function DashBoardPage() {
   const [currentPage, setCurrentPage] = useState<string>(() => {
     const savedState = localStorage.getItem("currentPage");
-    return savedState || "algorithm";
+    return savedState === "statistic" ? "algorithm" : savedState || "algorithm";
   });
   const [isModalVisible, setIsModalVisible] = useState<boolean>(true);
   const [password, setPassword] = useState<string>("");
 
   const toggleComponent = () => {
     const nextPage = {
-      algorithm: "statistic",
-      statistic: "timebased",
+      algorithm: "timebased",
       timebased: "algorithm",
     }[currentPage] as string;
 
@@ -77,8 +75,6 @@ export default function DashBoardPage() {
         {localStorage.getItem("isLoggedIn") === "true" &&
           (currentPage === "algorithm" ? (
             <AlgorithmPerformance />
-          ) : currentPage === "statistic" ? (
-            <StatisticTrendCharts />
           ) : (
             <TimeBasedChart />
           ))}
